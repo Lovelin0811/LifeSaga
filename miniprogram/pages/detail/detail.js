@@ -19,6 +19,7 @@ Page({
     showActionSheet: false,
     statusBarHeight: 44,
     navBarHeight: 88,
+    capsuleRight: 16,
   },
 
   sagaId: null,
@@ -26,8 +27,14 @@ Page({
   onLoad(options) {
     const systemInfo = wx.getSystemInfoSync();
     const statusBarHeight = systemInfo.statusBarHeight || 44;
-    const navBarHeight = statusBarHeight + 44; // 44 = 导航内容区高度
-    this.setData({ statusBarHeight, navBarHeight });
+    const navBarHeight = statusBarHeight + 44;
+    // 获取胶囊按钮位置，把 more 按钮放到胶囊左侧
+    try {
+      const rect = wx.getMenuButtonBoundingClientRect();
+      this.setData({ statusBarHeight, navBarHeight, capsuleRight: rect.right + 8 });
+    } catch (e) {
+      this.setData({ statusBarHeight, navBarHeight, capsuleRight: systemInfo.windowWidth - 100 });
+    }
     this.sagaId = options.id;
     this.loadData();
   },

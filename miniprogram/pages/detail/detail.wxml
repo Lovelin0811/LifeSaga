@@ -5,14 +5,13 @@
   </view>
 
   <block wx:elif="{{saga}}">
-    <!-- 自定义导航栏（绝对定位，透明背景） -->
+    <!-- 自定义导航栏 -->
     <view class="detail-nav" style="padding-top: {{statusBarHeight}}px;">
       <view class="nav-back" bindtap="goBack">
         <image src="/images/icons/back.svg" class="nav-icon" mode="aspectFit"/>
       </view>
       <text class="nav-title">{{saga.name}}</text>
-      <!-- 右侧占位，避开系统胶囊 -->
-      <view class="nav-action" style="opacity: 0; pointer-events: none;">
+      <view class="nav-action" style="right: {{capsuleRight}}px; top: {{statusBarHeight}}px;" bindtap="showActions">
         <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
       </view>
     </view>
@@ -22,9 +21,6 @@
       <view class="detail-title-row">
         <text class="type-tag type-tag--{{saga.type}}">{{saga.typeName}}</text>
         <view class="rarity-badge rarity-badge--{{saga.rarity || 'common'}}">{{saga.rarityName}}</view>
-        <view class="detail-actions" bindtap="showActions">
-          <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
-        </view>
       </view>
       <text class="detail-title">{{saga.name}}</text>
       <text class="detail-desc" wx:if="{{saga.description}}">{{saga.description}}</text>
