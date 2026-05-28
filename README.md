@@ -1,72 +1,93 @@
-# Map Picture（微信地图相册）
+# 人生副本（LifeSaga）
 
-一个微信小程序 + Java 后端项目，支持按省份管理照片、文件夹管理、双人共享相册配对，以及鉴权访问图片。
+一个 RPG 概念的时间线记录微信小程序，把人生经历（恋爱、旅行、成长等）当作"副本"来记录和回顾。
 
-## 当前技术栈
+## 技术栈
 
-- 小程序前端：`miniprogram/`
-- 后端：Spring Boot 3.3 + JDBC + MySQL（`backend/`）
-- Java 版本：21
+- **小程序前端**：`miniprogram/`（原生微信小程序）
+- **后端**：Java 21 + Spring Boot 3.3 + JdbcTemplate + MySQL
+- **认证**：微信登录 + JWT Bearer Token
+- **端口**：3000
 
 ## 核心功能
 
-- 微信登录：`/api/auth/wechat-login`
-- 会话鉴权：基于 `Bearer token`
-- 相册配对：邀请、接受邀请、解绑
-- 按省份查看照片列表与统计
-- 文件夹管理：创建、删除、照片移动文件夹
-- 图片上传：支持 `multipart/form-data` 与 `base64`
-- 图片访问：通过鉴权接口 `/api/photos/file/{id}`
+- **微信一键登录**：扫码即登录，`wx.login` → code → 后端 jscode2session → JWT
+- **副本管理**：创建/编辑人生副本，RPG 稀有度体系（普通→稀有→传说→神话）
+- **节点记录**：在副本时间线上添加节点，支持图片上传
+- **成就系统**：记录人生里程碑
+- **个人主页**：用户信息与数据统计
+- **发现页**：浏览和发现副本
+
+## 页面结构
+
+| 页面 | 路径 | 说明 |
+|------|------|------|
+| 首页 | `home` | 副本列表、统计（进行中/已完成/总节点） |
+| 详情页 | `detail` | 副本详情、节点时间线 |
+| 添加节点 | `add-node` | 在副本中添加新节点 |
+| 节点详情 | `node-detail` | 查看单个节点 |
+| 创建副本 | `create` | 创建/编辑副本（tabBar 页） |
+| 成就 | `achievements` | 成就列表 |
+| 发现 | `discover` | 发现页 |
+| 个人 | `profile` | 个人主页 |
 
 ## 目录结构
 
-- `miniprogram/`：微信小程序代码
-- `backend/src/main/java`：后端业务代码
-- `backend/src/main/resources`：后端配置（`application.properties`、`logback-spring.xml`）
-- `uploads/`：上传文件目录（运行时创建）
-- `logs/`：日志目录（运行时创建）
+```
+LifeSaga/
+├── miniprogram/          # 微信小程序前端
+│   ├── pages/            # 页面目录
+│   ├── app.js            # 小程序入口
+│   ├── config.js         # 配置（读 config.local.js）
+│   └── config.local.js   # 本地配置（gitignored）
+├── backend/              # Spring Boot 后端
+│   └── src/main/
+│       ├── java/com/lovelin/lifesaga/
+│       └── resources/application.yml
+└── uploads/              # 上传文件目录（运行时创建）
+```
 
-## 后端启动
+## 本地开发
 
-1. 准备 MySQL 并创建数据库（默认库名：`lovelin`）。
-2. 按需修改 `backend/src/main/resources/application.properties` 中数据库连接。
-3. 进入后端目录并启动：
+### 后端启动
+
+1. 准备 MySQL，创建数据库 `lifesaga`
+2. 配置环境变量（或修改 `application.yml`）：
+   - `DB_USERNAME` / `DB_PASSWORD`
+   - `JWT_SECRET`（≥32字符）
+   - `WECHAT_APP_ID` / `WECHAT_APP_SECRET`（为空时走 dev 模式）
+3. 启动：
 
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
 
-如果本机没有 `mvnw`，可用系统 Maven：
+默认地址：`http://127.0.0.1:3000`
 
-```bash
-cd backend
-mvn spring-boot:run
-```
+### 小程序启动
 
-默认服务地址：`http://127.0.0.1:3000`。  
-健康检查：`/health` 或 `/api/health`。
+1. 微信开发者工具导入 `miniprogram` 目录
+2. 创建 `miniprogram/config.local.js`：
 
-## 小程序启动
-
-1. 微信开发者工具导入 `miniprogram` 目录。
-2. 创建 `miniprogram/config.local.js`，配置后端服务器地址：
 ```js
 module.exports = {
-  API_BASE: 'http://后端服务器公网IP:3000'
+  API_BASE: 'http://127.0.0.1:3000'
 };
 ```
-3. 不创建 `config.local.js` 时默认连接 `http://127.0.0.1:3000`。
-4. 本地联调时，开发者工具可勾选"不校验合法域名"。
-5. `config.local.js` 已在 `.gitignore` 中，不会提交到远程仓库。
 
-## 关键配置
+3. 不创建时默认连接 `http://127.0.0.1:3000`
+4. 本地联调时勾选"不校验合法域名"
 
-- 数据库：`spring.datasource.*`
-- 上传目录：`app.upload.dir`（默认 `uploads`）
-- 日志目录：`app.log.dir`（默认 `logs`）
-- 微信配置：`app.wechat.appid`、`app.wechat.secret`
+## 生产部署
 
-## 备注
+- **域名**：`https://lovelin.com.cn`
+- **服务器**：阿里云 ECS（47.116.214.42）
+- **Nginx**：反代 3000 端口，HTTPS（Let's Encrypt）
+- **ICP 备案**：✅ 已通过
 
-- 代码仓库忽略了 IDE 与运行产物目录：`.idea/`、`backend/.idea/`、`backend/target/`、`logs/`、`deploy.sh`、`config.local.js`、`.workbuddy/`。
+## 设计风格
+
+- Warm Editorial + RPG 游戏感
+- 主色：珊瑚暖阳 `#E8725A` + 蜂蜜暖金 `#E5A44D`
+- 稀有度：common → uncommon → rare → epic → legendary → mythic
