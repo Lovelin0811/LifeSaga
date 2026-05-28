@@ -11,9 +11,6 @@
         <image src="/images/icons/back.svg" class="nav-icon" mode="aspectFit"/>
       </view>
       <text class="nav-title">{{saga.name}}</text>
-      <view class="nav-action" style="right: {{capsuleRight}}px; top: {{statusBarHeight}}px;" bindtap="showActions">
-        <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
-      </view>
     </view>
 
     <!-- 副本头部信息 -->
@@ -21,6 +18,9 @@
       <view class="detail-title-row">
         <text class="type-tag type-tag--{{saga.type}}">{{saga.typeName}}</text>
         <view class="rarity-badge rarity-badge--{{saga.rarity || 'common'}}">{{saga.rarityName}}</view>
+        <view class="detail-actions" bindtap="showActions">
+          <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
+        </view>
       </view>
       <text class="detail-title">{{saga.name}}</text>
       <text class="detail-desc" wx:if="{{saga.description}}">{{saga.description}}</text>

@@ -9,16 +9,14 @@
   z-index: 10;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding-left: 32rpx;
   padding-right: 32rpx;
   padding-bottom: 16rpx;
   background: var(--color-bg-surface);
 }
 
-/* sticky 不建立定位上下文，需要额外加 relative */
-.detail-nav { position: sticky; position: relative; top: 0; }
-
-.nav-back, .nav-action {
+.nav-back {
   width: 64rpx;
   height: 64rpx;
   display: flex;
@@ -29,11 +27,6 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   flex-shrink: 0;
-}
-
-.nav-action {
-  position: absolute;
-  right: 100px;
 }
 
 .nav-back:active, .nav-action:active {
@@ -55,7 +48,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   margin: 0 8rpx;
-  margin-right: 100rpx;
 }
 
 /* 副本头部 */
@@ -70,6 +62,21 @@
   gap: 12rpx;
   margin-bottom: 12rpx;
   flex-wrap: wrap;
+}
+
+.detail-actions {
+  margin-left: auto;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(155, 142, 132, 0.1);
+}
+
+.detail-actions:active {
+  background: rgba(155, 142, 132, 0.2);
 }
 
 .detail-title {
