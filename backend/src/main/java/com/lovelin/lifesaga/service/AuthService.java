@@ -2,10 +2,12 @@ package com.lovelin.lifesaga.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lovelin.lifesaga.dto.UserVO;
 import com.lovelin.lifesaga.model.User;
 import com.lovelin.lifesaga.repository.UserRepository;
 import com.lovelin.lifesaga.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -21,6 +23,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Environment environment;
 
     @Value("${wechat.app-id:}")
     private String appId;
@@ -28,16 +31,21 @@ public class AuthService {
     @Value("${wechat.app-secret:}")
     private String appSecret;
 
-    public AuthService(UserRepository userRepository, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, JwtUtil jwtUtil, Environment environment) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
+        this.environment = environment;
     }
 
     public Map<String, Object> wechatLogin(String code) {
         String openid;
 
         if (appId.isEmpty() || appSecret.isEmpty()) {
-            // 开发环境：code 直接作为 openid（便于本地调试）
+            // 开发模式：只在 dev profile 下启用，生产环境禁止
+            boolean isDev = java.util.Arrays.asList(environment.getActiveProfiles()).contains("dev");
+            if (!isDev) {
+                throw new RuntimeException("生产环境未配置微信 appId/appSecret");
+            }
             openid = "dev_" + code;
         } else {
             // 生产环境：调用微信 jscode2session 接口
@@ -77,7 +85,7 @@ public class AuthService {
         String token = jwtUtil.generateToken(user.getId());
         return Map.of(
                 "token", token,
-                "user", user
+                "user", UserVO.from(user)
         );
     }
 }

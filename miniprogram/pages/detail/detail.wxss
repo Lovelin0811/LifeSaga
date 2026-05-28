@@ -52,7 +52,7 @@
 
 /* 副本头部 */
 .detail-header {
-  padding: 0 40rpx 28rpx;
+  padding: 12rpx 40rpx 28rpx;
   background: var(--color-bg-surface);
 }
 

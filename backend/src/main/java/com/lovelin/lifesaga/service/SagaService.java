@@ -41,6 +41,7 @@ public class SagaService {
 
     @Transactional
     public Saga create(Saga saga) {
+        saga.setStatus("active");
         saga.setNodeCount(0);
         saga.setRarity("common");
         Saga saved = sagaRepository.save(saga);
@@ -51,14 +52,11 @@ public class SagaService {
     @Transactional
     public Saga update(Saga saga) {
         Saga existing = getById(saga.getId());
-        existing.setName(saga.getName());
-        existing.setType(saga.getType());
-        existing.setCoverUrl(saga.getCoverUrl());
-        existing.setDescription(saga.getDescription());
-        existing.setStatus(saga.getStatus());
-        if (saga.getEndedAt() != null) {
-            existing.setEndedAt(saga.getEndedAt());
-        }
+        // 只允许修改安全字段，status/endedAt/nodeCount/rarity/userId 不允许通过此接口修改
+        if (saga.getName() != null) existing.setName(saga.getName());
+        if (saga.getType() != null) existing.setType(saga.getType());
+        if (saga.getCoverUrl() != null) existing.setCoverUrl(saga.getCoverUrl());
+        if (saga.getDescription() != null) existing.setDescription(saga.getDescription());
         sagaRepository.update(existing);
         return existing;
     }

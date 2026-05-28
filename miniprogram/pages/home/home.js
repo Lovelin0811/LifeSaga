@@ -24,6 +24,12 @@ Page({
     const systemInfo = wx.getSystemInfoSync();
     this.setData({ statusBarHeight: systemInfo.statusBarHeight || 44 });
     this.loadSagas();
+    const app = getApp();
+    const pendingId = app.globalData && app.globalData.pendingDetailId;
+    if (pendingId) {
+      app.globalData.pendingDetailId = null;
+      setTimeout(() => wx.navigateTo({ url: `/pages/detail/detail?id=${pendingId}` }), 300);
+    }
   },
 
   async loadSagas() {

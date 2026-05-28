@@ -1,5 +1,6 @@
 package com.lovelin.lifesaga.controller;
 
+import com.lovelin.lifesaga.dto.UserVO;
 import com.lovelin.lifesaga.model.User;
 import com.lovelin.lifesaga.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,13 +26,13 @@ public class UserController {
     public Map<String, Object> me(HttpServletRequest request) {
         Long userId = getUserId(request);
         User user = userService.getById(userId);
-        return Map.of("code", 200, "data", user, "message", "success");
+        return Map.of("code", 200, "data", UserVO.from(user), "message", "success");
     }
 
     @PutMapping("/me")
     public Map<String, Object> update(@RequestBody User user, HttpServletRequest request) {
         Long userId = getUserId(request);
         User updated = userService.update(userId, user);
-        return Map.of("code", 200, "data", updated, "message", "success");
+        return Map.of("code", 200, "data", UserVO.from(updated), "message", "success");
     }
 }

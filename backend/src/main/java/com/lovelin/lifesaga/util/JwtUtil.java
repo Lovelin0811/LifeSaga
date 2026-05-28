@@ -18,6 +18,12 @@ public class JwtUtil {
 
     public JwtUtil(@Value("${jwt.secret}") String secret,
                    @Value("${jwt.expiration}") long expiration) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("JWT 密钥未配置，请设置环境变量 JWT_SECRET");
+        }
+        if (secret.length() < 32) {
+            throw new IllegalStateException("JWT 密钥过短，至少需要 32 字符");
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expiration = expiration;
     }

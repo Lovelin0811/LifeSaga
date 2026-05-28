@@ -23,16 +23,24 @@ Page({
     editId: null,
   },
 
+  onShow() {
+    const app = getApp();
+    const sagaId = (app.globalData && app.globalData.editSagaId) || null;
+    if (sagaId && sagaId !== this.data.editId) {
+      this.setData({ isEdit: true, editId: sagaId });
+      wx.setNavigationBarTitle({ title: '编辑副本' });
+      this.loadSaga(sagaId);
+      app.globalData.editSagaId = null;
+    }
+  },
+
   onLoad(options) {
-    // 优先从 options（navigateTo 传参）读，兼容非 tabBar 跳转
-    // 实际正常流程走 globalData（因为 create 是 tabBar 页面，只能用 switchTab）
     const app = getApp();
     const sagaId = options.id || (app.globalData && app.globalData.editSagaId);
     if (sagaId) {
       this.setData({ isEdit: true, editId: sagaId });
       wx.setNavigationBarTitle({ title: '编辑副本' });
       this.loadSaga(sagaId);
-      // 清除 globalData，避免下次误用
       if (app.globalData) app.globalData.editSagaId = null;
     }
   },
@@ -40,7 +48,7 @@ Page({
   async loadSaga(id) {
     try {
       const response = await api.getSaga(id);
-      const saga = response.saga;  // getSaga 返回 { saga: {...}, nodes: [...] }
+      const saga = response.saga;
       this.setData({
         selectedType: saga.type || 'life',
         name: saga.name || '',
@@ -51,6 +59,19 @@ Page({
       console.error('Load saga for edit failed:', err);
       wx.showToast({ title: '加载副本失败', icon: 'none' });
     }
+  },
+
+  resetForm() {
+    this.setData({
+      selectedType: 'life',
+      name: '',
+      description: '',
+      coverUrl: '',
+      coverTempPath: '',
+      isEdit: false,
+      editId: null,
+    });
+    wx.setNavigationBarTitle({ title: '添加副本' });
   },
 
   selectType(e) {
@@ -96,13 +117,16 @@ Page({
       if (isEdit) {
         await api.updateSaga(editId, payload);
         wx.showToast({ title: '修改成功' });
-        setTimeout(() => wx.navigateBack(), 1000);
+        this.resetForm();
+        setTimeout(() => wx.switchTab({ url: '/pages/home/home' }), 1000);
       } else {
         const saga = await api.createSaga(payload);
         wx.showToast({ title: '创建成功' });
-        setTimeout(() => {
-          wx.redirectTo({ url: `/pages/detail/detail?id=${saga.id}` });
-        }, 1000);
+        this.resetForm();
+        const app = getApp();
+        app.globalData = app.globalData || {};
+        app.globalData.pendingDetailId = saga.id;
+        setTimeout(() => wx.switchTab({ url: '/pages/home/home' }), 1000);
       }
     } catch (err) {
       console.error('Save saga failed:', err);

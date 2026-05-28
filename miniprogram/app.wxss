@@ -277,10 +277,10 @@ page {
 
 .form-submit {
   width: 100%;
-  padding: 28rpx;
+  padding: 24rpx 32rpx;
   background: var(--color-primary);
   color: var(--color-text-inverse);
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 600;
   border-radius: 12px;
   border: none;
@@ -288,6 +288,7 @@ page {
   letter-spacing: -0.02em;
   margin-top: 32rpx;
   line-height: 1.4;
+  box-sizing: border-box;
 }
 
 .form-submit::after {
