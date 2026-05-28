@@ -1,10 +1,12 @@
 /* pages/profile/profile.wxss */
 
-.user-card {
+/* ====== 用户信息卡片（对齐原型 profile-header） ====== */
+.profile-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 48rpx 32rpx 32rpx;
+  padding: 48rpx 0 32rpx;
+  background: var(--color-bg-surface);
 }
 
 .avatar-wrap {
@@ -12,9 +14,9 @@
   height: 144rpx;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  background: var(--color-bg-muted);
   margin-bottom: 20rpx;
-  border: 4rpx solid var(--color-bg-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .avatar {
@@ -23,65 +25,67 @@
 }
 
 .nickname {
-  font-size: 36rpx;
+  display: block;
+  font-size: 40rpx;
   font-weight: 600;
   color: var(--color-text-primary);
+  line-height: 1.35;
   margin-bottom: 8rpx;
 }
 
-.user-desc {
-  font-size: 24rpx;
-  color: var(--color-text-tertiary);
-}
-
-.stats-row {
-  display: flex;
-  gap: 20rpx;
-  margin-bottom: 28rpx;
-}
-
-.stat-card {
-  flex: 1;
-  background: var(--color-bg-surface);
-  border-radius: var(--radius-card);
-  padding: 28rpx 16rpx;
-  text-align: center;
-  box-shadow: var(--shadow-xs);
-}
-
-.stat-num {
+/* 个性签名 / bio */
+.profile-bio {
   display: block;
-  font-size: 44rpx;
-  font-weight: 700;
-  color: var(--color-primary);
+  font-size: 28rpx;
+  color: var(--color-text-tertiary);
+  margin-bottom: 32rpx;
+}
+
+/* 统计数据（在 user-card 内部，居中 3 列） */
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 64rpx;
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat .stat-num {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
   line-height: 1.2;
 }
 
-.stat-label {
+.profile-stat .stat-label {
   display: block;
-  font-size: 22rpx;
+  font-size: 24rpx;
   color: var(--color-text-tertiary);
-  margin-top: 8rpx;
+  margin-top: 4rpx;
 }
 
-.menu-list {
+/* ====== 菜单分组（对齐原型 menu-group） ====== */
+.menu-group {
   background: var(--color-bg-surface);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-xs);
   overflow: hidden;
-  margin-bottom: 40rpx;
+  margin-top: 24rpx;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
   gap: 20rpx;
-  padding: 32rpx;
-  border-bottom: 1rpx solid var(--color-border-subtle);
+  padding: 28rpx 32rpx;
 }
 
-.menu-item:last-child {
-  border-bottom: none;
+.menu-item + .menu-item {
+  border-top: 1rpx solid var(--color-divider);
 }
 
 .menu-item:active {
@@ -89,24 +93,29 @@
 }
 
 .menu-icon-wrap {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: var(--radius-sm);
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36rpx;
   flex-shrink: 0;
+}
+
+.menu-icon-emoji {
+  font-size: 32rpx;
+  line-height: 1;
 }
 
 .menu-text {
   flex: 1;
   font-size: 28rpx;
   color: var(--color-text-primary);
+  line-height: 1.65;
 }
 
 .menu-arrow {
-  font-size: 36rpx;
+  font-size: 32rpx;
   color: var(--color-text-placeholder);
 }
 
@@ -115,5 +124,5 @@
   text-align: center;
   font-size: 22rpx;
   color: var(--color-text-placeholder);
-  padding-bottom: 32rpx;
+  padding: 32rpx 0;
 }

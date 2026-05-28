@@ -51,7 +51,7 @@
 
 /* 副本头部 */
 .detail-header {
-  padding: 0 32rpx 28rpx;
+  padding: 0 40rpx 28rpx;
   background: var(--color-bg-surface);
 }
 
@@ -172,7 +172,7 @@
 
 /* 时间线 */
 .timeline-container {
-  padding: 32rpx 32rpx 200rpx;
+  padding: 32rpx 40rpx 200rpx;
 }
 
 .timeline {

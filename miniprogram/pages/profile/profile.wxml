@@ -1,57 +1,66 @@
 <view class="page-container">
-  <!-- 用户信息 -->
-  <view class="user-card" wx:if="{{userInfo}}">
+  <!-- 用户信息卡片（含统计） -->
+  <view class="profile-header" wx:if="{{userInfo}}">
     <view class="avatar-wrap">
       <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
     </view>
     <text class="nickname">{{userInfo.nickname || '冒险者'}}</text>
-    <text class="user-desc">Lv.{{userInfo.level || 1}} · {{userInfo.xp || 0}} XP</text>
-  </view>
-
-  <!-- 统计数据 -->
-  <view class="stats-row">
-    <view class="stat-card">
-      <text class="stat-num">{{stats.sagas || 0}}</text>
-      <text class="stat-label">副本</text>
-    </view>
-    <view class="stat-card">
-      <text class="stat-num">{{stats.nodes || 0}}</text>
-      <text class="stat-label">节点</text>
-    </view>
-    <view class="stat-card">
-      <text class="stat-num">{{stats.achievements || 0}}</text>
-      <text class="stat-label">成就</text>
-    </view>
-  </view>
-
-  <!-- 菜单列表 -->
-  <view class="menu-list">
-    <view class="menu-item" bindtap="goAchievements">
-      <view class="menu-icon-wrap" style="background: var(--color-secondary-soft);">
-        <text>🏆</text>
+    <text class="profile-bio">记录生活的每一个精彩瞬间</text>
+    <view class="profile-stats">
+      <view class="profile-stat">
+        <text class="stat-num">{{stats.sagas || 0}}</text>
+        <text class="stat-label">副本</text>
       </view>
-      <text class="menu-text">成就展示柜</text>
+      <view class="profile-stat">
+        <text class="stat-num">{{stats.nodes || 0}}</text>
+        <text class="stat-label">节点</text>
+      </view>
+      <view class="profile-stat">
+        <text class="stat-num">{{stats.achievements || 0}}</text>
+        <text class="stat-label">成就</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 菜单第一组 -->
+  <view class="menu-group">
+    <view class="menu-item" bindtap="goAlbums">
+      <view class="menu-icon-wrap" style="background: var(--color-primary-soft);">
+        <text class="menu-icon-emoji">🖼</text>
+      </view>
+      <text class="menu-text">我的相册</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item">
-      <view class="menu-icon-wrap" style="background: var(--color-accent-soft);">
-        <text>📊</text>
+    <view class="menu-item" bindtap="goStats">
+      <view class="menu-icon-wrap" style="background: var(--color-secondary-soft);">
+        <text class="menu-icon-emoji">📊</text>
       </view>
       <text class="menu-text">数据统计</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item">
-      <view class="menu-icon-wrap" style="background: var(--color-primary-soft);">
-        <text>🎨</text>
+  </view>
+
+  <!-- 菜单第二组 -->
+  <view class="menu-group">
+    <view class="menu-item" bindtap="goReminders">
+      <view class="menu-icon-wrap" style="background: var(--color-accent-soft);">
+        <text class="menu-icon-emoji">⏰</text>
       </view>
-      <text class="menu-text">主题外观</text>
+      <text class="menu-text">提醒设置</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goTheme">
+      <view class="menu-icon-wrap" style="background: var(--color-accent-alt-soft);">
+        <text class="menu-icon-emoji">🎨</text>
+      </view>
+      <text class="menu-text">主题与外观</text>
       <text class="menu-arrow">›</text>
     </view>
     <view class="menu-item" bindtap="about">
-      <view class="menu-icon-wrap" style="background: var(--color-accent-alt-soft);">
-        <text>ℹ️</text>
+      <view class="menu-icon-wrap" style="background: var(--color-bg-sunken);">
+        <text class="menu-icon-emoji">ℹ️</text>
       </view>
-      <text class="menu-text">关于</text>
+      <text class="menu-text">关于人生副本</text>
       <text class="menu-arrow">›</text>
     </view>
   </view>

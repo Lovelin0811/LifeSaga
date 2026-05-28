@@ -1,70 +1,135 @@
 /* pages/achievements/achievements.wxss */
 
+/* ====== 成就页标题区 ====== */
+.achievements-header {
+  padding: 40rpx 0 24rpx;
+  background: var(--color-bg-surface);
+}
+
+.achievements-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.achievements-subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: var(--color-text-tertiary);
+  margin-top: 8rpx;
+  line-height: 1.5;
+}
+
+/* ====== 等级卡片 ====== */
 .level-card {
   background: var(--color-bg-surface);
   border-radius: var(--radius-card);
   padding: 32rpx;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 24rpx;
+  margin: 16rpx 0 32rpx;
 }
 
 .level-top {
   display: flex;
   align-items: center;
   gap: 24rpx;
+  margin-bottom: 24rpx;
 }
 
-.level-badge {
+/* 等级图标：圆角方块（非圆形），金色渐变 */
+.level-icon {
   width: 96rpx;
   height: 96rpx;
-  border-radius: 50%;
+  border-radius: 28rpx;
   background: linear-gradient(135deg, #F5D76E 0%, #E5A44D 50%, #F5D76E 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 16rpx rgba(229,164,77,0.3);
+  font-family: var(--font-heading);
 }
 
 .level-num {
-  font-size: 28rpx;
+  font-size: 40rpx;
   font-weight: 700;
   color: #2D2520;
+  line-height: 1;
 }
 
-.level-title {
+.level-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.level-label {
   display: block;
-  font-size: 32rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.level-xp {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-tertiary);
+  margin-top: 4rpx;
+  line-height: 1.5;
+}
+
+/* XP 进度条行 */
+.level-xp-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.level-xp-bar .xp-bar {
+  flex: 1;
+  height: 16rpx;
+}
+
+.level-xp-bar .xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E8725A, #E5A44D);
+  border-radius: 8rpx;
+  transition: width 0.6s ease;
+}
+
+.xp-text {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--rpg-legendary);
+  white-space: nowrap;
+  font-family: var(--font-heading);
+}
+
+/* ====== 已解锁 section head ====== */
+.section-head-wrap {
+  margin-bottom: 24rpx;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 34rpx;
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
-.xp-row {
-  margin-top: 4rpx;
-}
-
-.xp-text {
-  font-size: 24rpx;
+.section-count {
+  font-size: 28rpx;
   color: var(--color-text-tertiary);
 }
 
-.xp-hint {
-  display: block;
-  text-align: right;
-  font-size: 22rpx;
-  color: var(--color-text-tertiary);
-  margin-top: 8rpx;
-}
-
-.unlock-stats {
-  margin-bottom: 24rpx;
-  padding: 0 8rpx;
-}
-
-.unlock-text {
-  font-size: 26rpx;
-  color: var(--color-text-secondary);
-}
-
+/* ====== 成就网格 ====== */
 .badge-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -76,23 +141,48 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24rpx 12rpx 20rpx;
+  padding: 24rpx 16rpx 20rpx;
   background: var(--color-bg-surface);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-xs);
   text-align: center;
+  box-shadow: var(--shadow-xs);
   border: 2rpx solid var(--color-border-subtle);
 }
 
-.badge-locked {
+/* 稀有度边框样式 — 对齐原型 */
+.badge-card--legendary {
+  border: 4rpx solid var(--rpg-legendary) !important;
+  background: linear-gradient(180deg, rgba(245,215,110,0.08) 0%, var(--color-bg-surface) 100%);
+  box-shadow: 0 0 24rpx rgba(229,164,77,0.4);
+}
+
+.badge-card--common {
+  border: 3rpx solid var(--rpg-common) !important;
+}
+
+.badge-card--rare {
+  border: 3rpx solid var(--rpg-rare) !important;
+}
+
+.badge-card--epic {
+  border: 4rpx solid var(--rpg-epic) !important;
+  box-shadow: 0 0 24rpx rgba(176,136,196,0.2);
+}
+
+.badge-card--uncommon {
+  border: 3rpx solid var(--rpg-uncommon) !important;
+}
+
+.badge-card--locked {
   opacity: 0.4;
   filter: grayscale(0.6);
 }
 
+/* 成就图标：圆角方块 */
 .badge-icon-wrap {
   width: 80rpx;
   height: 80rpx;
-  border-radius: 50%;
+  border-radius: 24rpx;
   background: var(--color-bg-muted);
   display: flex;
   align-items: center;
@@ -109,26 +199,16 @@
   font-weight: 700;
   color: var(--color-text-primary);
   margin-bottom: 4rpx;
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
 }
 
 .badge-desc {
   font-size: 20rpx;
   color: var(--color-text-tertiary);
-  line-height: 1.4;
-  margin-bottom: 8rpx;
+  line-height: 1.3;
 }
 
-/* 稀有度卡片边框 */
-.rarity-legendary {
-  border-color: var(--rpg-legendary) !important;
-  box-shadow: 0 0 24rpx rgba(229,164,77,0.15);
-}
-
-.rarity-mythic {
-  border-color: var(--rpg-mythic) !important;
-  box-shadow: 0 0 32rpx rgba(232,114,90,0.15);
-}
-
-.rarity-epic {
-  border-color: var(--rpg-epic) !important;
+.badge-card--locked .badge-name {
+  color: var(--color-text-tertiary);
 }

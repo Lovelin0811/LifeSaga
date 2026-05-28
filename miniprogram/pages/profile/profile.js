@@ -40,6 +40,22 @@ Page({
     wx.switchTab({ url: '/pages/achievements/achievements' });
   },
 
+  goAlbums() {
+    wx.showToast({ title: '我的相册 - 开发中', icon: 'none' });
+  },
+
+  goStats() {
+    wx.showToast({ title: '数据统计 - 开发中', icon: 'none' });
+  },
+
+  goReminders() {
+    wx.showToast({ title: '提醒设置 - 开发中', icon: 'none' });
+  },
+
+  goTheme() {
+    wx.showToast({ title: '主题与外观 - 开发中', icon: 'none' });
+  },
+
   about() {
     wx.showModal({
       title: '关于人生副本',
