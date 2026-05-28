@@ -79,13 +79,6 @@ module.exports = {
 3. 不创建时默认连接 `http://127.0.0.1:3000`
 4. 本地联调时勾选"不校验合法域名"
 
-## 生产部署
-
-- **域名**：`https://lovelin.com.cn`
-- **服务器**：阿里云 ECS（47.116.214.42）
-- **Nginx**：反代 3000 端口，HTTPS（Let's Encrypt）
-- **ICP 备案**：✅ 已通过
-
 ## 设计风格
 
 - Warm Editorial + RPG 游戏感
