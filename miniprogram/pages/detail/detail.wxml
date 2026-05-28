@@ -7,9 +7,6 @@
   <block wx:elif="{{saga}}">
     <!-- 自定义导航栏 -->
     <view class="detail-nav" style="padding-top: {{statusBarHeight}}px;">
-      <view class="nav-back" bindtap="goBack">
-        <image src="/images/icons/back.svg" class="nav-icon" mode="aspectFit"/>
-      </view>
       <text class="nav-title">{{saga.name}}</text>
     </view>
 
