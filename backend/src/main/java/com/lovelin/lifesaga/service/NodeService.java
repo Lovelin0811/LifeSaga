@@ -28,8 +28,12 @@ public class NodeService {
 
     public SagaNode getById(Long sagaId, Long nodeId) {
         sagaService.getById(sagaId);
-        return nodeRepository.findById(nodeId).orElseThrow(() ->
+        SagaNode node = nodeRepository.findById(nodeId).orElseThrow(() ->
                 new RuntimeException("节点不存在"));
+        if (!node.getSagaId().equals(sagaId)) {
+            throw new RuntimeException("节点不属于该副本");
+        }
+        return node;
     }
 
     @Transactional
@@ -52,7 +56,7 @@ public class NodeService {
     @Transactional
     public void delete(Long sagaId, Long nodeId) {
         getById(sagaId, nodeId);
-        nodeRepository.delete(nodeId);
+        nodeRepository.delete(sagaId, nodeId);
         sagaService.updateSagaNodeCount(sagaId);
     }
 }

@@ -86,17 +86,17 @@ public class NodeRepository {
     }
 
     public int update(SagaNode node) {
-        String sql = "UPDATE saga_nodes SET title = ?, content = ?, location = ?, latitude = ?, longitude = ?, node_time = ?, photos = ?, is_milestone = ?, sort_order = ? WHERE id = ?";
+        String sql = "UPDATE saga_nodes SET title = ?, content = ?, location = ?, latitude = ?, longitude = ?, node_time = ?, photos = ?, is_milestone = ?, sort_order = ? WHERE id = ? AND saga_id = ?";
         return jdbcTemplate.update(sql,
                 node.getTitle(), node.getContent(), node.getLocation(),
                 node.getLatitude(), node.getLongitude(),
                 node.getNodeTime() != null ? java.sql.Timestamp.valueOf(node.getNodeTime()) : null,
                 node.getPhotos(), node.isMilestone(), node.getSortOrder(),
-                node.getId());
+                node.getId(), node.getSagaId());
     }
 
-    public int delete(Long id) {
-        return jdbcTemplate.update("DELETE FROM saga_nodes WHERE id = ?", id);
+    public int delete(Long sagaId, Long nodeId) {
+        return jdbcTemplate.update("DELETE FROM saga_nodes WHERE id = ? AND saga_id = ?", nodeId, sagaId);
     }
 
     public int deleteBySagaId(Long sagaId) {
