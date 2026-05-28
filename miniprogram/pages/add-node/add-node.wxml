@@ -65,7 +65,7 @@
       <text class="label-icon">📝</text>
       <text>标题</text>
     </view>
-    <input class="form-input" placeholder="给这个时刻起个名字..." model:value="{{title}}" maxlength="100" placeholder-class="form-input-placeholder" color="#2D2520"/>
+    <textarea class="form-input" placeholder="给这个时刻起个名字..." model:value="{{title}}" maxlength="100" placeholder-class="form-input-placeholder" color="#2D2520" auto-height/>
   </view>
 
   <!-- 描述 -->
