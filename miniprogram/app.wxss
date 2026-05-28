@@ -250,8 +250,8 @@ page {
   width: 100%;
   padding: 24rpx 32rpx;
   font-size: 28rpx;
-  color: var(--color-text-primary);
-  background: var(--color-bg-sunken);
+  color: #2D2520;
+  background: #F7F0EA;
   border: 3rpx solid transparent;
   border-radius: 12px;
   transition: all 0.2s ease;
@@ -266,7 +266,7 @@ page {
 }
 
 .form-input-placeholder {
-  color: var(--color-text-placeholder);
+  color: #B8ADA4;
 }
 
 .form-textarea {
