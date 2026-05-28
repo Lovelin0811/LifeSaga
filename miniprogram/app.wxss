@@ -98,6 +98,7 @@ page {
   font-family: var(--font-body);
   font-size: 28rpx;
   line-height: 1.65;
+  overflow-x: hidden;
 }
 
 /* ====== 通用工具类 ====== */
