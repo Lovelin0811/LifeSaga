@@ -31,7 +31,7 @@ Page({
     // 获取胶囊按钮位置，把 more 按钮放到胶囊左侧
     try {
       const rect = wx.getMenuButtonBoundingClientRect();
-      this.setData({ statusBarHeight, navBarHeight, capsuleRight: rect.right + 8 });
+      this.setData({ statusBarHeight, navBarHeight, capsuleRight: systemInfo.windowWidth - rect.left + 8 });
     } catch (e) {
       this.setData({ statusBarHeight, navBarHeight, capsuleRight: systemInfo.windowWidth - 100 });
     }

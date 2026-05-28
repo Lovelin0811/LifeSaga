@@ -15,6 +15,9 @@
   background: var(--color-bg-surface);
 }
 
+/* sticky 不建立定位上下文，需要额外加 relative */
+.detail-nav { position: sticky; position: relative; top: 0; }
+
 .nav-back, .nav-action {
   width: 64rpx;
   height: 64rpx;
@@ -30,7 +33,7 @@
 
 .nav-action {
   position: absolute;
-  right: 0;
+  right: 100px;
 }
 
 .nav-back:active, .nav-action:active {
