@@ -42,6 +42,12 @@ const request = (options) => {
   });
 };
 
+const joinBaseUrl = (baseUrl, path) => {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 // 上传文件
 const upload = (options) => {
   return new Promise((resolve, reject) => {
@@ -135,7 +141,7 @@ const api = {
   // 文件上传
   uploadFile: async (filePath, formData) => {
     const res = await upload({ url: '/api/upload', filePath, name: 'file', formData });
-    return res.url;  // 后端返回 { url: "https://..." }，提取纯 URL 字符串
+    return joinBaseUrl(API_BASE, res.url);
   },
 };
 

@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
         String msg = e.getMessage();
         if (msg != null && (msg.contains("不存在") || msg.contains("无权") || msg.contains("已过期")
                 || msg.contains("不能为空") || msg.contains("微信登录失败")
-                || msg.contains("未配置") || msg.contains("过短"))) {
+                || msg.contains("未配置") || msg.contains("未启用")
+                || msg.contains("过短"))) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("code", 400, "message", msg));
         }

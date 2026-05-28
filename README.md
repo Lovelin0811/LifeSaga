@@ -53,7 +53,8 @@ LifeSaga/
 
 1. 准备 MySQL，创建数据库 `lifesaga`
 2. 创建本地密钥文件 `backend/application-local.yml`（已加入 `.gitignore`），填写数据库、微信和 JWT 信息
-3. 启动：
+3. 生产环境另外设置 `UPLOAD_PUBLIC_BASE_URL`，本地开发可在 `application-local.yml` 里开启 `auth.dev-login-enabled`
+4. 启动：
 
 ```bash
 cd backend

@@ -23,6 +23,7 @@ wechat:
 
 upload:
   dir: ${UPLOAD_DIR:./uploads}
+  public-base-url: ${UPLOAD_PUBLIC_BASE_URL:}
 
 jwt:
   secret: ${JWT_SECRET:}
@@ -30,4 +31,7 @@ jwt:
 
 logging:
   level:
-    com.lovelin.lifesaga: DEBUG
+    com.lovelin.lifesaga: INFO
+
+auth:
+  dev-login-enabled: ${AUTH_DEV_LOGIN_ENABLED:false}

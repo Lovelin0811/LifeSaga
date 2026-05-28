@@ -24,6 +24,9 @@ public class UploadController {
     @Value("${upload.dir:./uploads}")
     private String uploadDir;
 
+    @Value("${upload.public-base-url:}")
+    private String publicBaseUrl;
+
     private static final long MAX_SIZE = 20 * 1024 * 1024L;
     private static final java.util.Set<String> ALLOWED_TYPES = java.util.Set.of(
             "image/jpeg", "image/png", "image/webp", "image/gif"
@@ -79,12 +82,10 @@ public class UploadController {
             Path target = dir.resolve(filename);
             file.transferTo(target.toFile());
 
-            String host = request.getHeader("X-Forwarded-Host");
-            String proto = request.getHeader("X-Forwarded-Proto");
-            if (host == null || host.isEmpty()) host = request.getServerName();
-            if (proto == null || proto.isEmpty()) proto = request.getScheme();
-            String baseUrl = proto + "://" + host;
-            String fileUrl = baseUrl + "/uploads/" + today + "/" + filename;
+            String fileUrl = "/uploads/" + today + "/" + filename;
+            if (publicBaseUrl != null && !publicBaseUrl.isBlank()) {
+                fileUrl = publicBaseUrl.replaceAll("/+$", "") + fileUrl;
+            }
 
             return Map.of("code", 200, "data", Map.of("url", fileUrl), "message", "success");
         } catch (Exception e) {

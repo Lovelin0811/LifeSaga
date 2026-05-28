@@ -21,6 +21,7 @@ wechat:
 
 upload:
   dir: ${UPLOAD_DIR:./uploads}
+  public-base-url: ${UPLOAD_PUBLIC_BASE_URL:}
 
 jwt:
   # 至少 32 字符的随机密钥，生产环境必须通过环境变量 JWT_SECRET 设置
@@ -29,4 +30,7 @@ jwt:
 
 logging:
   level:
-    com.lovelin.lifesaga: DEBUG
+    com.lovelin.lifesaga: INFO
+
+auth:
+  dev-login-enabled: ${AUTH_DEV_LOGIN_ENABLED:false}

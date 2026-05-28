@@ -31,6 +31,9 @@ public class AuthService {
     @Value("${wechat.app-secret:}")
     private String appSecret;
 
+    @Value("${auth.dev-login-enabled:false}")
+    private boolean devLoginEnabled;
+
     public AuthService(UserRepository userRepository, JwtUtil jwtUtil, Environment environment) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
@@ -41,10 +44,12 @@ public class AuthService {
         String openid;
 
         if (appId.isEmpty() || appSecret.isEmpty()) {
-            // 开发模式：只在 dev profile 下启用，生产环境禁止
             boolean isDev = java.util.Arrays.asList(environment.getActiveProfiles()).contains("dev");
             if (!isDev) {
                 throw new RuntimeException("生产环境未配置微信 appId/appSecret");
+            }
+            if (!devLoginEnabled) {
+                throw new RuntimeException("本地登录未启用");
             }
             openid = "dev_" + code;
         } else {
