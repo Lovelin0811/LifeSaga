@@ -7,8 +7,8 @@ uploads/
 backend/local.properties
 backend/logs/
 backend/uploads/
+backend/application-local.yml
 miniprogram/config.local.js
 deploy.sh
 .workbuddy/
-backend/src/main/resources/application.yml
 miniprogram/project.private.config.json

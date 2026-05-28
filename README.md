@@ -52,15 +52,12 @@ LifeSaga/
 ### 后端启动
 
 1. 准备 MySQL，创建数据库 `lifesaga`
-2. 配置环境变量（或修改 `application.yml`）：
-   - `DB_USERNAME` / `DB_PASSWORD`
-   - `JWT_SECRET`（≥32字符）
-   - `WECHAT_APP_ID` / `WECHAT_APP_SECRET`（为空时走 dev 模式）
+2. 创建本地密钥文件 `backend/application-local.yml`（已加入 `.gitignore`），填写数据库、微信和 JWT 信息
 3. 启动：
 
 ```bash
 cd backend
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
 默认地址：`http://127.0.0.1:3000`
