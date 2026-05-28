@@ -10,3 +10,5 @@ backend/uploads/
 miniprogram/config.local.js
 deploy.sh
 .workbuddy/
+backend/src/main/resources/application.yml
+miniprogram/project.private.config.json
