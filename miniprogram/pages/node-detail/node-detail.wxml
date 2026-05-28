@@ -6,18 +6,7 @@
   </view>
 
   <block wx:elif="{{node}}">
-    <!-- 自定义导航栏：绝对定位，透明背景 -->
-    <view class="detail-header-bar" style="padding-top: {{statusBarHeight}}px;">
-      <view class="header-btn back-btn" bindtap="goBack">
-        <text class="header-btn-icon">‹</text>
-      </view>
-      <view style="flex:1;"></view>
-      <view class="header-btn menu-btn" bindtap="showMenu">
-        <text class="menu-dot">•••</text>
-      </view>
-    </view>
-
-    <!-- 大封面区 300px -->
+    <!-- 封面区 -->
     <view class="node-detail-cover">
       <!-- 有照片：swiper -->
       <swiper class="cover-swiper" indicator-dots="{{node.photos.length > 1}}" indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#fff" circular wx:if="{{node.photos && node.photos.length}}">
@@ -73,11 +62,15 @@
           </view>
           <view class="action-btn action-btn-secondary" bindtap="toggleMilestone">
             <text class="action-icon">⚑</text>
-            <text>标记里程碑</text>
+            <text>里程碑</text>
           </view>
           <view class="action-btn action-btn-secondary" bindtap="shareNode">
             <text class="action-icon">⇧</text>
             <text>分享</text>
+          </view>
+          <view class="action-btn action-btn-secondary" bindtap="showMenu">
+            <text class="action-icon">⋯</text>
+            <text>更多</text>
           </view>
         </view>
       </view>
