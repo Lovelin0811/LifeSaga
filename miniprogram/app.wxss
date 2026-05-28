@@ -260,9 +260,9 @@ page {
 }
 
 .form-input-focus {
-  background: var(--color-bg-surface);
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 6rpx var(--color-primary-soft);
+  background: #FFFFFF;
+  border-color: #E8725A;
+  box-shadow: 0 0 0 6rpx rgba(232,114,90,0.12);
 }
 
 .form-input-placeholder {

@@ -30,7 +30,7 @@
     <!-- 副本名称 -->
     <view class="form-group">
       <view class="form-label">副本名称</view>
-      <input class="form-input" placeholder="给你的副本起个名字" model:value="{{name}}" maxlength="128" placeholder-class="form-input-placeholder" />
+      <input class="form-input" placeholder="给你的副本起个名字" model:value="{{name}}" maxlength="128" placeholder-class="form-input-placeholder" color="#2D2520" />
     </view>
 
     <!-- 封面图 -->
@@ -50,7 +50,7 @@
     <!-- 简介 -->
     <view class="form-group">
       <view class="form-label">简介</view>
-      <textarea class="form-input form-textarea" placeholder="简单描述这个副本..." model:value="{{description}}" maxlength="500" placeholder-class="form-input-placeholder" />
+      <textarea class="form-input form-textarea" placeholder="简单描述这个副本..." model:value="{{description}}" maxlength="500" placeholder-class="form-input-placeholder" color="#2D2520" />
     </view>
 
     <!-- 创建按钮 -->
