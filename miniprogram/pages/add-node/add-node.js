@@ -4,6 +4,8 @@ const { api } = require('../../utils/api');
 Page({
   data: {
     sagaId: '',
+    nodeId: '',
+    isEdit: false,
     title: '',
     date: '',
     time: '',
@@ -19,6 +21,35 @@ Page({
 
   onLoad(options) {
     this.setData({ sagaId: options.sagaId });
+    if (options.nodeId) {
+      this.setData({ nodeId: options.nodeId, isEdit: true });
+      this.loadNode(options.nodeId);
+    }
+  },
+
+  async loadNode(nodeId) {
+    try {
+      wx.showLoading({ title: '加载中' });
+      const node = await api.getNode(this.data.sagaId, nodeId);
+      const photos = typeof node.photos === 'string' ? JSON.parse(node.photos || '[]') : (node.photos || []);
+      const [datePart, timePart] = (node.nodeTime || '').split('T');
+      this.setData({
+        title: node.title || '',
+        content: node.content || '',
+        location: node.location || '',
+        latitude: node.latitude || null,
+        longitude: node.longitude || null,
+        date: datePart || '',
+        time: timePart ? timePart.substring(0, 5) : '',
+        isMilestone: !!node.milestone,
+        photos,
+      });
+    } catch (err) {
+      console.error('Load node failed:', err);
+      wx.showToast({ title: '加载节点失败', icon: 'none' });
+    } finally {
+      wx.hideLoading();
+    }
   },
 
   onTitleInput(e) { this.setData({ title: e.detail.value }); },
@@ -98,7 +129,7 @@ Page({
       // nodeTime 必须用 ISO 格式 (T 分隔)，不能用空格
       const nodeTime = date ? (time ? `${date}T${time}:00` : `${date}T00:00:00`) : null;
 
-      await api.createNode(sagaId, {
+      const payload = {
         title,
         content,
         location,
@@ -107,7 +138,13 @@ Page({
         nodeTime,
         photos: photoUrls.length > 0 ? JSON.stringify(photoUrls) : null,
         milestone: isMilestone,
-      });
+      };
+
+      if (this.data.isEdit) {
+        await api.updateNode(this.data.sagaId, this.data.nodeId, payload);
+      } else {
+        await api.createNode(this.data.sagaId, payload);
+      }
 
       wx.showToast({ title: '保存成功' });
       setTimeout(() => wx.navigateBack(), 1000);
