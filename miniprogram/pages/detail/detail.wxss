@@ -63,6 +63,21 @@
   flex-wrap: wrap;
 }
 
+.detail-actions {
+  margin-left: auto;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(155, 142, 132, 0.1);
+}
+
+.detail-actions:active {
+  background: rgba(155, 142, 132, 0.2);
+}
+
 .detail-title {
   display: block;
   font-size: 48rpx;
