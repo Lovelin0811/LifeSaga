@@ -4,32 +4,14 @@ import com.lovelin.lifesaga.model.Saga;
 import com.lovelin.lifesaga.model.SagaNode;
 import com.lovelin.lifesaga.repository.NodeRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class NodeServiceTest {
-
-    @Mock
-    private NodeRepository nodeRepository;
-
-    @Mock
-    private SagaService sagaService;
-
-    @Mock
-    private AchievementService achievementService;
-
-    @InjectMocks
-    private NodeService nodeService;
 
     @Test
     void getByIdRejectsNodeFromAnotherSaga() {
@@ -40,8 +22,14 @@ class NodeServiceTest {
         node.setId(99L);
         node.setSagaId(2L);
 
-        when(sagaService.getById(1L)).thenReturn(saga);
-        when(nodeRepository.findById(99L)).thenReturn(Optional.of(node));
+        FakeNodeRepository nodeRepository = new FakeNodeRepository();
+        nodeRepository.findByIdResult = Optional.of(node);
+
+        NodeService nodeService = new NodeService(
+                nodeRepository,
+                new FakeSagaService(saga),
+                new FakeAchievementService()
+        );
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> nodeService.getById(1L, 99L));
 
@@ -57,13 +45,16 @@ class NodeServiceTest {
         node.setId(99L);
         node.setSagaId(1L);
 
-        when(sagaService.getById(1L)).thenReturn(saga);
-        when(nodeRepository.findById(99L)).thenReturn(Optional.of(node));
+        FakeNodeRepository nodeRepository = new FakeNodeRepository();
+        nodeRepository.findByIdResult = Optional.of(node);
+
+        FakeSagaService sagaService = new FakeSagaService(saga);
+        NodeService nodeService = new NodeService(nodeRepository, sagaService, new FakeAchievementService());
 
         nodeService.delete(1L, 99L);
 
-        verify(nodeRepository).delete(1L, 99L);
-        verify(sagaService).updateSagaNodeCount(1L);
+        assertEquals(List.of("delete:1:99"), nodeRepository.calls);
+        assertEquals(List.of(1L), sagaService.updatedSagaNodeCounts);
     }
 
     @Test
@@ -79,11 +70,80 @@ class NodeServiceTest {
         stored.setId(99L);
         stored.setSagaId(2L);
 
-        when(sagaService.getById(1L)).thenReturn(saga);
-        when(nodeRepository.findById(99L)).thenReturn(Optional.of(stored));
+        FakeNodeRepository nodeRepository = new FakeNodeRepository();
+        nodeRepository.findByIdResult = Optional.of(stored);
+
+        NodeService nodeService = new NodeService(
+                nodeRepository,
+                new FakeSagaService(saga),
+                new FakeAchievementService()
+        );
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> nodeService.update(incoming));
 
         assertEquals("节点不属于该副本", exception.getMessage());
+    }
+
+    private static final class FakeNodeRepository extends NodeRepository {
+        private Optional<SagaNode> findByIdResult = Optional.empty();
+        private List<SagaNode> findBySagaIdResult = List.of();
+        private final java.util.List<String> calls = new java.util.ArrayList<>();
+
+        private FakeNodeRepository() {
+            super(null);
+        }
+
+        @Override
+        public List<SagaNode> findBySagaId(Long sagaId) {
+            return findBySagaIdResult;
+        }
+
+        @Override
+        public Optional<SagaNode> findById(Long id) {
+            return findByIdResult;
+        }
+
+        @Override
+        public SagaNode save(SagaNode node) {
+            return node;
+        }
+
+        @Override
+        public int update(SagaNode node) {
+            calls.add("update:" + node.getSagaId() + ":" + node.getId());
+            return 1;
+        }
+
+        @Override
+        public int delete(Long sagaId, Long nodeId) {
+            calls.add("delete:" + sagaId + ":" + nodeId);
+            return 1;
+        }
+    }
+
+    private static final class FakeSagaService extends SagaService {
+        private final Saga saga;
+        private final java.util.List<Long> updatedSagaNodeCounts = new java.util.ArrayList<>();
+
+        private FakeSagaService(Saga saga) {
+            super(null, null, null);
+            this.saga = saga;
+        }
+
+        @Override
+        public Saga getById(Long id) {
+            return saga;
+        }
+
+        @Override
+        public void updateSagaNodeCount(Long sagaId) {
+            updatedSagaNodeCounts.add(sagaId);
+        }
+    }
+
+    private static final class FakeAchievementService extends AchievementService {
+        private FakeAchievementService() {
+            super(null, null, null, null, null);
+        }
     }
 }
