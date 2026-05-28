@@ -11,7 +11,7 @@
     </view>
 
     <!-- 副本头部信息 -->
-    <view class="detail-header" style="padding-top: {{navBarHeight}}px;">
+    <view class="detail-header">
       <view class="detail-title-row">
         <text class="type-tag type-tag--{{saga.type}}">{{saga.typeName}}</text>
         <view class="rarity-badge rarity-badge--{{saga.rarity || 'common'}}">{{saga.rarityName}}</view>
