@@ -45,6 +45,10 @@
       <!-- 空状态 -->
       <view class="empty-state" wx:if="{{!nodes.length}}">
         <text class="empty-text">还没有节点\n开始记录这段旅程吧</text>
+        <view class="add-node-card" style="margin-top: 32rpx;" bindtap="goAddNode">
+          <text class="add-icon">+</text>
+          <text class="add-text">添加新节点</text>
+        </view>
       </view>
 
       <view class="timeline" wx:else>
