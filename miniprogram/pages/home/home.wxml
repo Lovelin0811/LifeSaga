@@ -1,7 +1,7 @@
 <!--pages/home/home.wxml-->
 <view class="page-container">
   <!-- 页面内容 -->
-  <view class="home-content">
+  <view class="home-content" style="padding-top: {{statusBarHeight}}px;">
     <!-- Hero -->
     <view class="home-header">
       <text class="greeting">下午好，冒险者</text>
