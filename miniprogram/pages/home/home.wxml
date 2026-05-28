@@ -1,13 +1,5 @@
 <!--pages/home/home.wxml-->
 <view class="page-container">
-  <!-- 自定义导航栏 -->
-  <view class="home-nav" style="padding-top: {{statusBarHeight}}px;">
-    <text class="home-nav-title">人生副本</text>
-    <view class="home-nav-right">
-      <image src="/images/icons/search.svg" class="home-nav-icon" mode="aspectFit" bindtap="onSearchTap"/>
-    </view>
-  </view>
-
   <!-- 页面内容 -->
   <view class="home-content">
     <!-- Hero -->
