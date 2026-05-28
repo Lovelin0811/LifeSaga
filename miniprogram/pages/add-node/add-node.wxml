@@ -1,0 +1,91 @@
+<!-- pages/add-node/add-node.wxml -->
+<view class="form-page">
+  <!-- 时间 -->
+  <view class="form-group">
+    <view class="form-label">
+      <text class="label-icon">🕐</text>
+      <text>时间</text>
+    </view>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange">
+      <view class="form-input form-input-readonly">
+        <text class="{{date ? '' : 'form-input-placeholder'}}">{{date || '选择日期'}}</text>
+      </view>
+    </picker>
+    <picker mode="time" value="{{time}}" bindchange="onTimeChange" wx:if="{{date}}">
+      <view class="form-input form-input-readonly" style="margin-top: 16rpx;">
+        <text class="{{time ? '' : 'form-input-placeholder'}}">{{time || '选择时间'}}</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 地点 -->
+  <view class="form-group">
+    <view class="form-label">
+      <text class="label-icon">📍</text>
+      <text>地点</text>
+    </view>
+    <view class="location-picker" bindtap="chooseLocation">
+      <text class="label-icon-sm">📍</text>
+      <text class="location-text {{location ? '' : 'location-placeholder'}}">{{location || '选择或输入地点...'}}</text>
+      <text class="location-arrow">›</text>
+    </view>
+    <text class="location-tip" wx:if="{{latitude}}">已定位: {{latitude.toFixed(4)}}, {{longitude.toFixed(4)}}</text>
+  </view>
+
+  <!-- 照片 -->
+  <view class="form-group">
+    <view class="form-label">
+      <text class="label-icon">📷</text>
+      <text>照片</text>
+    </view>
+    <!-- 已上传的照片 -->
+    <view class="photo-grid" wx:if="{{photos.length > 0}}">
+      <view class="photo-item" wx:for="{{photos}}" wx:key="*this">
+        <image class="photo-preview" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-urls="{{photos}}" data-current="{{item}}"/>
+        <view class="photo-remove" catchtap="removePhoto" data-index="{{index}}">
+          <text>×</text>
+        </view>
+      </view>
+      <view class="photo-add" bindtap="choosePhoto" wx:if="{{photos.length < 9}}">
+        <text class="photo-add-icon">+</text>
+        <text class="photo-add-text">{{photos.length}}/9</text>
+      </view>
+    </view>
+    <!-- 空上传区 -->
+    <view class="photo-upload" bindtap="choosePhoto" wx:if="{{photos.length === 0}}">
+      <text class="photo-upload-icon">🖼</text>
+      <text class="upload-text">点击上传照片</text>
+      <text class="upload-hint">支持 JPG、PNG，最多 9 张</text>
+    </view>
+  </view>
+
+  <!-- 标题 -->
+  <view class="form-group">
+    <view class="form-label">
+      <text class="label-icon">📝</text>
+      <text>标题</text>
+    </view>
+    <input class="form-input" placeholder="给这个时刻起个名字..." model:value="{{title}}" maxlength="100" placeholder-class="form-input-placeholder"/>
+  </view>
+
+  <!-- 描述 -->
+  <view class="form-group">
+    <view class="form-label">
+      <text class="label-icon">✏️</text>
+      <text>描述</text>
+    </view>
+    <textarea class="form-input form-textarea" placeholder="写下这个时刻的故事和感受..." model:value="{{content}}" maxlength="5000" auto-height placeholder-class="form-input-placeholder"/>
+    <text class="char-count">{{content.length}}/5000</text>
+  </view>
+
+  <!-- 里程碑 -->
+  <view class="form-group">
+    <view class="milestone-row">
+      <text class="milestone-label">标记为里程碑</text>
+      <switch checked="{{isMilestone}}" bindchange="onMilestoneChange" color="#E8725A"/>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="form-submit" bindtap="save">保存节点</view>
+</view>

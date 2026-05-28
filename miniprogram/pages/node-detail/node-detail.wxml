@@ -1,0 +1,86 @@
+<!-- pages/node-detail/node-detail.wxml -->
+<view class="node-detail-page">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <block wx:elif="{{node}}">
+    <!-- 自定义导航栏：绝对定位，透明背景 -->
+    <view class="detail-header-bar" style="padding-top: {{statusBarHeight}}px;">
+      <view class="header-btn back-btn" bindtap="goBack">
+        <text class="header-btn-icon">‹</text>
+      </view>
+      <view style="flex:1;"></view>
+      <view class="header-btn menu-btn" bindtap="showMenu">
+        <text class="menu-dot">•••</text>
+      </view>
+    </view>
+
+    <!-- 大封面区 300px -->
+    <view class="node-detail-cover">
+      <!-- 有照片：swiper -->
+      <swiper class="cover-swiper" indicator-dots="{{node.photos.length > 1}}" indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#fff" circular wx:if="{{node.photos && node.photos.length}}">
+        <swiper-item wx:for="{{node.photos}}" wx:key="*this">
+          <image class="cover-img" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-urls="{{node.photos}}" data-current="{{item}}"/>
+        </swiper-item>
+      </swiper>
+      <!-- 无照片：渐变占位+SVG图标 -->
+      <view class="cover-placeholder" wx:else>
+        <text class="cover-placeholder-icon">🌅</text>
+      </view>
+      <!-- 底部渐变 overlay -->
+      <view class="cover-overlay"></view>
+    </view>
+
+    <!-- Body card：上移 -24px -->
+    <view class="node-detail-body">
+      <view class="node-detail-card">
+        <!-- 日期（时钟 icon） -->
+        <view class="detail-date" wx:if="{{node.nodeTimeText}}">
+          <text class="date-icon">🕐</text>
+          <text>{{node.nodeTimeText}}</text>
+        </view>
+
+        <!-- 标题 h2 -->
+        <view class="detail-title">{{node.title || '未命名节点'}}</view>
+
+        <!-- 地点（金色 map icon） -->
+        <view class="detail-location" wx:if="{{node.location}}">
+          <text class="location-icon-gold">📍</text>
+          <text>{{node.location}}</text>
+        </view>
+
+        <!-- 里程碑徽章 -->
+        <view class="milestone-badge" wx:if="{{node.milestone}}">
+          <text class="milestone-star">★</text>
+          <text>里程碑</text>
+        </view>
+
+        <!-- 正文（大字号 1.8 行高） -->
+        <view class="detail-content" wx:if="{{node.content}}">
+          <text>{{node.content}}</text>
+        </view>
+
+        <!-- 分隔线 -->
+        <view class="detail-divider"></view>
+
+        <!-- 操作按钮行 -->
+        <view class="detail-actions">
+          <view class="action-btn action-btn-primary" bindtap="toggleFavorite">
+            <text class="action-icon">♡</text>
+            <text>收藏</text>
+          </view>
+          <view class="action-btn action-btn-secondary" bindtap="toggleMilestone">
+            <text class="action-icon">⚑</text>
+            <text>标记里程碑</text>
+          </view>
+          <view class="action-btn action-btn-secondary" bindtap="shareNode">
+            <text class="action-icon">⇧</text>
+            <text>分享</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

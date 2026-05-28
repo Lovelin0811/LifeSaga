@@ -1,0 +1,59 @@
+<view class="page-container">
+  <!-- Hero 区域 -->
+  <view class="create-form-header">
+    <view class="hero-icon">
+      <view class="hero-icon-circle">
+        <view class="hero-icon-plus"></view>
+      </view>
+    </view>
+    <view class="hero-title">开始新的冒险</view>
+    <view class="hero-subtitle">选择副本类型，开始记录一段新的人生副本</view>
+  </view>
+
+  <view class="form-page">
+    <!-- 类型选择器 -->
+    <view class="form-group">
+      <view class="form-label">选择副本类型</view>
+      <view class="type-selector">
+        <view class="type-option {{selectedType === item.key ? 'selected' : ''}}"
+              wx:for="{{types}}" wx:key="key"
+              style="--type-color: {{item.color}};"
+              bindtap="selectType" data-key="{{item.key}}">
+          <view class="type-icon" style="background: {{item.color}}1F;">
+            <text class="type-icon-emoji">{{item.icon}}</text>
+          </view>
+          <text class="type-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 副本名称 -->
+    <view class="form-group">
+      <view class="form-label">副本名称</view>
+      <input class="form-input" placeholder="给你的副本起个名字" model:value="{{name}}" maxlength="128" placeholder-class="form-input-placeholder" />
+    </view>
+
+    <!-- 封面图 -->
+    <view class="form-group">
+      <view class="form-label">封面图</view>
+      <view class="cover-upload" bindtap="chooseCover">
+        <image wx:if="{{coverUrl}}" class="cover-preview" src="{{coverUrl}}" mode="aspectFill"/>
+        <view wx:else class="cover-upload-placeholder">
+          <view class="cover-upload-icon-circle">
+            <view class="cover-upload-plus"></view>
+          </view>
+          <text class="cover-upload-text">选择封面图片</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 简介 -->
+    <view class="form-group">
+      <view class="form-label">简介</view>
+      <textarea class="form-input form-textarea" placeholder="简单描述这个副本..." model:value="{{description}}" maxlength="500" placeholder-class="form-input-placeholder" />
+    </view>
+
+    <!-- 创建按钮 -->
+    <view class="form-submit" bindtap="createSaga">{{isEdit ? '保存修改' : '创建副本'}}</view>
+  </view>
+</view>

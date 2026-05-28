@@ -1,0 +1,205 @@
+/* pages/create/create.wxss — 对齐原型 PAGE 5: CREATE INSTANCE */
+
+/* ---- Hero 区域 ---- */
+.create-form-header {
+  padding: 40rpx 0 24rpx;
+  text-align: center;
+}
+
+.hero-icon {
+  margin-bottom: 16rpx;
+}
+
+.hero-icon-circle {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.hero-icon-circle::before {
+  content: '';
+  position: absolute;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  border: 2rpx solid var(--color-primary);
+  opacity: 0.3;
+}
+
+.hero-icon-plus {
+  width: 40rpx;
+  height: 40rpx;
+  position: relative;
+}
+
+.hero-icon-plus::before,
+.hero-icon-plus::after {
+  content: '';
+  position: absolute;
+  background: var(--color-primary);
+  border-radius: 4rpx;
+}
+
+.hero-icon-plus::before {
+  width: 40rpx;
+  height: 5rpx;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.hero-icon-plus::after {
+  width: 5rpx;
+  height: 40rpx;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.hero-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8rpx;
+}
+
+.hero-subtitle {
+  font-size: 28rpx;
+  color: var(--color-text-tertiary);
+}
+
+/* ---- 表单页面容器 ---- */
+.form-page {
+  padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
+}
+
+/* ---- 类型选择器 grid ---- */
+.type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  margin-bottom: 8rpx;
+}
+
+.type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 24rpx 16rpx;
+  background: var(--color-bg-surface);
+  border: 3rpx solid var(--color-border-subtle);
+  border-radius: 24rpx;
+  transition: all 0.2s ease;
+}
+
+.type-option:active,
+.type-option.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.type-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.type-icon-emoji {
+  font-size: 36rpx;
+}
+
+.type-name {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.type-option.selected .type-name {
+  color: var(--color-primary);
+}
+
+/* ---- 封面上传区域 ---- */
+.cover-upload {
+  width: 100%;
+  height: 280rpx;
+  background: var(--color-bg-sunken);
+  border: 3rpx dashed var(--color-border-default);
+  border-radius: 32rpx;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.cover-upload:active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.cover-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-upload-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.cover-upload-icon-circle {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: var(--color-bg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-upload-plus {
+  width: 36rpx;
+  height: 36rpx;
+  position: relative;
+}
+
+.cover-upload-plus::before,
+.cover-upload-plus::after {
+  content: '';
+  position: absolute;
+  background: var(--color-text-tertiary);
+  border-radius: 3rpx;
+}
+
+.cover-upload-plus::before {
+  width: 36rpx;
+  height: 4rpx;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.cover-upload-plus::after {
+  width: 4rpx;
+  height: 36rpx;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.cover-upload-text {
+  font-size: 28rpx;
+  color: var(--color-text-tertiary);
+}

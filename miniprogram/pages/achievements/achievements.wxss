@@ -1,0 +1,134 @@
+/* pages/achievements/achievements.wxss */
+
+.level-card {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-card);
+  padding: 32rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24rpx;
+}
+
+.level-top {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.level-badge {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F5D76E 0%, #E5A44D 50%, #F5D76E 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(229,164,77,0.3);
+}
+
+.level-num {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2D2520;
+}
+
+.level-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.xp-row {
+  margin-top: 4rpx;
+}
+
+.xp-text {
+  font-size: 24rpx;
+  color: var(--color-text-tertiary);
+}
+
+.xp-hint {
+  display: block;
+  text-align: right;
+  font-size: 22rpx;
+  color: var(--color-text-tertiary);
+  margin-top: 8rpx;
+}
+
+.unlock-stats {
+  margin-bottom: 24rpx;
+  padding: 0 8rpx;
+}
+
+.unlock-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+  padding-bottom: 32rpx;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 12rpx 20rpx;
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-xs);
+  text-align: center;
+  border: 2rpx solid var(--color-border-subtle);
+}
+
+.badge-locked {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+}
+
+.badge-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: var(--color-bg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.badge-icon {
+  font-size: 40rpx;
+}
+
+.badge-name {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4rpx;
+}
+
+.badge-desc {
+  font-size: 20rpx;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+/* 稀有度卡片边框 */
+.rarity-legendary {
+  border-color: var(--rpg-legendary) !important;
+  box-shadow: 0 0 24rpx rgba(229,164,77,0.15);
+}
+
+.rarity-mythic {
+  border-color: var(--rpg-mythic) !important;
+  box-shadow: 0 0 32rpx rgba(232,114,90,0.15);
+}
+
+.rarity-epic {
+  border-color: var(--rpg-epic) !important;
+}

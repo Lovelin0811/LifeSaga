@@ -1,0 +1,61 @@
+<view class="page-container">
+  <!-- 用户信息 -->
+  <view class="user-card" wx:if="{{userInfo}}">
+    <view class="avatar-wrap">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
+    </view>
+    <text class="nickname">{{userInfo.nickname || '冒险者'}}</text>
+    <text class="user-desc">Lv.{{userInfo.level || 1}} · {{userInfo.xp || 0}} XP</text>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-num">{{stats.sagas || 0}}</text>
+      <text class="stat-label">副本</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.nodes || 0}}</text>
+      <text class="stat-label">节点</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.achievements || 0}}</text>
+      <text class="stat-label">成就</text>
+    </view>
+  </view>
+
+  <!-- 菜单列表 -->
+  <view class="menu-list">
+    <view class="menu-item" bindtap="goAchievements">
+      <view class="menu-icon-wrap" style="background: var(--color-secondary-soft);">
+        <text>🏆</text>
+      </view>
+      <text class="menu-text">成就展示柜</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <view class="menu-icon-wrap" style="background: var(--color-accent-soft);">
+        <text>📊</text>
+      </view>
+      <text class="menu-text">数据统计</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <view class="menu-icon-wrap" style="background: var(--color-primary-soft);">
+        <text>🎨</text>
+      </view>
+      <text class="menu-text">主题外观</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="about">
+      <view class="menu-icon-wrap" style="background: var(--color-accent-alt-soft);">
+        <text>ℹ️</text>
+      </view>
+      <text class="menu-text">关于</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 版本 -->
+  <text class="version-text">人生副本 v1.0.0</text>
+</view>

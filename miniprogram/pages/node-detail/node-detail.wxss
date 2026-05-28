@@ -1,0 +1,254 @@
+/* pages/node-detail/node-detail.wxss */
+
+/* ====== 页面容器 ====== */
+.node-detail-page {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  position: relative;
+}
+
+/* ====== 加载状态 ====== */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 0;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid var(--color-border-subtle);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ====== 自定义导航栏 ====== */
+.detail-header-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+  padding-bottom: 16rpx;
+  background: transparent;
+}
+
+.header-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-btn:active {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.header-btn-icon {
+  font-size: 40rpx;
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-top: -4rpx;
+}
+
+.menu-dot {
+  font-size: 24rpx;
+  color: var(--color-text-primary);
+  letter-spacing: 2rpx;
+  line-height: 1;
+}
+
+/* ====== 大封面 300px ====== */
+.node-detail-cover {
+  width: 100%;
+  height: 600rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FFF6E8 0%, #FFE5DD 50%, #FFF0EB 100%);
+}
+
+.cover-placeholder-icon {
+  font-size: 120rpx;
+  opacity: 0.3;
+  line-height: 1;
+}
+
+/* 底部渐变 overlay */
+.cover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160rpx;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+  pointer-events: none;
+}
+
+/* ====== Body card 上移 ====== */
+.node-detail-body {
+  padding: 0 var(--space-lg);
+  margin-top: -48rpx;
+  position: relative;
+  z-index: 1;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+}
+
+.node-detail-card {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
+  padding: 40rpx;
+}
+
+/* ====== 日期 ====== */
+.detail-date {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+  color: var(--color-text-tertiary);
+  margin-bottom: 16rpx;
+}
+
+.date-icon {
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+/* ====== 标题 h2 ====== */
+.detail-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.35;
+  margin-bottom: 24rpx;
+  letter-spacing: -0.02em;
+}
+
+/* ====== 地点（金色） ====== */
+.detail-location {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 30rpx;
+  color: var(--color-secondary);
+  margin-bottom: 32rpx;
+  padding-bottom: 32rpx;
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.location-icon-gold {
+  font-size: 28rpx;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ====== 里程碑徽章 ====== */
+.milestone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 20rpx;
+  background: rgba(229, 164, 77, 0.12);
+  color: #C08530;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 24rpx;
+}
+
+.milestone-star {
+  font-size: 20rpx;
+  color: #E5A44D;
+}
+
+/* ====== 正文（大字号 1.8 行高） ====== */
+.detail-content {
+  font-size: 32rpx;
+  color: var(--color-text-primary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 40rpx;
+}
+
+/* ====== 分隔线 ====== */
+.detail-divider {
+  height: 1rpx;
+  background: var(--color-divider);
+  margin-bottom: 32rpx;
+}
+
+/* ====== 操作按钮行 ====== */
+.detail-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 20rpx 0;
+  border-radius: 12px;
+  font-size: 26rpx;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+.action-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.action-btn-primary {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.action-btn-secondary {
+  background: var(--color-bg-sunken);
+  color: var(--color-text-secondary);
+}

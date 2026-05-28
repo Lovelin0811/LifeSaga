@@ -1,0 +1,9 @@
+<!-- 广场页 - 展示公开副本 -->
+<view class="page-container">
+  <view class="page-header">
+    <text class="page-title">广场</text>
+  </view>
+  <view class="empty-state">
+    <text class="empty-text">探索其他冒险者的副本</text>
+  </view>
+</view>

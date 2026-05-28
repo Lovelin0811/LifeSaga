@@ -1,0 +1,43 @@
+<view class="page-container">
+  <!-- 等级卡片 -->
+  <view class="level-card" wx:if="{{userInfo}}">
+    <view class="level-top">
+      <view class="level-badge">
+        <text class="level-num">Lv.{{userInfo.level || 1}}</text>
+      </view>
+      <view class="level-info">
+        <text class="level-title">冒险者</text>
+        <view class="xp-row">
+          <text class="xp-text">{{userInfo.xp || 0}} XP</text>
+        </view>
+      </view>
+    </view>
+    <view class="xp-bar" style="margin-top: 24rpx;">
+      <view class="xp-bar-fill" style="width: {{xpPercent}}%;"></view>
+    </view>
+    <text class="xp-hint">距离下一级还需 {{nextLevelXp}} XP</text>
+  </view>
+
+  <!-- 统计 -->
+  <view class="unlock-stats" wx:if="{{achievements.length}}">
+    <text class="unlock-text">已解锁 <text style="color: var(--color-primary); font-weight: 700;">{{unlockedCount}}</text> / {{achievements.length}} 个成就</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <!-- 成就网格 -->
+  <view class="badge-grid" wx:elif="{{achievements.length}}">
+    <view class="badge-item {{item.unlocked ? 'rarity-' + item.rarity : 'badge-locked'}}"
+          wx:for="{{achievements}}" wx:key="id">
+      <view class="badge-icon-wrap">
+        <text class="badge-icon">{{item.icon || '?'}}</text>
+      </view>
+      <text class="badge-name">{{item.name}}</text>
+      <text class="badge-desc">{{item.unlocked ? item.description : '???'}}</text>
+      <view class="rarity-tag rarity-{{item.rarity}}" wx:if="{{item.unlocked}}">{{item.rarityName}}</view>
+    </view>
+  </view>
+</view>

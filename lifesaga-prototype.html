@@ -1,0 +1,2577 @@
+<!--
+  人生副本 · Life Saga — 高保真移动端原型
+  设计系统: Warm Journal RPG (基于 Warm Editorial 定制)
+  设计令牌来源: /tmp/lifesaga-design-tokens/DESIGN.md
+  原型类型: mobile-app (微信小程序模拟)
+  页面: 首页/副本广场 · 副本详情(时间线) · 添加节点 · 节点详情 · 创建副本
+  构建: 筑原型 (Zhu) · design-engine
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>人生副本 · Life Saga</title>
+<style>
+/* ================================================================
+   1. DESIGN TOKENS — CSS Variables
+   ================================================================ */
+:root {
+  /* --- Brand Colors --- */
+  --color-primary:           #E8725A;
+  --color-primary-hover:     #D4613F;
+  --color-primary-active:    #C45535;
+  --color-primary-soft:      #FFF0EB;
+  --color-primary-subtle:    #FFE5DD;
+  --color-secondary:         #E5A44D;
+  --color-secondary-hover:   #D4933E;
+  --color-secondary-soft:    #FFF6E8;
+  --color-accent:            #6BBF8A;
+  --color-accent-soft:       #EDF8F1;
+  --color-accent-alt:        #B088C4;
+  --color-accent-alt-soft:   #F5EDF8;
+
+  /* --- Neutral Colors --- */
+  --color-bg-page:           #FFFAF5;
+  --color-bg-surface:        #FFFFFF;
+  --color-bg-elevated:       #FFFFFF;
+  --color-bg-sunken:         #F7F0EA;
+  --color-bg-muted:          #F2EBE3;
+  --color-bg-overlay:        rgba(45,37,32,0.45);
+  --color-text-primary:      #2D2520;
+  --color-text-secondary:    #6B5E54;
+  --color-text-tertiary:     #9B8E84;
+  --color-text-placeholder:  #C4B8AD;
+  --color-text-inverse:      #FFFFFF;
+  --color-border-default:    #E8DDD4;
+  --color-border-subtle:     #F0E8E0;
+  --color-border-strong:     #C4B8AD;
+  --color-divider:           #EDE6DE;
+
+  /* --- Semantic Colors --- */
+  --color-success:           #5CB870;
+  --color-success-soft:      #EDF7EF;
+  --color-warning:           #E5A44D;
+  --color-warning-soft:      #FFF6E8;
+  --color-error:             #E05A5A;
+  --color-error-soft:        #FFF0F0;
+  --color-info:              #5A9FD4;
+  --color-info-soft:         #EBF3FA;
+
+  /* --- RPG Colors --- */
+  --rpg-common:              #A8B0B8;
+  --rpg-uncommon:            #5CB870;
+  --rpg-rare:                #5A9FD4;
+  --rpg-epic:                #B088C4;
+  --rpg-legendary:           #E5A44D;
+  --rpg-mythic:              #E8725A;
+  --rpg-type-travel:         #5A9FD4;
+  --rpg-type-study:          #5CB870;
+  --rpg-type-work:           #E5A44D;
+  --rpg-type-life:           #E8725A;
+  --rpg-type-health:         #6BBF8A;
+  --rpg-type-creative:       #B088C4;
+  --rpg-gold-shimmer:        linear-gradient(135deg, #F5D76E 0%, #E5A44D 50%, #F5D76E 100%);
+  --rpg-xp-bar:              linear-gradient(90deg, #E8725A 0%, #E5A44D 100%);
+  --rpg-badge-glow:          0 0 12px rgba(229,164,77,0.4);
+
+  /* --- Typography --- */
+  --font-heading: 'DIN Alternate', 'PingFang SC', -apple-system, 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+  --font-body: 'PingFang SC', -apple-system, 'Noto Sans SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+  --font-handwrite: 'LXGW WenKai', 'PingFang SC', cursive;
+  --font-mono: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  --font-numeric: 'DIN Alternate', 'Avenir Next', var(--font-body);
+
+  --text-display-xl: 700 32px/1.2 var(--font-heading);
+  --text-display:    700 28px/1.25 var(--font-heading);
+  --text-h1:         600 24px/1.3 var(--font-heading);
+  --text-h2:         600 20px/1.35 var(--font-heading);
+  --text-h3:         600 17px/1.4 var(--font-body);
+  --text-h4:         600 15px/1.4 var(--font-body);
+  --text-body-lg:    400 16px/1.65 var(--font-body);
+  --text-body:       400 15px/1.65 var(--font-body);
+  --text-body-sm:    400 14px/1.6 var(--font-body);
+  --text-caption:    400 13px/1.5 var(--font-body);
+  --text-micro:      500 11px/1.4 var(--font-body);
+  --text-handwrite:  400 18px/1.5 var(--font-handwrite);
+  --text-rpg-badge:  700 13px/1.2 var(--font-heading);
+  --text-rpg-rarity: 700 11px/1.2 var(--font-heading);
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.04em;
+  --letter-spacing-rpg: 0.08em;
+
+  /* --- Spacing --- */
+  --space-0:    0px;
+  --space-0-5:  2px;
+  --space-1:    4px;
+  --space-1-5:  6px;
+  --space-2:    8px;
+  --space-3:    12px;
+  --space-4:    16px;
+  --space-5:    20px;
+  --space-6:    24px;
+  --space-8:    32px;
+  --space-10:   40px;
+  --space-12:   48px;
+  --space-16:   64px;
+  --space-20:   80px;
+  --page-padding-h: 20px;
+  --page-padding-v: 16px;
+
+  /* --- Shadows --- */
+  --shadow-none: none;
+  --shadow-warm-xs: 0 1px 2px rgba(45,37,32,0.04), 0 1px 3px rgba(45,37,32,0.02);
+  --shadow-warm-sm: 0 1px 3px rgba(45,37,32,0.06), 0 2px 8px rgba(45,37,32,0.04);
+  --shadow-warm-md: 0 2px 4px rgba(45,37,32,0.06), 0 4px 16px rgba(45,37,32,0.08);
+  --shadow-warm-lg: 0 4px 8px rgba(45,37,32,0.06), 0 8px 32px rgba(45,37,32,0.10);
+  --shadow-warm-xl: 0 8px 16px rgba(45,37,32,0.08), 0 16px 48px rgba(45,37,32,0.12);
+  --shadow-gold: 0 2px 8px rgba(229,164,77,0.20), 0 4px 16px rgba(229,164,77,0.10);
+  --shadow-legendary: 0 0 20px rgba(245,215,110,0.20), 0 4px 16px rgba(229,164,77,0.15);
+
+  /* --- Z-Index --- */
+  --z-base: 0;
+  --z-card: 1;
+  --z-sticky: 10;
+  --z-dropdown: 20;
+  --z-tab-bar: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+/* ================================================================
+   2. GLOBAL RESET & BASE
+   ================================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font: var(--text-body);
+  color: var(--color-text-primary);
+  background: #E8DDD4;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 0;
+}
+
+/* ================================================================
+   3. DEVICE FRAME — iPhone 模拟
+   ================================================================ */
+.device-frame {
+  width: 375px;
+  height: 812px;
+  background: var(--color-bg-page);
+  border-radius: 40px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 2px #1a1a1a,
+    0 0 0 4px #333,
+    0 0 0 5px #1a1a1a,
+    0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Status bar simulation */
+.status-bar {
+  height: 44px;
+  background: var(--color-bg-surface);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 var(--space-6) 6px;
+  position: relative;
+  z-index: var(--z-sticky);
+}
+
+.status-bar .time {
+  font: 600 15px/1 var(--font-numeric);
+  color: var(--color-text-primary);
+}
+
+.status-bar .icons {
+  display: flex;
+  gap: var(--space-1-5);
+  align-items: center;
+}
+
+.status-bar .icons svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ================================================================
+   4. APP SHELL — Page container + TabBar
+   ================================================================ */
+.app-shell {
+  height: calc(812px - 44px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Pages ---- */
+.page-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--color-bg-page);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateX(20px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.page.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.page.page-enter {
+  transform: translateX(100%);
+}
+
+.page.page-enter.active {
+  transform: translateX(0);
+}
+
+.page.page-exit {
+  transform: translateX(-30%);
+}
+
+/* ---- Tab Bar ---- */
+.tab-bar {
+  height: 83px;
+  background: var(--color-bg-surface);
+  border-top: 0.5px solid var(--color-border-subtle);
+  display: flex;
+  align-items: flex-start;
+  padding-top: var(--space-2);
+  position: relative;
+  z-index: var(--z-tab-bar);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: var(--space-1) 0;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-item svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.tab-item .tab-label {
+  font: var(--text-micro);
+  color: var(--color-text-tertiary);
+  transition: color 0.2s ease;
+}
+
+.tab-item.active svg {
+  transform: scale(1.05);
+}
+
+.tab-item.active .tab-label {
+  color: var(--color-primary);
+}
+
+.tab-item.active svg path,
+.tab-item.active svg circle,
+.tab-item.active svg rect,
+.tab-item.active svg line,
+.tab-item.active svg polyline {
+  stroke: var(--color-primary);
+}
+
+.tab-item.active svg .tab-icon-fill {
+  fill: var(--color-primary);
+}
+
+/* Center create button */
+.tab-item--create {
+  position: relative;
+  top: -12px;
+}
+
+.tab-item--create .create-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(232,114,90,0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tab-item--create .create-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 8px rgba(232,114,90,0.25);
+}
+
+.tab-item--create .create-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.tab-item--create .tab-label {
+  margin-top: var(--space-1);
+  color: var(--color-text-tertiary);
+}
+
+.tab-item--create.active .tab-label {
+  color: var(--color-primary);
+}
+
+/* ================================================================
+   5. PAGE HEADER — Navigation bars
+   ================================================================ */
+.page-header {
+  padding: var(--space-4) var(--page-padding-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg-surface);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.page-header .back-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.page-header .back-btn:active {
+  background: var(--color-bg-muted);
+}
+
+.page-header .back-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.page-header .title {
+  font: var(--text-h2);
+  color: var(--color-text-primary);
+}
+
+.page-header .action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 8px;
+}
+
+.page-header .action-btn:active {
+  background: var(--color-bg-muted);
+}
+
+.page-header .action-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ================================================================
+   6. PAGE 1: HOME / 副本广场
+   ================================================================ */
+.home-header {
+  padding: var(--space-4) var(--page-padding-h) 0;
+  background: var(--color-bg-surface);
+}
+
+.home-header .greeting {
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+}
+
+.home-header .hero-title {
+  font: var(--text-h1);
+  color: var(--color-text-primary);
+  margin-top: var(--space-1);
+}
+
+.home-header .hero-subtitle {
+  font: var(--text-handwrite);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.home-search {
+  margin: var(--space-4) var(--page-padding-h) var(--space-3);
+  position: relative;
+  background: var(--color-bg-surface);
+  padding-bottom: var(--space-3);
+}
+
+.search-box {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  background: var(--color-bg-sunken);
+  border: 1.5px solid transparent;
+  border-radius: 24px;
+  font: var(--text-body-sm);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-box:focus {
+  background: var(--color-bg-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.search-box::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.search-icon {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: -6px;
+}
+
+.search-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--color-text-placeholder);
+}
+
+.home-section {
+  padding: 0 var(--page-padding-h);
+  margin-bottom: var(--space-6);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.section-head .section-title {
+  font: var(--text-h3);
+  color: var(--color-text-primary);
+}
+
+.section-head .section-more {
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Instance cards */
+.instance-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.instance-card {
+  background: var(--color-bg-surface);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-warm-sm);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.instance-card:active {
+  transform: scale(0.98);
+}
+
+.instance-card--legendary {
+  box-shadow: var(--shadow-warm-sm), 0 0 20px rgba(229,164,77,0.15);
+}
+
+.instance-card .cover {
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+
+.instance-card .cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instance-card .cover-placeholder svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.3;
+}
+
+.instance-card .cover .cover-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.15));
+}
+
+.instance-card .cover .rarity-badge {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font: var(--text-rpg-rarity);
+  letter-spacing: var(--letter-spacing-rpg);
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.rarity-badge--rare { background: rgba(90,159,212,0.85); color: #fff; }
+.rarity-badge--epic { background: rgba(176,136,196,0.85); color: #fff; }
+.rarity-badge--legendary { background: rgba(229,164,77,0.9); color: #2D2520; }
+.rarity-badge--common { background: rgba(168,176,184,0.7); color: #fff; }
+.rarity-badge--uncommon { background: rgba(92,184,112,0.8); color: #fff; }
+
+.instance-card .body {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.instance-card .body .card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font: var(--text-micro);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.type-tag svg {
+  width: 14px;
+  height: 14px;
+}
+
+.type-tag--life { background: rgba(232,114,90,0.12); color: #C04A35; }
+.type-tag--travel { background: rgba(90,159,212,0.12); color: #3A7FC0; }
+.type-tag--study { background: rgba(92,184,112,0.12); color: #3D9450; }
+.type-tag--work { background: rgba(229,164,77,0.12); color: #C08530; }
+.type-tag--health { background: rgba(107,191,138,0.12); color: #3A9B5E; }
+.type-tag--creative { background: rgba(176,136,196,0.12); color: #8A5FA0; }
+
+.instance-card .body .card-title {
+  font: var(--text-h3);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1-5);
+}
+
+.instance-card .body .card-desc {
+  font: var(--text-body-sm);
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.instance-card .body .card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font: var(--text-caption);
+  color: var(--color-text-tertiary);
+}
+
+.instance-card .body .card-meta span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.instance-card .body .card-meta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* XP bar on instance card */
+.instance-card .body .xp-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.instance-card .body .xp-label {
+  font: var(--text-rpg-badge);
+  color: var(--rpg-legendary);
+  white-space: nowrap;
+}
+
+.xp-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-bg-muted);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.xp-bar .fill {
+  height: 100%;
+  background: var(--rpg-xp-bar);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Quick stats row */
+.quick-stats {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--page-padding-h);
+  background: var(--color-bg-surface);
+  margin-bottom: var(--space-4);
+}
+
+.stat-item {
+  flex: 1;
+  background: var(--color-bg-sunken);
+  border-radius: 12px;
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+}
+
+.stat-item .stat-num {
+  font: 600 22px/1.2 var(--font-numeric);
+  color: var(--color-text-primary);
+}
+
+.stat-item .stat-label {
+  font: var(--text-micro);
+  color: var(--color-text-tertiary);
+  margin-top: var(--space-1);
+}
+
+/* ================================================================
+   7. PAGE 2: INSTANCE DETAIL / 时间线
+   ================================================================ */
+.detail-header {
+  padding: 0 var(--page-padding-h);
+  background: var(--color-bg-surface);
+  padding-bottom: var(--space-4);
+}
+
+.detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.detail-title {
+  font: var(--text-h1);
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-desc {
+  font: var(--text-body-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.detail-meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font: var(--text-caption);
+  color: var(--color-text-tertiary);
+}
+
+.detail-meta-row .node-count {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.detail-meta-row .node-count svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Timeline */
+.timeline-container {
+  padding: var(--space-5) var(--page-padding-h) var(--space-20);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary),
+    var(--color-secondary),
+    var(--color-border-default)
+  );
+  border-radius: 1px;
+}
+
+.timeline-node {
+  position: relative;
+  margin-bottom: var(--space-5);
+  cursor: pointer;
+}
+
+.timeline-node:last-child {
+  margin-bottom: 0;
+}
+
+/* Timeline dot */
+.timeline-node::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 3px solid var(--color-bg-page);
+  box-shadow: 0 0 0 2px var(--color-primary-soft);
+  z-index: 2;
+}
+
+.timeline-node--active::before {
+  width: 16px;
+  height: 16px;
+  left: -26px;
+  top: 18px;
+  box-shadow: 0 0 0 3px var(--color-primary-soft), 0 0 12px rgba(232,114,90,0.3);
+}
+
+.timeline-node--milestone::before {
+  width: 20px;
+  height: 20px;
+  left: -28px;
+  top: 16px;
+  background: var(--rpg-gold-shimmer);
+  box-shadow: var(--rpg-badge-glow);
+}
+
+.timeline-node--add::before {
+  width: 16px;
+  height: 16px;
+  left: -26px;
+  top: 18px;
+  background: var(--color-bg-surface);
+  border: 2px dashed var(--color-border-default);
+  box-shadow: none;
+}
+
+.timeline-node .node-date {
+  font: var(--text-caption);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.timeline-node .node-card {
+  background: var(--color-bg-surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-warm-sm);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.timeline-node .node-card:active {
+  transform: scale(0.98);
+}
+
+.timeline-node .node-card .node-cover {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-node .node-card .node-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-node .node-card .node-cover-placeholder svg {
+  width: 40px;
+  height: 40px;
+  opacity: 0.2;
+}
+
+.timeline-node .node-card .node-content {
+  padding: var(--space-4);
+}
+
+.timeline-node .node-card .node-title {
+  font: var(--text-h3);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1-5);
+}
+
+.timeline-node .node-card .node-location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.timeline-node .node-card .node-location svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.timeline-node .node-card .node-text {
+  font: var(--text-body-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.timeline-node--milestone .node-card .milestone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font: var(--text-rpg-rarity);
+  letter-spacing: var(--letter-spacing-rpg);
+  background: rgba(229,164,77,0.12);
+  color: #C08530;
+  margin-bottom: var(--space-2);
+}
+
+/* Add node card */
+.add-node-card {
+  background: var(--color-bg-surface);
+  border-radius: 16px;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  border: 2px dashed var(--color-border-default);
+  transition: all 0.2s ease;
+  color: var(--color-text-tertiary);
+  font: var(--text-body-sm);
+}
+
+.add-node-card:active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.add-node-card svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ================================================================
+   8. PAGE 3: ADD NODE
+   ================================================================ */
+.form-page {
+  padding: 0 var(--page-padding-h) var(--space-20);
+}
+
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  font: var(--text-h4);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.form-label svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-tertiary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  font: var(--text-body);
+  color: var(--color-text-primary);
+  background: var(--color-bg-sunken);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-input:focus {
+  background: var(--color-bg-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.form-textarea {
+  min-height: 120px;
+  line-height: 1.7;
+  resize: none;
+  font-family: inherit;
+}
+
+/* Photo upload area */
+.photo-upload {
+  width: 100%;
+  height: 160px;
+  background: var(--color-bg-sunken);
+  border: 1.5px dashed var(--color-border-default);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.photo-upload:active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.photo-upload svg {
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-tertiary);
+}
+
+.photo-upload .upload-text {
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+}
+
+.photo-upload .upload-hint {
+  font: var(--text-caption);
+  color: var(--color-text-placeholder);
+}
+
+/* Location selector */
+.location-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px 16px;
+  background: var(--color-bg-sunken);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.location-picker:active {
+  background: var(--color-primary-soft);
+}
+
+.location-picker svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.location-picker .location-text {
+  font: var(--text-body);
+  color: var(--color-text-placeholder);
+}
+
+.location-picker .location-arrow {
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-placeholder);
+}
+
+/* Submit button */
+.form-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font: var(--text-h4);
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: var(--letter-spacing-tight);
+  margin-top: var(--space-4);
+}
+
+.form-submit:active {
+  background: var(--color-primary-active);
+  transform: scale(0.98);
+}
+
+/* ================================================================
+   9. PAGE 4: NODE DETAIL
+   ================================================================ */
+.node-detail-cover {
+  width: 100%;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+}
+
+.node-detail-cover .cover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.2));
+}
+
+.node-detail-body {
+  padding: var(--space-5) var(--page-padding-h);
+  margin-top: -24px;
+  position: relative;
+  z-index: var(--z-card);
+}
+
+.node-detail-card {
+  background: var(--color-bg-surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-warm-md);
+  padding: var(--space-5);
+}
+
+.node-detail-date {
+  font: var(--text-caption);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.node-detail-title {
+  font: var(--text-h2);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.node-detail-location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font: var(--text-body);
+  color: var(--color-secondary);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.node-detail-location svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.node-detail-text {
+  font: var(--text-body-lg);
+  color: var(--color-text-primary);
+  line-height: 1.8;
+  margin-bottom: var(--space-5);
+}
+
+.node-detail-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.node-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1-5);
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  font: var(--text-body-sm);
+  transition: all 0.2s ease;
+}
+
+.node-action-btn:active {
+  transform: scale(0.96);
+}
+
+.node-action-btn--primary {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.node-action-btn--secondary {
+  background: var(--color-bg-sunken);
+  color: var(--color-text-secondary);
+}
+
+.node-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ================================================================
+   10. PAGE 5: CREATE INSTANCE
+   ================================================================ */
+.create-form-header {
+  padding: var(--space-5) var(--page-padding-h) var(--space-3);
+  text-align: center;
+}
+
+.create-form-header .emoji-hero {
+  font-size: 48px;
+  margin-bottom: var(--space-2);
+}
+
+.create-form-header h2 {
+  font: var(--text-h2);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.create-form-header p {
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* Type selector grid */
+.type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1-5);
+  padding: var(--space-3) var(--space-2);
+  background: var(--color-bg-surface);
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.type-option:active,
+.type-option.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.type-option .type-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.type-option .type-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.type-option .type-name {
+  font: var(--text-micro);
+  color: var(--color-text-secondary);
+}
+
+.type-option.selected .type-name {
+  color: var(--color-primary);
+}
+
+/* Cover upload */
+.cover-upload {
+  width: 100%;
+  height: 140px;
+  background: var(--color-bg-sunken);
+  border: 1.5px dashed var(--color-border-default);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cover-upload:active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.cover-upload svg {
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-tertiary);
+}
+
+.cover-upload span {
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* ================================================================
+   11. PAGE 6: ACHIEVEMENTS (Tab)
+   ================================================================ */
+.achievements-header {
+  padding: var(--space-5) var(--page-padding-h) var(--space-4);
+  background: var(--color-bg-surface);
+}
+
+.achievements-header h2 {
+  font: var(--text-h2);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* Level card */
+.level-card {
+  background: var(--color-bg-surface);
+  margin: var(--space-3) var(--page-padding-h) var(--space-5);
+  border-radius: 16px;
+  padding: var(--space-5);
+  box-shadow: var(--shadow-warm-sm);
+}
+
+.level-card .level-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.level-card .level-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--rpg-gold-shimmer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 20px/1 var(--font-numeric);
+  color: #2D2520;
+}
+
+.level-card .level-info .level-label {
+  font: var(--text-h3);
+  color: var(--color-text-primary);
+}
+
+.level-card .level-info .level-xp {
+  font: var(--text-caption);
+  color: var(--color-text-tertiary);
+}
+
+.level-card .level-xp-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.level-card .level-xp-bar .xp-bar {
+  flex: 1;
+  height: 8px;
+}
+
+.level-card .level-xp-bar .xp-text {
+  font: var(--text-rpg-badge);
+  color: var(--rpg-legendary);
+  white-space: nowrap;
+}
+
+/* Achievement grid */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  padding: 0 var(--page-padding-h) var(--space-6);
+}
+
+.badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  background: var(--color-bg-surface);
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-warm-xs);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.badge-card:active {
+  transform: scale(0.95);
+}
+
+.badge-card--legendary {
+  border: 2px solid var(--rpg-legendary);
+  background: linear-gradient(180deg, rgba(245,215,110,0.08) 0%, var(--color-bg-surface) 100%);
+  box-shadow: var(--rpg-badge-glow);
+}
+
+.badge-card--common {
+  border: 1.5px solid var(--rpg-common);
+}
+
+.badge-card--rare {
+  border: 1.5px solid var(--rpg-rare);
+}
+
+.badge-card--epic {
+  border: 2px solid var(--rpg-epic);
+  box-shadow: 0 0 12px rgba(176,136,196,0.2);
+}
+
+.badge-card--uncommon {
+  border: 1.5px solid var(--rpg-uncommon);
+}
+
+.badge-card--locked {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+}
+
+.badge-card .badge-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-card .badge-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.badge-card .badge-title {
+  font: var(--text-rpg-badge);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.badge-card .badge-desc {
+  font: var(--text-micro);
+  color: var(--color-text-tertiary);
+  line-height: 1.3;
+}
+
+.badge-card--locked .badge-title {
+  color: var(--color-text-tertiary);
+}
+
+/* ================================================================
+   12. PAGE 7: PROFILE (Tab)
+   ================================================================ */
+.profile-header {
+  padding: var(--space-6) var(--page-padding-h) var(--space-5);
+  background: var(--color-bg-surface);
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-bg-muted);
+  margin: 0 auto var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-warm-sm);
+}
+
+.profile-avatar svg {
+  width: 36px;
+  height: 36px;
+  color: var(--color-text-tertiary);
+}
+
+.profile-name {
+  font: var(--text-h2);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.profile-bio {
+  font: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+}
+
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat .stat-num {
+  font: 600 20px/1.2 var(--font-numeric);
+  color: var(--color-text-primary);
+}
+
+.profile-stat .stat-label {
+  font: var(--text-caption);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+/* Menu items */
+.profile-menu {
+  margin: var(--space-4) var(--page-padding-h);
+}
+
+.menu-group {
+  background: var(--color-bg-surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-warm-xs);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.menu-item:active {
+  background: var(--color-bg-sunken);
+}
+
+.menu-item + .menu-item {
+  border-top: 0.5px solid var(--color-divider);
+}
+
+.menu-item .menu-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-item .menu-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.menu-item .menu-text {
+  font: var(--text-body);
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.menu-item .menu-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-placeholder);
+}
+
+/* ================================================================
+   13. SCROLLBAR HIDE (Mobile feel)
+   ================================================================ */
+.page::-webkit-scrollbar {
+  display: none;
+}
+.page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ================================================================
+   14. COVER PLACEHOLDER COLORS
+   ================================================================ */
+.cover-bg-1 { background: linear-gradient(135deg, #FFE5DD 0%, #FFF0EB 100%); }
+.cover-bg-2 { background: linear-gradient(135deg, #EBF3FA 0%, #F5FAFF 100%); }
+.cover-bg-3 { background: linear-gradient(135deg, #FFF6E8 0%, #FFFBF0 100%); }
+.cover-bg-4 { background: linear-gradient(135deg, #EDF8F1 0%, #F5FBF7 100%); }
+.cover-bg-5 { background: linear-gradient(135deg, #F5EDF8 0%, #FBF7FC 100%); }
+.cover-bg-6 { background: linear-gradient(135deg, #FFF0F0 0%, #FFF8F8 100%); }
+</style>
+</head>
+<body>
+
+<div class="device-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="icons">
+      <!-- Signal -->
+      <svg viewBox="0 0 18 18" fill="none">
+        <rect x="1" y="12" width="3" height="5" rx="0.5" fill="#2D2520"/>
+        <rect x="5.5" y="9" width="3" height="8" rx="0.5" fill="#2D2520"/>
+        <rect x="10" y="5" width="3" height="12" rx="0.5" fill="#2D2520"/>
+        <rect x="14.5" y="1" width="3" height="16" rx="0.5" fill="#2D2520"/>
+      </svg>
+      <!-- WiFi -->
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 14.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="#2D2520"/>
+        <path d="M5 11.5a5 5 0 018 0" stroke="#2D2520" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M2.5 8.5a8.5 8.5 0 0113 0" stroke="#2D2520" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <!-- Battery -->
+      <svg viewBox="0 0 28 14" fill="none">
+        <rect x="0.5" y="0.5" width="23" height="13" rx="2.5" stroke="#2D2520" stroke-width="1"/>
+        <rect x="25" y="4" width="2.5" height="6" rx="1" fill="#2D2520"/>
+        <rect x="2" y="2" width="20" height="10" rx="1.5" fill="#2D2520"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app-shell">
+    <div class="page-container">
+
+      <!-- ============================================================
+           PAGE 1: HOME / 副本广场
+           ============================================================ -->
+      <div class="page active" id="page-home">
+        <div class="home-header">
+          <p class="greeting">下午好，冒险者</p>
+          <h1 class="hero-title">人生副本</h1>
+          <p class="hero-subtitle">记录你的每一段旅程</p>
+        </div>
+
+        <div class="home-search">
+          <span class="search-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+          </span>
+          <input class="search-box" type="text" placeholder="搜索副本名称..." readonly>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="stat-item">
+            <div class="stat-num">5</div>
+            <div class="stat-label">进行中</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">12</div>
+            <div class="stat-label">已完成</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">47</div>
+            <div class="stat-label">总节点</div>
+          </div>
+        </div>
+
+        <!-- Recent Instances -->
+        <div class="home-section">
+          <div class="section-head">
+            <span class="section-title">最近副本</span>
+            <button class="section-more">查看全部</button>
+          </div>
+
+          <div class="instance-list">
+            <!-- Instance Card 1: 恋爱副本 (Legendary) -->
+            <div class="instance-card instance-card--legendary" onclick="navigateTo('page-detail')">
+              <div class="cover cover-bg-1">
+                <div class="cover-placeholder">
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M24 42S6 30 6 18a9 9 0 0118-1 9 9 0 0118 1c0 12-18 24-18 24z" fill="#E8725A" opacity="0.3"/>
+                  </svg>
+                </div>
+                <div class="cover-gradient"></div>
+                <span class="rarity-badge rarity-badge--legendary">传说</span>
+              </div>
+              <div class="body">
+                <div class="card-top">
+                  <span class="type-tag type-tag--life">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M8 14s-6-4.35-6-8.5A3.5 3.5 0 018 3a3.5 3.5 0 016 2.5C14 9.65 8 14 8 14z"/>
+                    </svg>
+                    生活副本
+                  </span>
+                </div>
+                <div class="card-title">和你的恋爱副本</div>
+                <div class="card-desc">从 2023 年秋天开始的故事，记录我们在一起的每一个重要时刻。</div>
+                <div class="card-meta">
+                  <span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>
+                    2023.09.15 开始
+                  </span>
+                  <span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 2v2m0 8v2M2 8h2m8 0h2"/></svg>
+                    23 个节点
+                  </span>
+                </div>
+                <div class="xp-row">
+                  <span class="xp-label">Lv.5</span>
+                  <div class="xp-bar">
+                    <div class="fill" style="width: 72%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Instance Card 2: 旅行副本 -->
+            <div class="instance-card" onclick="navigateTo('page-detail')">
+              <div class="cover cover-bg-2">
+                <div class="cover-placeholder">
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M24 6L6 16v18l18 10 18-10V16L24 6z" fill="#5A9FD4" fill-opacity="0.2" stroke="#5A9FD4" stroke-width="1.5" stroke-opacity="0.4"/>
+                  </svg>
+                </div>
+                <div class="cover-gradient"></div>
+                <span class="rarity-badge rarity-badge--rare">稀有</span>
+              </div>
+              <div class="body">
+                <div class="card-top">
+                  <span class="type-tag type-tag--travel">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                      <circle cx="8" cy="8" r="6"/>
+                      <path d="M2 8h12M8 2a10 10 0 010 12M8 2a10 10 0 000 12"/>
+                    </svg>
+                    旅行副本
+                  </span>
+                </div>
+                <div class="card-title">云南自驾环线</div>
+                <div class="card-desc">大理-丽江-香格里拉-泸沽湖，七天的公路旅行记忆。</div>
+                <div class="card-meta">
+                  <span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>
+                    2024.03.20 开始
+                  </span>
+                  <span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 2v2m0 8v2M2 8h2m8 0h2"/></svg>
+                    8 个节点
+                  </span>
+                </div>
+                <div class="xp-row">
+                  <span class="xp-label">Lv.3</span>
+                  <div class="xp-bar">
+                    <div class="fill" style="width: 45%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Instance Card 3: 学习副本 -->
+            <div class="instance-card" onclick="navigateTo('page-detail')">
+              <div class="cover cover-bg-4">
+                <div class="cover-placeholder">
+                  <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M8 6h32v32H8z" fill="#5CB870" opacity="0.15" rx="3"/>
+                    <path d="M14 14h20M14 22h16M14 30h12" stroke="#5CB870" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="cover-gradient"></div>
+                <span class="rarity-badge rarity-badge--uncommon">优秀</span>
+              </div>
+              <div class="body">
+                <div class="card-top">
+                  <span class="type-tag type-tag--study">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M2 3h12l-1 10H3L2 3z"/><path d="M5 3V1h6v2"/>
+                    </svg>
+                    学习副本
+                  </span>
+                </div>
+                <div class="card-title">日语 N2 备考</div>
+                <div class="card-desc">从零基础到 N2，记录每天的学习进度和心得。</div>
+                <div class="card-meta">
+                  <span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg>
+                    2024.01.10 开始
+                  </span>
+                  <span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 2v2m0 8v2M2 8h2m8 0h2"/></svg>
+                    15 个节点
+                  </span>
+                </div>
+                <div class="xp-row">
+                  <span class="xp-label">Lv.4</span>
+                  <div class="xp-bar">
+                    <div class="fill" style="width: 60%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 2: INSTANCE DETAIL / 副本详情时间线
+           ============================================================ -->
+      <div class="page" id="page-detail">
+        <div class="page-header">
+          <button class="back-btn" onclick="navigateBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2D2520" stroke-width="2" stroke-linecap="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <span class="title">和你的恋爱副本</span>
+          <button class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6B5E54" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="detail-header">
+          <div class="detail-title-row">
+            <span class="type-tag type-tag--life">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <path d="M8 14s-6-4.35-6-8.5A3.5 3.5 0 018 3a3.5 3.5 0 016 2.5C14 9.65 8 14 8 14z"/>
+              </svg>
+              生活副本
+            </span>
+            <span class="rarity-badge rarity-badge--legendary">传说</span>
+          </div>
+          <h1 class="detail-title">和你的恋爱副本</h1>
+          <p class="detail-desc">从 2023 年秋天开始的故事，记录我们在一起的每一个重要时刻。</p>
+          <div class="detail-meta-row">
+            <span class="node-count">
+              <svg viewBox="0 0 16 16" fill="none" stroke="#9B8E84" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 2v2m0 8v2M2 8h2m8 0h2"/></svg>
+              23 个节点
+            </span>
+            <span>2023.09.15 至今</span>
+          </div>
+          <div class="xp-row" style="margin-top: 12px;">
+            <span class="xp-label">Lv.5</span>
+            <div class="xp-bar">
+              <div class="fill" style="width: 72%"></div>
+            </div>
+            <span style="font: var(--text-caption); color: var(--color-text-tertiary);">360 / 500 XP</span>
+          </div>
+        </div>
+
+        <div class="timeline-container">
+          <div class="timeline">
+
+            <!-- Timeline Node 1: 里程碑 — 开始 -->
+            <div class="timeline-node timeline-node--milestone" onclick="navigateTo('page-node-detail')">
+              <div class="node-date">2023 年 9 月 15 日 · 星期五</div>
+              <div class="node-card">
+                <div class="node-cover cover-bg-1">
+                  <div class="node-cover-placeholder">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <path d="M20 35S8 27 8 17a6 6 0 0112-1 6 6 0 0112 1c0 10-12 18-12 18z" fill="#E8725A" opacity="0.25"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="node-content">
+                  <span class="milestone-badge">
+                    <svg viewBox="0 0 12 12" fill="#E5A44D" width="12" height="12"><polygon points="6,0 7.5,4.5 12,4.5 8.5,7.5 10,12 6,9 2,12 3.5,7.5 0,4.5 4.5,4.5"/></svg>
+                    里程碑
+                  </span>
+                  <div class="node-title">故事的开始</div>
+                  <div class="node-location">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="#9B8E84" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                      <circle cx="8" cy="6" r="1.5"/>
+                    </svg>
+                    南京 · 先锋书店
+                  </div>
+                  <div class="node-text">
+                    在先锋书店的书架间，你递给我一本村上春树。我不知道那是故事的开始，还是只是另一个普通的周五下午。后来我才知道，那天阳光很好。
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline Node 2 -->
+            <div class="timeline-node timeline-node--active" onclick="navigateTo('page-node-detail')">
+              <div class="node-date">2023 年 10 月 3 日 · 星期二</div>
+              <div class="node-card">
+                <div class="node-cover cover-bg-3">
+                  <div class="node-cover-placeholder">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <circle cx="20" cy="18" r="8" fill="#E5A44D" opacity="0.2"/>
+                      <path d="M14 32 Q20 26 26 32" stroke="#E5A44D" stroke-width="1.5" fill="none" opacity="0.3"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="node-content">
+                  <div class="node-title">第一次一起看日落</div>
+                  <div class="node-location">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="#9B8E84" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                      <circle cx="8" cy="6" r="1.5"/>
+                    </svg>
+                    杭州 · 西湖断桥
+                  </div>
+                  <div class="node-text">
+                    国庆假期的第二天，西湖边人很多，但我们找到了一处安静的地方。夕阳把湖面染成了金色，你说这是你见过最好看的日落。
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline Node 3 -->
+            <div class="timeline-node" onclick="navigateTo('page-node-detail')">
+              <div class="node-date">2023 年 12 月 25 日 · 星期一</div>
+              <div class="node-card">
+                <div class="node-content">
+                  <div class="node-title">圣诞惊喜</div>
+                  <div class="node-location">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="#9B8E84" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                      <circle cx="8" cy="6" r="1.5"/>
+                    </svg>
+                    南京 · 颐和路
+                  </div>
+                  <div class="node-text">
+                    你在颐和路的梧桐树下等我，手里拿着一个很大的袋子。打开发现是我念叨了很久的那条围巾，还有一封手写信。信的最后一句是：「以后每个冬天都有我。」
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline Node 4 -->
+            <div class="timeline-node" onclick="navigateTo('page-node-detail')">
+              <div class="node-date">2024 年 2 月 10 日 · 星期六</div>
+              <div class="node-card">
+                <div class="node-cover cover-bg-6">
+                  <div class="node-cover-placeholder">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <rect x="8" y="12" width="24" height="18" rx="2" fill="#E05A5A" opacity="0.15"/>
+                      <path d="M14 20 L20 28 L28 16" stroke="#E05A5A" stroke-width="2" opacity="0.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="node-content">
+                  <div class="node-title">一起过第一个春节</div>
+                  <div class="node-location">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="#9B8E84" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                      <circle cx="8" cy="6" r="1.5"/>
+                    </svg>
+                    南京 · 玄武湖公园
+                  </div>
+                  <div class="node-text">
+                    除夕夜在玄武湖边放烟花，你的家人也在。虽然很紧张，但他们都很友善。烟花倒映在湖面上的时候，你在旁边笑了。
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline Node 5: 里程碑 — 周年 -->
+            <div class="timeline-node timeline-node--milestone" onclick="navigateTo('page-node-detail')">
+              <div class="node-date">2024 年 9 月 15 日 · 星期日</div>
+              <div class="node-card">
+                <div class="node-content">
+                  <span class="milestone-badge">
+                    <svg viewBox="0 0 12 12" fill="#E5A44D" width="12" height="12"><polygon points="6,0 7.5,4.5 12,4.5 8.5,7.5 10,12 6,9 2,12 3.5,7.5 0,4.5 4.5,4.5"/></svg>
+                    里程碑
+                  </span>
+                  <div class="node-title">一周年纪念日</div>
+                  <div class="node-location">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="#9B8E84" stroke-width="1.5" stroke-linecap="round">
+                      <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                      <circle cx="8" cy="6" r="1.5"/>
+                    </svg>
+                    南京 · 紫金山
+                  </div>
+                  <div class="node-text">
+                    整整一年了。我们回到故事开始的那家书店，又走了一遍那条路。紫金山的夕阳和一年前一样好看。
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add Node -->
+            <div class="timeline-node timeline-node--add" onclick="navigateTo('page-add-node')">
+              <div class="add-node-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>添加新节点</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 3: ADD NODE
+           ============================================================ -->
+      <div class="page" id="page-add-node">
+        <div class="page-header">
+          <button class="back-btn" onclick="navigateBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2D2520" stroke-width="2" stroke-linecap="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <span class="title">添加节点</span>
+          <div style="width:32px"></div>
+        </div>
+
+        <div class="form-page">
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 4v4l3 2"/><circle cx="8" cy="8" r="6"/></svg>
+              时间
+            </label>
+            <input class="form-input" type="text" value="2024 年 11 月 20 日 · 星期三" readonly>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+              地点
+            </label>
+            <div class="location-picker">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                <circle cx="8" cy="6" r="1.5"/>
+              </svg>
+              <span class="location-text">选择或输入地点...</span>
+              <svg class="location-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <path d="M6 4l4 4-4 4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="2"/><circle cx="5.5" cy="5.5" r="1.5"/><path d="M14 10l-4-4-6 6"/></svg>
+              照片
+            </label>
+            <div class="photo-upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="8.5" cy="8.5" r="2"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span class="upload-text">点击上传照片</span>
+              <span class="upload-hint">支持 JPG、PNG，最多 9 张</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2H4a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2z"/><path d="M5 6h6M5 9h4"/></svg>
+              标题
+            </label>
+            <input class="form-input" type="text" placeholder="给这个时刻起个名字...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2h8l-1 12H5L4 2z"/><path d="M6 2V1h4v1"/></svg>
+              描述
+            </label>
+            <textarea class="form-input form-textarea" placeholder="写下这个时刻的故事和感受..."></textarea>
+          </div>
+
+          <button class="form-submit" onclick="navigateBack()">保存节点</button>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 4: NODE DETAIL
+           ============================================================ -->
+      <div class="page" id="page-node-detail">
+        <div class="page-header" style="background: transparent; position: absolute; left: 0; right: 0; z-index: 10; border-bottom: none;">
+          <button class="back-btn" style="background: rgba(255,255,255,0.8); border-radius: 50%;" onclick="navigateBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2D2520" stroke-width="2" stroke-linecap="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <div style="width:32px"></div>
+          <button class="action-btn" style="background: rgba(255,255,255,0.8); border-radius: 50%;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2D2520" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="node-detail-cover cover-bg-3">
+          <div class="node-detail-cover" style="height: 300px;">
+            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, #FFF6E8 0%, #FFE5DD 50%, #FFF0EB 100%);">
+              <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
+                <circle cx="40" cy="32" r="16" fill="#E5A44D" opacity="0.15"/>
+                <path d="M40 8v6" stroke="#E5A44D" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+                <path d="M20 16l4 4" stroke="#E5A44D" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+                <path d="M60 16l-4 4" stroke="#E5A44D" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+                <path d="M20 68 Q40 48 60 68" fill="#E5A44D" opacity="0.08"/>
+                <rect x="18" y="48" width="44" height="24" rx="3" fill="#E5A44D" opacity="0.1"/>
+              </svg>
+            </div>
+          </div>
+          <div class="cover-overlay"></div>
+        </div>
+
+        <div class="node-detail-body">
+          <div class="node-detail-card">
+            <div class="node-detail-date">
+              <svg viewBox="0 0 14 14" fill="none" stroke="#9B8E84" stroke-width="1.5" width="14" height="14" style="vertical-align: -2px; margin-right: 4px;"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 1.5"/></svg>
+              2023 年 10 月 3 日 · 星期二 · 下午 5:47
+            </div>
+            <h2 class="node-detail-title">第一次一起看日落</h2>
+            <div class="node-detail-location">
+              <svg viewBox="0 0 16 16" fill="none" stroke="#E5A44D" stroke-width="1.5" stroke-linecap="round">
+                <path d="M8 1C5.24 1 3 3.24 3 6c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/>
+                <circle cx="8" cy="6" r="1.5"/>
+              </svg>
+              杭州 · 西湖断桥
+            </div>
+            <div class="node-detail-text">
+              国庆假期的第二天，西湖边人很多，但我们找到了一处安静的地方。夕阳把湖面染成了金色，你说这是你见过最好看的日落。
+              <br><br>
+              那天风很大，你的头发一直往我脸上飘。我们坐在湖边的长椅上，你靠在我肩上，什么话都没有说。有时候最好的时光就是这样，不需要做什么，只要在一起就好。
+              <br><br>
+              回程的路上，你说想吃糖炒栗子。我们在路边的小摊买了一袋，边走边吃。栗子很甜，和你一样。
+            </div>
+            <div class="node-detail-actions">
+              <button class="node-action-btn node-action-btn--primary">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11.33 2A3 3 0 006.67 2 3 3 0 002 5.33C2 9.33 8 14 8 14s6-4.67 6-8.67A3 3 0 0011.33 2z"/></svg>
+                收藏
+              </button>
+              <button class="node-action-btn node-action-btn--secondary">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 12V4l4 3 4-3v8"/></svg>
+                标记里程碑
+              </button>
+              <button class="node-action-btn node-action-btn--secondary">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="3" r="2"/><path d="M3 14l2-6 3 2 3-2 2 6"/></svg>
+                分享
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 5: CREATE INSTANCE
+           ============================================================ -->
+      <div class="page" id="page-create">
+        <div class="page-header">
+          <button class="back-btn" onclick="navigateBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2D2520" stroke-width="2" stroke-linecap="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <span class="title">创建副本</span>
+          <div style="width:32px"></div>
+        </div>
+
+        <div class="create-form-header">
+          <div class="emoji-hero">
+            <svg viewBox="0 0 56 56" fill="none" width="56" height="56">
+              <circle cx="28" cy="28" r="26" fill="var(--color-primary-soft)"/>
+              <path d="M28 12v32M12 28h32" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="28" cy="28" r="16" stroke="var(--color-primary)" stroke-width="1" opacity="0.3"/>
+            </svg>
+          </div>
+          <h2>开始新的冒险</h2>
+          <p>选择副本类型，开始记录一段新的人生副本</p>
+        </div>
+
+        <div class="form-page" style="padding-top: 0;">
+          <!-- Type selector -->
+          <div class="form-group">
+            <label class="form-label">选择副本类型</label>
+            <div class="type-selector">
+              <div class="type-option selected">
+                <div class="type-icon" style="background: rgba(232,114,90,0.12);">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#C04A35" stroke-width="1.5" stroke-linecap="round"><path d="M10 18s-7-5-7-9.5A4.5 4.5 0 0110 4a4.5 4.5 0 017 4.5C17 13 10 18 10 18z"/></svg>
+                </div>
+                <span class="type-name">生活</span>
+              </div>
+              <div class="type-option">
+                <div class="type-icon" style="background: rgba(90,159,212,0.12);">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#3A7FC0" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2 2 3 4.5 3 7s-1 5-3 7M10 3c-2 2-3 4.5-3 7s1 5 3 7"/></svg>
+                </div>
+                <span class="type-name">旅行</span>
+              </div>
+              <div class="type-option">
+                <div class="type-icon" style="background: rgba(92,184,112,0.12);">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#3D9450" stroke-width="1.5" stroke-linecap="round"><path d="M3 4h14l-1.5 13H4.5L3 4z"/><path d="M7 4V2.5a1 1 0 011-1h4a1 1 0 011 1V4"/></svg>
+                </div>
+                <span class="type-name">学习</span>
+              </div>
+              <div class="type-option">
+                <div class="type-icon" style="background: rgba(229,164,77,0.12);">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#C08530" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="14" height="10" rx="2"/><path d="M7 6V4a3 3 0 016 0v2"/></svg>
+                </div>
+                <span class="type-name">工作</span>
+              </div>
+              <div class="type-option">
+                <div class="type-icon" style="background: rgba(107,191,138,0.12);">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#3A9B5E" stroke-width="1.5" stroke-linecap="round"><path d="M10 3v14M7 6l3-3 3 3M7 14l3 3 3-3"/></svg>
+                </div>
+                <span class="type-name">健身</span>
+              </div>
+              <div class="type-option">
+                <div class="type-icon" style="background: rgba(176,136,196,0.12);">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#8A5FA0" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><circle cx="7" cy="9" r="1.5"/><circle cx="13" cy="9" r="1.5"/><path d="M7 13c1 1 2.5 1.5 3 1.5s2-.5 3-1.5"/></svg>
+                </div>
+                <span class="type-name">创作</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instance Name -->
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M6 6h4M6 9h3"/></svg>
+              副本名称
+            </label>
+            <input class="form-input" type="text" placeholder="给你的副本起个名字...">
+          </div>
+
+          <!-- Cover -->
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="2"/><circle cx="5.5" cy="5.5" r="1.5"/><path d="M14 10l-4-4-6 6"/></svg>
+              封面图
+            </label>
+            <div class="cover-upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="8.5" cy="8.5" r="2"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span>选择封面图片</span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label class="form-label">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2H4a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2z"/><path d="M5 6h6M5 9h4"/></svg>
+              简介
+            </label>
+            <textarea class="form-input form-textarea" placeholder="简单描述这个副本..." style="min-height: 80px;"></textarea>
+          </div>
+
+          <button class="form-submit" onclick="navigateTo('page-home'); switchTab('tab-home');">创建副本</button>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 6: ACHIEVEMENTS
+           ============================================================ -->
+      <div class="page" id="page-achievements">
+        <div class="achievements-header">
+          <h2>冒险者成就</h2>
+          <p style="font: var(--text-body-sm); color: var(--color-text-tertiary); margin-top: var(--space-1);">解锁成就，记录你的冒险历程</p>
+        </div>
+
+        <!-- Level Card -->
+        <div class="level-card">
+          <div class="level-top">
+            <div class="level-icon">5</div>
+            <div class="level-info">
+              <div class="level-label">冒险者 · Lv.5</div>
+              <div class="level-xp">累计 360 XP，距离下一级还需 140 XP</div>
+            </div>
+          </div>
+          <div class="level-xp-bar">
+            <div class="xp-bar">
+              <div class="fill" style="width: 72%"></div>
+            </div>
+            <span class="xp-text">360 / 500</span>
+          </div>
+        </div>
+
+        <!-- Achievement badges -->
+        <div class="home-section">
+          <div class="section-head">
+            <span class="section-title">已解锁</span>
+            <span class="section-more">6 / 10</span>
+          </div>
+        </div>
+        <div class="badge-grid">
+          <!-- Unlocked badges -->
+          <div class="badge-card badge-card--common">
+            <div class="badge-icon" style="background: rgba(92,184,112,0.12);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5CB870" stroke-width="2" stroke-linecap="round"><path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z"/></svg>
+            </div>
+            <div class="badge-title">冒险新手</div>
+            <div class="badge-desc">创建第一个副本</div>
+          </div>
+
+          <div class="badge-card badge-card--common">
+            <div class="badge-icon" style="background: rgba(90,159,212,0.12);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5A9FD4" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
+            <div class="badge-title">记录者</div>
+            <div class="badge-desc">添加第一个节点</div>
+          </div>
+
+          <div class="badge-card badge-card--uncommon">
+            <div class="badge-icon" style="background: rgba(232,114,90,0.12);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8725A" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <div class="badge-title">摄影师</div>
+            <div class="badge-desc">添加第一张照片</div>
+          </div>
+
+          <div class="badge-card badge-card--rare">
+            <div class="badge-icon" style="background: rgba(90,159,212,0.12);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5A9FD4" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10 15 15 0 014-10z"/></svg>
+            </div>
+            <div class="badge-title">探险家</div>
+            <div class="badge-desc">3 个不同类型副本</div>
+          </div>
+
+          <div class="badge-card badge-card--epic">
+            <div class="badge-icon" style="background: rgba(229,164,77,0.12);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E5A44D" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="badge-title">传说猎人</div>
+            <div class="badge-desc">获得传说副本</div>
+          </div>
+
+          <div class="badge-card badge-card--legendary">
+            <div class="badge-icon" style="background: rgba(229,164,77,0.15);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E5A44D" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="badge-title">连续记录</div>
+            <div class="badge-desc">连续 7 天记录</div>
+          </div>
+
+          <!-- Locked badges -->
+          <div class="badge-card badge-card--locked">
+            <div class="badge-icon" style="background: var(--color-bg-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9B8E84" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            </div>
+            <div class="badge-title">学霸</div>
+            <div class="badge-desc">完成学习副本</div>
+          </div>
+
+          <div class="badge-card badge-card--locked">
+            <div class="badge-icon" style="background: var(--color-bg-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9B8E84" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            </div>
+            <div class="badge-title">旅行家</div>
+            <div class="badge-desc">完成旅行副本</div>
+          </div>
+
+          <div class="badge-card badge-card--locked">
+            <div class="badge-icon" style="background: var(--color-bg-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9B8E84" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            </div>
+            <div class="badge-title">全满贯</div>
+            <div class="badge-desc">所有类型各一个</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 7: PROFILE
+           ============================================================ -->
+      <div class="page" id="page-profile">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <svg viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="14" r="7" fill="#E8DDD4"/>
+              <path d="M6 32c0-6.627 5.373-12 12-12s12 5.373 12 12" fill="#E8DDD4"/>
+            </svg>
+          </div>
+          <div class="profile-name">冒险者小林</div>
+          <div class="profile-bio">记录生活的每一个精彩瞬间</div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="stat-num">17</div>
+              <div class="stat-label">副本</div>
+            </div>
+            <div class="profile-stat">
+              <div class="stat-num">47</div>
+              <div class="stat-label">节点</div>
+            </div>
+            <div class="profile-stat">
+              <div class="stat-num">6</div>
+              <div class="stat-label">成就</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-menu">
+          <div class="menu-group">
+            <button class="menu-item">
+              <div class="menu-icon" style="background: var(--color-primary-soft);">
+                <svg viewBox="0 0 18 18" fill="none" stroke="#E8725A" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="14" height="14" rx="3"/><circle cx="6.5" cy="6.5" r="1.5"/><path d="M16 11l-4-4L4 15"/></svg>
+              </div>
+              <span class="menu-text">我的相册</span>
+              <svg class="menu-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+            <button class="menu-item">
+              <div class="menu-icon" style="background: var(--color-secondary-soft);">
+                <svg viewBox="0 0 18 18" fill="none" stroke="#E5A44D" stroke-width="1.5" stroke-linecap="round"><path d="M9 2L3 5v4c0 4.5 2.7 7.8 6 9 3.3-1.2 6-4.5 6-9V5L9 2z"/></svg>
+              </div>
+              <span class="menu-text">数据统计</span>
+              <svg class="menu-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+          </div>
+
+          <div class="menu-group">
+            <button class="menu-item">
+              <div class="menu-icon" style="background: var(--color-accent-soft);">
+                <svg viewBox="0 0 18 18" fill="none" stroke="#6BBF8A" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
+              </div>
+              <span class="menu-text">提醒设置</span>
+              <svg class="menu-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+            <button class="menu-item">
+              <div class="menu-icon" style="background: var(--color-accent-alt-soft);">
+                <svg viewBox="0 0 18 18" fill="none" stroke="#B088C4" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="3"/><path d="M9 2v3m0 8v3m-7-7h3m8 0h3"/></svg>
+              </div>
+              <span class="menu-text">主题与外观</span>
+              <svg class="menu-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+            <button class="menu-item">
+              <div class="menu-icon" style="background: var(--color-bg-sunken);">
+                <svg viewBox="0 0 18 18" fill="none" stroke="#6B5E54" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="3"/><path d="M9 2a10 10 0 010 14"/></svg>
+              </div>
+              <span class="menu-text">关于人生副本</span>
+              <svg class="menu-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-container -->
+
+    <!-- Tab Bar -->
+    <div class="tab-bar" id="tab-bar">
+      <!-- Home -->
+      <button class="tab-item active" id="tab-home" onclick="switchTab('tab-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 22V12h6v10" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="tab-label">首页</span>
+      </button>
+
+      <!-- Discover (placeholder, not used) -->
+      <button class="tab-item" id="tab-discover" onclick="switchTab('tab-discover')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="tab-label">广场</span>
+      </button>
+
+      <!-- Create (center) -->
+      <button class="tab-item tab-item--create" id="tab-create" onclick="navigateTo('page-create')">
+        <div class="create-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </div>
+        <span class="tab-label">创建</span>
+      </button>
+
+      <!-- Achievements -->
+      <button class="tab-item" id="tab-achievements" onclick="switchTab('tab-achievements')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="tab-label">成就</span>
+      </button>
+
+      <!-- Profile -->
+      <button class="tab-item" id="tab-profile" onclick="switchTab('tab-profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="tab-label">我的</span>
+      </button>
+    </div>
+
+  </div><!-- /app-shell -->
+</div><!-- /device-frame -->
+
+<!-- ================================================================
+     JAVASCRIPT — Page Navigation
+     ================================================================ -->
+<script>
+const pageHistory = ['page-home'];
+const tabPages = {
+  'tab-home': 'page-home',
+  'tab-discover': 'page-home', // placeholder
+  'tab-achievements': 'page-achievements',
+  'tab-profile': 'page-profile'
+};
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+  });
+  const target = document.getElementById(pageId);
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
+}
+
+function navigateTo(pageId) {
+  pageHistory.push(pageId);
+  showPage(pageId);
+
+  // Show/hide tab bar for sub-pages
+  const tabBar = document.getElementById('tab-bar');
+  const mainPages = ['page-home', 'page-achievements', 'page-profile'];
+  if (mainPages.includes(pageId)) {
+    tabBar.style.display = 'flex';
+  } else {
+    tabBar.style.display = 'none';
+  }
+}
+
+function navigateBack() {
+  if (pageHistory.length > 1) {
+    pageHistory.pop();
+    const prevPage = pageHistory[pageHistory.length - 1];
+    showPage(prevPage);
+
+    // Show/hide tab bar
+    const tabBar = document.getElementById('tab-bar');
+    const mainPages = ['page-home', 'page-achievements', 'page-profile'];
+    if (mainPages.includes(prevPage)) {
+      tabBar.style.display = 'flex';
+    } else {
+      tabBar.style.display = 'none';
+    }
+  }
+}
+
+function switchTab(tabId) {
+  // Update active state
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+
+  // Navigate to corresponding page
+  const pageId = tabPages[tabId];
+  if (pageId) {
+    // Reset history to just this page
+    pageHistory.length = 0;
+    pageHistory.push(pageId);
+    showPage(pageId);
+
+    // Ensure tab bar is visible
+    document.getElementById('tab-bar').style.display = 'flex';
+  }
+}
+</script>
+
+</body>
+</html>

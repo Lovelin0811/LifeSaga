@@ -1,0 +1,65 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/detail/detail",
+    "pages/add-node/add-node",
+    "pages/node-detail/node-detail",
+    "pages/create/create",
+    "pages/discover/discover",
+    "pages/achievements/achievements",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFFAF5",
+    "navigationBarTitleText": "人生副本",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFAF5",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#9B8E84",
+    "selectedColor": "#E8725A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/discover/discover",
+        "text": "广场",
+        "iconPath": "images/tab-discover.png",
+        "selectedIconPath": "images/tab-discover-active.png"
+      },
+      {
+        "pagePath": "pages/create/create",
+        "text": "创建",
+        "iconPath": "images/tab-create.png",
+        "selectedIconPath": "images/tab-create-active.png"
+      },
+      {
+        "pagePath": "pages/achievements/achievements",
+        "text": "成就",
+        "iconPath": "images/tab-achievement.png",
+        "selectedIconPath": "images/tab-achievement-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab-profile.png",
+        "selectedIconPath": "images/tab-profile-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "requiredPrivateInfos": ["chooseLocation"],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于记录节点发生的地点"
+    }
+  }
+}
