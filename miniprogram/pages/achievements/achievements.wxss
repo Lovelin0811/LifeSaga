@@ -209,6 +209,10 @@
   line-height: 1.3;
 }
 
+.badge-desc--locked {
+  color: var(--color-text-secondary);
+}
+
 .badge-card--locked .badge-name {
   color: var(--color-text-tertiary);
 }

@@ -45,7 +45,9 @@
         <text class="badge-icon">{{item.icon || '?'}}</text>
       </view>
       <text class="badge-name">{{item.name}}</text>
-      <text class="badge-desc">{{item.unlocked ? item.description : '???'}}</text>
+      <text class="badge-desc {{item.unlocked ? '' : 'badge-desc--locked'}}">
+        {{item.unlocked ? item.description : '解锁任务：' + item.description}}
+      </text>
     </view>
   </view>
 </view>
