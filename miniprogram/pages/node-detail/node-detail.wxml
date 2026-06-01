@@ -57,12 +57,12 @@
         <!-- 操作按钮行 -->
         <view class="detail-actions">
           <view class="action-btn action-btn-primary" bindtap="toggleFavorite">
-            <text class="action-icon">♡</text>
-            <text>收藏</text>
+            <text class="action-icon">{{node.favorited ? '♥' : '♡'}}</text>
+            <text>{{node.favorited ? '已收藏' : '收藏'}}</text>
           </view>
           <view class="action-btn action-btn-secondary" bindtap="toggleMilestone">
             <text class="action-icon">⚑</text>
-            <text>里程碑</text>
+            <text>{{node.milestone ? '取消里程碑' : '里程碑'}}</text>
           </view>
           <view class="action-btn action-btn-secondary" bindtap="shareNode">
             <text class="action-icon">⇧</text>

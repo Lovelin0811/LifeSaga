@@ -1,12 +1,14 @@
 package com.lovelin.lifesaga.controller;
 
 import com.lovelin.lifesaga.dto.UserVO;
+import com.lovelin.lifesaga.dto.AlbumItemVO;
 import com.lovelin.lifesaga.model.User;
 import com.lovelin.lifesaga.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -34,5 +36,12 @@ public class UserController {
         Long userId = getUserId(request);
         User updated = userService.update(userId, user);
         return Map.of("code", 200, "data", UserVO.from(updated), "message", "success");
+    }
+
+    @GetMapping("/me/albums")
+    public Map<String, Object> albums(HttpServletRequest request) {
+        Long userId = getUserId(request);
+        List<AlbumItemVO> albums = userService.listAlbums(userId);
+        return Map.of("code", 200, "data", albums, "message", "success");
     }
 }

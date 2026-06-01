@@ -93,14 +93,43 @@ Page({
   },
 
   toggleFavorite() {
-    wx.showToast({ title: '收藏功能开发中', icon: 'none' });
+    if (!this.data.node) return;
+    wx.showLoading({ title: '处理中' });
+    api.toggleNodeFavorite(this.sagaId, this.nodeId)
+      .then((data) => {
+        this.setData({ 'node.favorited': !!data.favorited });
+        wx.showToast({ title: data.favorited ? '已收藏' : '已取消', icon: 'none' });
+      })
+      .catch((err) => {
+        wx.showToast({ title: err.message || '操作失败', icon: 'none' });
+      })
+      .finally(() => wx.hideLoading());
   },
 
   toggleMilestone() {
-    wx.showToast({ title: '里程碑功能开发中', icon: 'none' });
+    if (!this.data.node) return;
+    wx.showLoading({ title: '处理中' });
+    api.toggleNodeMilestone(this.sagaId, this.nodeId)
+      .then((node) => {
+        this.setData({ node: { ...node, photos: this.data.node.photos } });
+        wx.showToast({ title: node.milestone ? '已设为里程碑' : '已取消里程碑', icon: 'none' });
+      })
+      .catch((err) => {
+        wx.showToast({ title: err.message || '操作失败', icon: 'none' });
+      })
+      .finally(() => wx.hideLoading());
   },
 
   shareNode() {
-    wx.showToast({ title: '分享功能开发中', icon: 'none' });
+    wx.showShareMenu({ withShareTicket: true });
+    wx.showToast({ title: '点击右上角分享', icon: 'none' });
+  },
+
+  onShareAppMessage() {
+    const node = this.data.node;
+    return {
+      title: node?.title || '节点分享',
+      path: `/pages/node-detail/node-detail?id=${this.nodeId}&sagaId=${this.sagaId}`,
+    };
   },
 });

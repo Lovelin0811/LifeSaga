@@ -2,6 +2,7 @@ package com.lovelin.lifesaga.service;
 
 import com.lovelin.lifesaga.model.Saga;
 import com.lovelin.lifesaga.model.SagaNode;
+import com.lovelin.lifesaga.repository.NodeFavoriteRepository;
 import com.lovelin.lifesaga.repository.NodeRepository;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,7 @@ class NodeServiceTest {
 
         NodeService nodeService = new NodeService(
                 nodeRepository,
+                new FakeNodeFavoriteRepository(),
                 new FakeSagaService(saga),
                 new FakeAchievementService()
         );
@@ -49,7 +51,7 @@ class NodeServiceTest {
         nodeRepository.findByIdResult = Optional.of(node);
 
         FakeSagaService sagaService = new FakeSagaService(saga);
-        NodeService nodeService = new NodeService(nodeRepository, sagaService, new FakeAchievementService());
+        NodeService nodeService = new NodeService(nodeRepository, new FakeNodeFavoriteRepository(), sagaService, new FakeAchievementService());
 
         nodeService.delete(1L, 99L);
 
@@ -75,6 +77,7 @@ class NodeServiceTest {
 
         NodeService nodeService = new NodeService(
                 nodeRepository,
+                new FakeNodeFavoriteRepository(),
                 new FakeSagaService(saga),
                 new FakeAchievementService()
         );
@@ -126,7 +129,7 @@ class NodeServiceTest {
         private final java.util.List<Long> updatedSagaNodeCounts = new java.util.ArrayList<>();
 
         private FakeSagaService(Saga saga) {
-            super(null, null, null);
+            super(null, null, null, null);
             this.saga = saga;
         }
 
@@ -144,6 +147,32 @@ class NodeServiceTest {
     private static final class FakeAchievementService extends AchievementService {
         private FakeAchievementService() {
             super(null, null, null, null, null);
+        }
+    }
+
+    private static final class FakeNodeFavoriteRepository extends NodeFavoriteRepository {
+        private FakeNodeFavoriteRepository() {
+            super(null);
+        }
+
+        @Override
+        public boolean isFavorited(Long userId, Long nodeId) {
+            return false;
+        }
+
+        @Override
+        public boolean toggle(Long userId, Long nodeId) {
+            return true;
+        }
+
+        @Override
+        public int deleteByNodeId(Long nodeId) {
+            return 1;
+        }
+
+        @Override
+        public int deleteBySagaId(Long sagaId) {
+            return 1;
         }
     }
 }

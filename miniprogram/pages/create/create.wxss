@@ -203,3 +203,28 @@
   font-size: 28rpx;
   color: var(--color-text-tertiary);
 }
+
+.public-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+  background: var(--color-bg-surface);
+  border: 3rpx solid var(--color-border-subtle);
+  border-radius: 24rpx;
+}
+
+.public-switch-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4rpx;
+}
+
+.public-switch-desc {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}

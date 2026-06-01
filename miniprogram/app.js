@@ -5,10 +5,12 @@ App({
   globalData: {
     userInfo: null,
     token: '',
+    theme: 'light',
   },
 
   onLaunch() {
     this.restoreSession();
+    this.restoreTheme();
   },
 
   // 恢复登录态
@@ -18,6 +20,27 @@ App({
       this.globalData.token = token;
       this.globalData.userInfo = wx.getStorageSync('userInfo') || null;
     }
+  },
+
+  restoreTheme() {
+    const theme = wx.getStorageSync('lifesaga_theme') || 'light';
+    this.setTheme(theme);
+  },
+
+  setTheme(theme) {
+    this.globalData.theme = theme;
+    const isDark = theme === 'dark';
+    wx.setNavigationBarColor({
+      frontColor: isDark ? '#ffffff' : '#000000',
+      backgroundColor: isDark ? '#1F1A17' : '#FFFAF5',
+      fail: () => {},
+    });
+    wx.setBackgroundColor({
+      backgroundColor: isDark ? '#1F1A17' : '#FFFAF5',
+      backgroundColorTop: isDark ? '#1F1A17' : '#FFFAF5',
+      backgroundColorBottom: isDark ? '#1F1A17' : '#FFFAF5',
+      fail: () => {},
+    });
   },
 
   // 登录

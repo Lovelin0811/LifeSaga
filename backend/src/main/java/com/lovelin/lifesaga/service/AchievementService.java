@@ -85,6 +85,22 @@ public class AchievementService {
     }
 
     @Transactional
+    public List<Achievement> checkAchievementsOnSagaComplete(Long userId, String type) {
+        List<Achievement> newlyUnlocked = new ArrayList<>();
+        if (type != null && !type.isBlank()) {
+            tryUnlock(userId, "completed_type_" + type, newlyUnlocked);
+        }
+        tryUnlock(userId, "all_types_completed", () -> {
+            String[] types = {"life", "travel", "study", "work", "health", "relationship"};
+            for (String sagaType : types) {
+                if (sagaRepository.countCompletedByType(userId, sagaType) == 0) return false;
+            }
+            return true;
+        }, newlyUnlocked);
+        return newlyUnlocked;
+    }
+
+    @Transactional
     public List<Achievement> checkAchievementsOnNodeCreate(Long userId, Long sagaId) {
         List<Achievement> newlyUnlocked = new ArrayList<>();
         tryUnlock(userId, "first_node", newlyUnlocked);

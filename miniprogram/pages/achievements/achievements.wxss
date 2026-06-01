@@ -169,6 +169,12 @@
   box-shadow: 0 0 24rpx rgba(176,136,196,0.2);
 }
 
+.badge-card--mythic {
+  border: 4rpx solid var(--rpg-mythic) !important;
+  background: linear-gradient(180deg, rgba(232,114,90,0.08) 0%, var(--color-bg-surface) 100%);
+  box-shadow: 0 0 24rpx rgba(232,114,90,0.25);
+}
+
 .badge-card--uncommon {
   border: 3rpx solid var(--rpg-uncommon) !important;
 }

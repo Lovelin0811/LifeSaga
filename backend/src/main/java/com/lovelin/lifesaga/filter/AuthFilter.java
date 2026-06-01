@@ -25,8 +25,8 @@ public class AuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // 放行 /api/auth/** 路径
-        if (path.startsWith("/api/auth/")) {
+        // 放行 /api/auth/** 和公开广场
+        if (path.startsWith("/api/auth/") || path.startsWith("/api/sagas/public")) {
             filterChain.doFilter(request, response);
             return;
         }

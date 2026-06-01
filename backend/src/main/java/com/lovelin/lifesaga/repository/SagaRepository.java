@@ -17,7 +17,7 @@ public class SagaRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String BASE_COLUMNS = "id, user_id, name, type, cover_url, description, status, node_count, rarity, started_at, ended_at, created_at, updated_at";
+    private static final String BASE_COLUMNS = "id, user_id, name, type, cover_url, description, status, is_public, node_count, rarity, started_at, ended_at, created_at, updated_at";
 
     public SagaRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -32,6 +32,7 @@ public class SagaRepository {
         saga.setCoverUrl(rs.getString("cover_url"));
         saga.setDescription(rs.getString("description"));
         saga.setStatus(rs.getString("status"));
+        saga.setPublic(rs.getBoolean("is_public"));
         saga.setNodeCount(rs.getInt("node_count"));
         saga.setRarity(rs.getString("rarity"));
         java.sql.Timestamp startedAt = rs.getTimestamp("started_at");
@@ -48,6 +49,33 @@ public class SagaRepository {
         return jdbcTemplate.query(sql, this::mapRow, userId);
     }
 
+    public List<Saga> findByUserId(Long userId, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT " + BASE_COLUMNS + " FROM sagas WHERE user_id = ?");
+        List<Object> params = new java.util.ArrayList<>();
+        params.add(userId);
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND (name LIKE ? OR description LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+        }
+        sql.append(" ORDER BY updated_at DESC");
+        return jdbcTemplate.query(sql.toString(), this::mapRow, params.toArray());
+    }
+
+    public List<Saga> findPublic(String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT " + BASE_COLUMNS + " FROM sagas WHERE is_public = 1");
+        List<Object> params = new java.util.ArrayList<>();
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND (name LIKE ? OR description LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+        }
+        sql.append(" ORDER BY updated_at DESC");
+        return jdbcTemplate.query(sql.toString(), this::mapRow, params.toArray());
+    }
+
     public Optional<Saga> findById(Long id) {
         String sql = "SELECT " + BASE_COLUMNS + " FROM sagas WHERE id = ?";
         List<Saga> list = jdbcTemplate.query(sql, this::mapRow, id);
@@ -55,7 +83,7 @@ public class SagaRepository {
     }
 
     public Saga save(Saga saga) {
-        String sql = "INSERT INTO sagas (user_id, name, type, cover_url, description, status, node_count, rarity, started_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO sagas (user_id, name, type, cover_url, description, status, is_public, node_count, rarity, started_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -65,12 +93,13 @@ public class SagaRepository {
             ps.setString(4, saga.getCoverUrl());
             ps.setString(5, saga.getDescription());
             ps.setString(6, saga.getStatus());
-            ps.setInt(7, saga.getNodeCount());
-            ps.setString(8, saga.getRarity());
+            ps.setBoolean(7, saga.isPublic());
+            ps.setInt(8, saga.getNodeCount());
+            ps.setString(9, saga.getRarity());
             if (saga.getStartedAt() != null) {
-                ps.setTimestamp(9, java.sql.Timestamp.valueOf(saga.getStartedAt()));
+                ps.setTimestamp(10, java.sql.Timestamp.valueOf(saga.getStartedAt()));
             } else {
-                ps.setNull(9, java.sql.Types.TIMESTAMP);
+                ps.setNull(10, java.sql.Types.TIMESTAMP);
             }
             return ps;
         }, keyHolder);
@@ -79,10 +108,10 @@ public class SagaRepository {
     }
 
     public int update(Saga saga) {
-        String sql = "UPDATE sagas SET name = ?, type = ?, cover_url = ?, description = ?, status = ?, node_count = ?, rarity = ?, ended_at = ? WHERE id = ?";
+        String sql = "UPDATE sagas SET name = ?, type = ?, cover_url = ?, description = ?, status = ?, is_public = ?, node_count = ?, rarity = ?, ended_at = ? WHERE id = ?";
         return jdbcTemplate.update(sql,
                 saga.getName(), saga.getType(), saga.getCoverUrl(), saga.getDescription(),
-                saga.getStatus(), saga.getNodeCount(), saga.getRarity(),
+                saga.getStatus(), saga.isPublic(), saga.getNodeCount(), saga.getRarity(),
                 saga.getEndedAt() != null ? java.sql.Timestamp.valueOf(saga.getEndedAt()) : null,
                 saga.getId());
     }

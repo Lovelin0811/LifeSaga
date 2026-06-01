@@ -1,9 +1,56 @@
-<!-- 广场页 - 展示公开副本 -->
 <view class="page-container">
   <view class="page-header">
     <text class="page-title">广场</text>
   </view>
-  <view class="empty-state">
-    <text class="empty-text">探索其他冒险者的副本</text>
+
+  <view class="home-search">
+    <view class="search-icon">
+      <image src="/images/icons/search.svg" class="search-icon-img" mode="aspectFit"/>
+    </view>
+    <input class="search-input"
+           value="{{searchQuery}}"
+           placeholder="搜索公开副本..."
+           placeholder-class="search-placeholder"
+           confirm-type="search"
+           bindinput="onSearchInput"/>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <view class="empty-state" wx:elif="{{!sagas.length}}">
+    <text class="empty-text">还没有公开副本\n试试换个关键词，或者把自己的副本设为公开</text>
+  </view>
+
+  <view class="instance-list" wx:else>
+    <view class="instance-card {{item.rarity === 'legendary' ? 'instance-card--legendary' : ''}}"
+          wx:for="{{sagas}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="cover cover-bg-{{item.type}}">
+        <image wx:if="{{item.coverUrl}}" class="cover-img" src="{{item.coverUrl}}" mode="aspectFill"/>
+        <view wx:else class="cover-placeholder">
+          <text class="cover-emoji">{{item.typeIcon}}</text>
+        </view>
+        <view class="cover-gradient"></view>
+        <view class="rarity-badge rarity-badge--{{item.rarity || 'common'}}">{{item.rarityName}}</view>
+      </view>
+      <view class="body">
+        <view class="card-top">
+          <text class="type-tag type-tag--{{item.type}}">{{item.typeName}}</text>
+        </view>
+        <text class="card-title">{{item.name}}</text>
+        <text class="card-desc" wx:if="{{item.description}}">{{item.description}}</text>
+        <view class="card-meta">
+          <text class="meta-item">
+            <image src="/images/icons/clock.svg" class="meta-icon" mode="aspectFit"/>
+            {{item.startedAtText}} 开始
+          </text>
+          <text class="meta-item">
+            <image src="/images/icons/node.svg" class="meta-icon" mode="aspectFit"/>
+            {{item.nodeCount}} 个节点
+          </text>
+        </view>
+      </view>
+    </view>
   </view>
 </view>

@@ -97,6 +97,18 @@
   line-height: 1.5;
 }
 
+.search-input {
+  width: 100%;
+  padding: 20rpx 32rpx 20rpx 72rpx;
+  background: var(--color-bg-sunken);
+  border: 3rpx solid transparent;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
 .home-search:active .search-placeholder {
   background: var(--color-bg-surface);
   border-color: var(--color-primary);

@@ -38,6 +38,11 @@
   cursor: pointer;
 }
 
+.form-input-number {
+  height: 88rpx;
+  padding: 0 32rpx;
+}
+
 /* ====== 地点选择器 ====== */
 .location-picker {
   display: flex;
@@ -194,4 +199,12 @@
   font-size: 28rpx;
   color: var(--color-text-primary);
   font-weight: 500;
+}
+
+.sort-order-tip {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
 }

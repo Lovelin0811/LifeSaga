@@ -5,9 +5,17 @@ Page({
   data: {
     userInfo: null,
     stats: { sagas: 0, nodes: 0, achievements: 0 },
+    editingProfile: false,
+    profileForm: { nickname: '', avatarUrl: '' },
+    reminderEnabled: false,
+    theme: 'light',
   },
 
   onShow() {
+    this.setData({
+      reminderEnabled: !!wx.getStorageSync('lifesaga_reminder_enabled'),
+      theme: wx.getStorageSync('lifesaga_theme') || 'light',
+    });
     this.loadData();
   },
 
@@ -25,6 +33,10 @@ Page({
 
       this.setData({
         userInfo,
+        profileForm: {
+          nickname: userInfo.nickname || '',
+          avatarUrl: userInfo.avatarUrl || '',
+        },
         stats: {
           sagas: sagas.length,
           nodes: totalNodes,
@@ -41,19 +53,101 @@ Page({
   },
 
   goAlbums() {
-    wx.showToast({ title: '我的相册 - 开发中', icon: 'none' });
+    wx.navigateTo({ url: '/pages/albums/albums' });
   },
 
   goStats() {
-    wx.showToast({ title: '数据统计 - 开发中', icon: 'none' });
+    wx.navigateTo({ url: '/pages/stats/stats' });
   },
 
   goReminders() {
-    wx.showToast({ title: '提醒设置 - 开发中', icon: 'none' });
+    const reminderEnabled = !this.data.reminderEnabled;
+    this.setData({ reminderEnabled });
+    wx.setStorageSync('lifesaga_reminder_enabled', reminderEnabled);
+    wx.showToast({
+      title: reminderEnabled ? '已开启提醒' : '已关闭提醒',
+      icon: 'none',
+    });
   },
 
   goTheme() {
-    wx.showToast({ title: '主题与外观 - 开发中', icon: 'none' });
+    const currentTheme = this.data.theme || 'light';
+    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+    this.setData({ theme: nextTheme });
+    wx.setStorageSync('lifesaga_theme', nextTheme);
+    const app = getApp();
+    if (app && typeof app.setTheme === 'function') {
+      app.setTheme(nextTheme);
+    }
+    wx.showToast({ title: nextTheme === 'light' ? '已切回浅色' : '已切到深色', icon: 'none' });
+  },
+
+  startEditProfile() {
+    const { userInfo } = this.data;
+    this.setData({
+      editingProfile: true,
+      profileForm: {
+        nickname: userInfo?.nickname || '',
+        avatarUrl: userInfo?.avatarUrl || '',
+      },
+    });
+  },
+
+  onAvatarTap() {
+    if (!this.data.editingProfile) {
+      this.startEditProfile();
+      return;
+    }
+    this.chooseAvatar();
+  },
+
+  cancelEditProfile() {
+    this.setData({ editingProfile: false });
+  },
+
+  chooseAvatar() {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const filePath = res.tempFiles[0].tempFilePath;
+        this.setData({ 'profileForm.avatarUrl': filePath });
+      },
+    });
+  },
+
+  onNicknameInput(e) {
+    this.setData({ 'profileForm.nickname': e.detail.value });
+  },
+
+  async saveProfile() {
+    const { profileForm } = this.data;
+    if (!profileForm.nickname.trim()) {
+      wx.showToast({ title: '请输入昵称', icon: 'none' });
+      return;
+    }
+    try {
+      wx.showLoading({ title: '保存中' });
+      let avatarUrl = profileForm.avatarUrl;
+      if (avatarUrl && !/^https?:\/\//i.test(avatarUrl)) {
+        avatarUrl = await api.uploadFile(avatarUrl);
+      }
+      const userInfo = await api.updateUser({
+        nickname: profileForm.nickname.trim(),
+        avatarUrl,
+      });
+      const app = getApp();
+      app.globalData.userInfo = userInfo;
+      wx.setStorageSync('userInfo', userInfo);
+      this.setData({ userInfo, editingProfile: false });
+      wx.showToast({ title: '已保存' });
+    } catch (err) {
+      wx.showToast({ title: err.message || '保存失败', icon: 'none' });
+    } finally {
+      wx.hideLoading();
+    }
   },
 
   about() {

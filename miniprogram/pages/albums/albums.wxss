@@ -1,0 +1,38 @@
+/* 相册页 */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.photo-card {
+  background: var(--color-bg-surface);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.photo-image {
+  width: 100%;
+  height: 260rpx;
+}
+
+.photo-meta {
+  padding: 20rpx;
+}
+
+.photo-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.photo-subtitle {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}

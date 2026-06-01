@@ -16,14 +16,28 @@ Page({
     photos: [],
     photoUrls: [],
     isMilestone: false,
+    sortOrder: 0,
     submitting: false,
   },
 
-  onLoad(options) {
+  async onLoad(options) {
     this.setData({ sagaId: options.sagaId });
     if (options.nodeId) {
       this.setData({ nodeId: options.nodeId, isEdit: true });
       this.loadNode(options.nodeId);
+    } else {
+      await this.loadDefaultSortOrder();
+    }
+  },
+
+  async loadDefaultSortOrder() {
+    try {
+      const nodes = await api.getNodes(this.data.sagaId);
+      const maxSortOrder = nodes.reduce((max, node) => Math.max(max, Number(node.sortOrder) || 0), 0);
+      this.setData({ sortOrder: maxSortOrder + 1 });
+    } catch (err) {
+      console.error('Load default sort order failed:', err);
+      this.setData({ sortOrder: 1 });
     }
   },
 
@@ -42,6 +56,7 @@ Page({
         date: datePart || '',
         time: timePart ? timePart.substring(0, 5) : '',
         isMilestone: !!node.milestone,
+        sortOrder: Number(node.sortOrder) || 0,
         photos,
       });
     } catch (err) {
@@ -58,6 +73,7 @@ Page({
   onDateChange(e) { this.setData({ date: e.detail.value }); },
   onTimeChange(e) { this.setData({ time: e.detail.value }); },
   onMilestoneChange(e) { this.setData({ isMilestone: e.detail.value }); },
+  onSortOrderInput(e) { this.setData({ sortOrder: Number(e.detail.value) || 0 }); },
 
   chooseLocation() {
     wx.chooseLocation({
@@ -104,7 +120,7 @@ Page({
 
   async save() {
     if (this.data.submitting) return;
-    const { title, content, date, time, location, latitude, longitude, photos, isMilestone, sagaId } = this.data;
+    const { title, content, date, time, location, latitude, longitude, photos, isMilestone, sortOrder, sagaId } = this.data;
 
     if (!title && !content) {
       wx.showToast({ title: '请填写标题或内容', icon: 'none' });
@@ -138,6 +154,7 @@ Page({
         nodeTime,
         photos: photoUrls.length > 0 ? JSON.stringify(photoUrls) : null,
         milestone: isMilestone,
+        sortOrder,
       };
 
       if (this.data.isEdit) {

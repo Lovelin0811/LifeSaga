@@ -15,6 +15,7 @@
       <view class="detail-title-row">
         <text class="type-tag type-tag--{{saga.type}}">{{saga.typeName}}</text>
         <view class="rarity-badge rarity-badge--{{saga.rarity || 'common'}}">{{saga.rarityName}}</view>
+        <view class="status-badge status-badge--{{saga.status || 'active'}}">{{saga.status === 'completed' ? '已完成' : '进行中'}}</view>
         <view class="detail-actions" bindtap="showActions">
           <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
         </view>
@@ -102,6 +103,9 @@
 <!-- 操作面板 (编辑/删除) -->
 <view class="action-sheet-mask" wx:if="{{showActionSheet}}" bindtap="hideActions">
   <view class="action-sheet" catchtap="">
+    <view class="action-sheet-item action-sheet-complete" wx:if="{{saga.status !== 'completed'}}" bindtap="completeSaga">
+      <text>完成副本</text>
+    </view>
     <view class="action-sheet-item action-sheet-edit" bindtap="editSaga">
       <text>编辑副本</text>
     </view>

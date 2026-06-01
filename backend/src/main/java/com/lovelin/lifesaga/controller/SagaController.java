@@ -3,6 +3,7 @@ package com.lovelin.lifesaga.controller;
 import com.lovelin.lifesaga.model.Saga;
 import com.lovelin.lifesaga.service.SagaService;
 import com.lovelin.lifesaga.service.NodeService;
+import com.lovelin.lifesaga.dto.PublicSagaVO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +27,18 @@ public class SagaController {
     }
 
     @GetMapping
-    public Map<String, Object> list(HttpServletRequest request) {
+    public Map<String, Object> list(@RequestParam(value = "keyword", required = false) String keyword,
+                                    HttpServletRequest request) {
         Long userId = getUserId(request);
-        List<Saga> sagas = sagaService.listByUserId(userId);
+        List<Saga> sagas = sagaService.listByUserId(userId, keyword);
+        return Map.of("code", 200, "data", sagas, "message", "success");
+    }
+
+    @GetMapping("/public")
+    public Map<String, Object> publicList(@RequestParam(value = "keyword", required = false) String keyword) {
+        List<PublicSagaVO> sagas = sagaService.listPublic(keyword).stream()
+                .map(PublicSagaVO::from)
+                .toList();
         return Map.of("code", 200, "data", sagas, "message", "success");
     }
 
@@ -61,6 +71,17 @@ public class SagaController {
         saga.setId(id);
         Saga updated = sagaService.update(saga);
         return Map.of("code", 200, "data", updated, "message", "success");
+    }
+
+    @PutMapping("/{id}/complete")
+    public Map<String, Object> complete(@PathVariable Long id, HttpServletRequest request) {
+        Long userId = getUserId(request);
+        Saga existing = sagaService.getById(id);
+        if (!existing.getUserId().equals(userId)) {
+            return Map.of("code", 403, "message", "无权修改");
+        }
+        Saga completed = sagaService.complete(id);
+        return Map.of("code", 200, "data", completed, "message", "success");
     }
 
     @DeleteMapping("/{id}")

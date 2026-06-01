@@ -1,1 +1,1 @@
-/* 广场页样式 */
+@import "../home/home.wxss";

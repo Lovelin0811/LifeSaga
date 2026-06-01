@@ -117,10 +117,12 @@ const login = async () => {
 
 const api = {
   // 副本
-  getSagas: () => request({ url: '/api/sagas' }),
+  getSagas: (keyword) => request({ url: keyword ? `/api/sagas?keyword=${encodeURIComponent(keyword)}` : '/api/sagas' }),
+  getPublicSagas: (keyword) => request({ url: keyword ? `/api/sagas/public?keyword=${encodeURIComponent(keyword)}` : '/api/sagas/public' }),
   getSaga: (id) => request({ url: `/api/sagas/${id}` }),
   createSaga: (data) => request({ url: '/api/sagas', method: 'POST', data }),
   updateSaga: (id, data) => request({ url: `/api/sagas/${id}`, method: 'PUT', data }),
+  completeSaga: (id) => request({ url: `/api/sagas/${id}/complete`, method: 'PUT' }),
   deleteSaga: (id) => request({ url: `/api/sagas/${id}`, method: 'DELETE' }),
 
   // 节点
@@ -129,6 +131,8 @@ const api = {
   createNode: (sagaId, data) => request({ url: `/api/sagas/${sagaId}/nodes`, method: 'POST', data }),
   updateNode: (sagaId, nodeId, data) => request({ url: `/api/sagas/${sagaId}/nodes/${nodeId}`, method: 'PUT', data }),
   deleteNode: (sagaId, nodeId) => request({ url: `/api/sagas/${sagaId}/nodes/${nodeId}`, method: 'DELETE' }),
+  toggleNodeMilestone: (sagaId, nodeId) => request({ url: `/api/sagas/${sagaId}/nodes/${nodeId}/toggle-milestone`, method: 'PUT' }),
+  toggleNodeFavorite: (sagaId, nodeId) => request({ url: `/api/sagas/${sagaId}/nodes/${nodeId}/favorite`, method: 'PUT' }),
 
   // 成就
   getAchievements: () => request({ url: '/api/achievements' }),
@@ -137,6 +141,7 @@ const api = {
   // 用户
   getUser: () => request({ url: '/api/users/me' }),
   updateUser: (data) => request({ url: '/api/users/me', method: 'PUT', data }),
+  getAlbums: () => request({ url: '/api/users/me/albums' }),
 
   // 文件上传
   uploadFile: async (filePath, formData) => {

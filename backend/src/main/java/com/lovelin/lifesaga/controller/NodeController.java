@@ -38,7 +38,7 @@ public class NodeController {
     public Map<String, Object> list(@PathVariable Long sagaId, HttpServletRequest request) {
         Long userId = getUserId(request);
         verifyOwnership(sagaId, userId);
-        List<SagaNode> nodes = nodeService.listBySagaId(sagaId);
+        List<SagaNode> nodes = nodeService.listBySagaId(sagaId, userId);
         return Map.of("code", 200, "data", nodes, "message", "success");
     }
 
@@ -55,7 +55,7 @@ public class NodeController {
     public Map<String, Object> detail(@PathVariable Long sagaId, @PathVariable Long id, HttpServletRequest request) {
         Long userId = getUserId(request);
         verifyOwnership(sagaId, userId);
-        SagaNode node = nodeService.getById(sagaId, id);
+        SagaNode node = nodeService.getById(sagaId, id, userId);
         return Map.of("code", 200, "data", node, "message", "success");
     }
 
@@ -68,6 +68,22 @@ public class NodeController {
         node.setSagaId(sagaId);
         SagaNode updated = nodeService.update(node);
         return Map.of("code", 200, "data", updated, "message", "success");
+    }
+
+    @PutMapping("/{id}/toggle-milestone")
+    public Map<String, Object> toggleMilestone(@PathVariable Long sagaId, @PathVariable Long id, HttpServletRequest request) {
+        Long userId = getUserId(request);
+        verifyOwnership(sagaId, userId);
+        SagaNode updated = nodeService.toggleMilestone(sagaId, id);
+        return Map.of("code", 200, "data", updated, "message", "success");
+    }
+
+    @PutMapping("/{id}/favorite")
+    public Map<String, Object> toggleFavorite(@PathVariable Long sagaId, @PathVariable Long id, HttpServletRequest request) {
+        Long userId = getUserId(request);
+        verifyOwnership(sagaId, userId);
+        boolean favorited = nodeService.toggleFavorite(sagaId, id, userId);
+        return Map.of("code", 200, "data", Map.of("favorited", favorited), "message", "success");
     }
 
     @DeleteMapping("/{id}")

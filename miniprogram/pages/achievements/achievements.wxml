@@ -40,7 +40,8 @@
   <!-- 成就网格 -->
   <view class="badge-grid" wx:elif="{{achievements.length}}">
     <view class="badge-item {{item.unlocked ? 'badge-card--' + item.rarity : 'badge-card--locked'}}"
-          wx:for="{{achievements}}" wx:key="id">
+          wx:for="{{achievements}}" wx:key="id"
+          bindtap="showAchievementDetail" data-item="{{item}}">
       <view class="badge-icon-wrap">
         <text class="badge-icon">{{item.icon || '?'}}</text>
       </view>

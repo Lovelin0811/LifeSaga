@@ -18,6 +18,7 @@ Page({
     description: '',
     coverUrl: '',
     coverTempPath: '',
+    isPublic: false,
     submitting: false,
     isEdit: false,
     editId: null,
@@ -54,6 +55,7 @@ Page({
         name: saga.name || '',
         description: saga.description || '',
         coverUrl: saga.coverUrl || '',
+        isPublic: !!saga.isPublic,
       });
     } catch (err) {
       console.error('Load saga for edit failed:', err);
@@ -68,6 +70,7 @@ Page({
       description: '',
       coverUrl: '',
       coverTempPath: '',
+      isPublic: false,
       isEdit: false,
       editId: null,
     });
@@ -76,6 +79,10 @@ Page({
 
   selectType(e) {
     this.setData({ selectedType: e.currentTarget.dataset.key });
+  },
+
+  togglePublic(e) {
+    this.setData({ isPublic: !!e.detail.value });
   },
 
   chooseCover() {
@@ -91,7 +98,7 @@ Page({
 
   async createSaga() {
     if (this.data.submitting) return;
-    const { selectedType, name, description, coverTempPath, isEdit, editId } = this.data;
+    const { selectedType, name, description, coverTempPath, isEdit, editId, isPublic } = this.data;
 
     if (!name) {
       wx.showToast({ title: '请输入副本名称', icon: 'none' });
@@ -112,6 +119,7 @@ Page({
         type: selectedType,
         coverUrl,
         description,
+        isPublic,
       };
 
       if (isEdit) {

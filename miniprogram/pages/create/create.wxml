@@ -53,6 +53,18 @@
       <textarea class="form-input form-textarea" placeholder="简单描述这个副本..." model:value="{{description}}" maxlength="500" placeholder-class="form-input-placeholder" color="#2D2520" />
     </view>
 
+    <!-- 公开设置 -->
+    <view class="form-group">
+      <view class="form-label">公开设置</view>
+      <view class="public-switch-row">
+        <view>
+          <text class="public-switch-title">公开副本</text>
+          <text class="public-switch-desc">公开后会出现在广场，其他人可以浏览</text>
+        </view>
+        <switch checked="{{isPublic}}" color="#E8725A" bindchange="togglePublic" />
+      </view>
+    </view>
+
     <!-- 创建按钮 -->
     <view class="form-submit" bindtap="createSaga">{{isEdit ? '保存修改' : '创建副本'}}</view>
   </view>

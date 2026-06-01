@@ -22,6 +22,7 @@ CREATE TABLE sagas (
     cover_url VARCHAR(512) DEFAULT '',
     description TEXT,
     status VARCHAR(16) DEFAULT 'active',
+    is_public TINYINT(1) DEFAULT 0,
     node_count INT DEFAULT 0,
     rarity VARCHAR(16) DEFAULT 'common',
     started_at TIMESTAMP NULL,
@@ -49,6 +50,17 @@ CREATE TABLE saga_nodes (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_saga_id (saga_id),
     INDEX idx_node_time (node_time)
+);
+
+-- 节点收藏表
+CREATE TABLE node_favorites (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    node_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_user_node (user_id, node_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_node_id (node_id)
 );
 
 -- 成就表

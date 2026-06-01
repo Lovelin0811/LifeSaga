@@ -1,11 +1,12 @@
-package com.lovelin.lifesaga.model;
+package com.lovelin.lifesaga.dto;
 
+import com.lovelin.lifesaga.model.Saga;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
-public class Saga {
+public class PublicSagaVO {
     private Long id;
-    private Long userId;
     private String name;
     private String type;
     private String coverUrl;
@@ -16,13 +17,27 @@ public class Saga {
     private String rarity;
     private LocalDateTime startedAt;
     private LocalDateTime endedAt;
-    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public static PublicSagaVO from(Saga saga) {
+        PublicSagaVO vo = new PublicSagaVO();
+        vo.id = saga.getId();
+        vo.name = saga.getName();
+        vo.type = saga.getType();
+        vo.coverUrl = saga.getCoverUrl();
+        vo.description = saga.getDescription();
+        vo.status = saga.getStatus();
+        vo.isPublic = saga.isPublic();
+        vo.nodeCount = saga.getNodeCount();
+        vo.rarity = saga.getRarity();
+        vo.startedAt = saga.getStartedAt();
+        vo.endedAt = saga.getEndedAt();
+        vo.updatedAt = saga.getUpdatedAt();
+        return vo;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getType() { return type; }
@@ -45,8 +60,6 @@ public class Saga {
     public void setStartedAt(LocalDateTime startedAt) { this.startedAt = startedAt; }
     public LocalDateTime getEndedAt() { return endedAt; }
     public void setEndedAt(LocalDateTime endedAt) { this.endedAt = endedAt; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

@@ -1,0 +1,23 @@
+<view class="page-container">
+  <view class="page-header">
+    <text class="page-title">我的相册</text>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <view class="empty-state" wx:elif="{{!photos.length}}">
+    <text class="empty-text">还没有照片\n去节点里添加一些精彩瞬间吧</text>
+  </view>
+
+  <view class="photo-grid" wx:else>
+    <view class="photo-card" wx:for="{{photos}}" wx:key="url" bindtap="previewPhoto" data-urls="{{photoUrls}}" data-current="{{item.url}}">
+      <image class="photo-image" src="{{item.url}}" mode="aspectFill"/>
+      <view class="photo-meta">
+        <text class="photo-title">{{item.title}}</text>
+        <text class="photo-subtitle">{{item.sagaName}}{{item.timeText ? ' · ' + item.timeText : ''}}</text>
+      </view>
+    </view>
+  </view>
+</view>

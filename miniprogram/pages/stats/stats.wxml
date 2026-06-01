@@ -1,0 +1,44 @@
+<view class="page-container">
+  <view class="page-header">
+    <text class="page-title">数据统计</text>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <block wx:else>
+    <view class="quick-stats" style="margin-top: 12rpx;">
+      <view class="stat-item">
+        <text class="stat-num">{{stats.sagas}}</text>
+        <text class="stat-label">副本</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.nodes}}</text>
+        <text class="stat-label">节点</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.completed}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+    </view>
+
+    <view class="menu-group">
+      <view class="menu-item">
+        <text class="menu-text">公开副本</text>
+        <text class="menu-arrow">{{stats.publicSagas}}</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-text">平均节点数</text>
+        <text class="menu-arrow">{{stats.avgNodes}}</text>
+      </view>
+    </view>
+
+    <view class="menu-group" wx:if="{{typeStats.length}}">
+      <view class="menu-item" wx:for="{{typeStats}}" wx:key="type">
+        <text class="menu-text">{{item.typeName}}</text>
+        <text class="menu-arrow">{{item.count}}</text>
+      </view>
+    </view>
+  </block>
+</view>

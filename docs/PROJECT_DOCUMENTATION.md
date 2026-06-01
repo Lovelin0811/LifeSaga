@@ -87,6 +87,8 @@ LifeSaga/
 │       ├── node-detail/     # 节点详情
 │       ├── discover/        # 广场（预留）
 │       ├── achievements/    # 成就展示
+│       ├── albums/          # 我的相册
+│       ├── stats/           # 数据统计
 │       └── profile/         # 个人中心
 │
 └── README.md
@@ -130,10 +132,12 @@ LifeSaga/
 
 | 方法 | 路径 | 功能 | 请求体 | 响应 | 权限 |
 |------|------|------|--------|------|------|
-| GET | `/api/sagas` | 我的副本列表 | - | Saga[] | 仅自己的 |
+| GET | `/api/sagas` | 我的副本列表 | `keyword`（可选） | Saga[] | 仅自己的 |
 | POST | `/api/sagas` | 创建副本 | `{"name","type","coverUrl","description"}` | Saga | - |
+| GET | `/api/sagas/public` | 公开副本列表 | `keyword`（可选） | Saga[] | 无 / 公开 |
 | GET | `/api/sagas/{id}` | 副本详情（含节点） | - | `{"saga":Saga,"nodes":SagaNode[]}` | 仅自己的 |
 | PUT | `/api/sagas/{id}` | 更新副本 | `{"name","type","coverUrl","description"}` | Saga | 仅自己的 |
+| PUT | `/api/sagas/{id}/complete` | 完成副本 | - | Saga | 仅自己的 |
 | DELETE | `/api/sagas/{id}` | 删除副本（级联删除节点） | - | `{"code":200}` | 仅自己的 |
 
 ### 4.4 节点模块
@@ -143,9 +147,11 @@ LifeSaga/
 | 方法 | 路径 | 功能 | 请求体 | 响应 | 权限 |
 |------|------|------|--------|------|------|
 | GET | `/api/sagas/{sagaId}/nodes` | 节点列表 | - | SagaNode[] | 仅自己的 |
-| POST | `/api/sagas/{sagaId}/nodes` | 创建节点 | `{"title","content","location","latitude","longitude","nodeTime","photos","milestone"}` | SagaNode | 仅自己的 |
+| POST | `/api/sagas/{sagaId}/nodes` | 创建节点 | `{"title","content","location","latitude","longitude","nodeTime","photos","milestone","sortOrder"}` | SagaNode | 仅自己的 |
 | GET | `/api/sagas/{sagaId}/nodes/{id}` | 节点详情 | - | SagaNode | 仅自己的 |
 | PUT | `/api/sagas/{sagaId}/nodes/{id}` | 更新节点 | 同创建 | SagaNode | 仅自己的 |
+| PUT | `/api/sagas/{sagaId}/nodes/{id}/toggle-milestone` | 切换里程碑 | - | SagaNode | 仅自己的 |
+| PUT | `/api/sagas/{sagaId}/nodes/{id}/favorite` | 切换收藏 | - | `{"favorited":bool}` | 仅自己的 |
 | DELETE | `/api/sagas/{sagaId}/nodes/{id}` | 删除节点 | - | `{"code":200}` | 仅自己的 |
 
 ### 4.5 成就模块
@@ -189,6 +195,7 @@ LifeSaga/
 | cover_url | VARCHAR(512) | 封面图 |
 | description | TEXT | 简介 |
 | status | VARCHAR(16) INDEX | active/completed |
+| is_public | TINYINT(1) | 是否公开 |
 | node_count | INT DEFAULT 0 | 节点数 |
 | rarity | VARCHAR(16) | 稀有度（自动计算） |
 | started_at | TIMESTAMP | |
@@ -210,7 +217,7 @@ LifeSaga/
 | node_time | TIMESTAMP INDEX | 节点时间 |
 | photos | TEXT | JSON 数组 |
 | is_milestone | TINYINT(1) | 是否里程碑 |
-| sort_order | INT | 排序 |
+| sort_order | INT | 排序编号（节点列表优先按此排序） |
 | created_at | TIMESTAMP | |
 | updated_at | TIMESTAMP | |
 
@@ -300,11 +307,20 @@ UNIQUE(user_id, achievement_id)
 
 **触发时机**：
 - 创建副本时 → first_saga / saga_types_count / total_sagas / has_legendary / all_types_completed
+- 完成副本时 → completed_type_* / all_types_completed
 - 创建节点时 → first_node / first_photo / streak_days
+
+### 7.3 完成副本流程
+
+1. 用户在副本详情页点击「完成副本」。
+2. 前端调用 `PUT /api/sagas/{id}/complete`。
+3. 后端校验副本归属，写入 `status = completed` 和 `ended_at = now()`。
+4. 后端同步检查完成类成就，并更新首页的已完成统计。
+5. 详情页与首页都会显示最新状态。
 
 **流程**：查成就定义 → 查是否已解锁 → 执行条件判断 → 插入 user_achievements → 增加 XP
 
-### 7.3 权限控制（三层防御）
+### 7.4 权限控制（三层防御）
 
 | 层级 | 措施 |
 |------|------|
@@ -312,7 +328,7 @@ UNIQUE(user_id, achievement_id)
 | Service | getById/update 校验 `node.sagaId == sagaId` |
 | Repository | SQL WHERE 条件加 `AND saga_id = ?`（深度防御） |
 
-### 7.4 文件上传安全
+### 7.5 文件上传安全
 
 - 大小限制：20MB（Spring + 代码双层校验）
 - ContentType 白名单：JPEG / PNG / WebP / GIF

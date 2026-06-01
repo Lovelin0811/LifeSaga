@@ -2,9 +2,18 @@
   <!-- 用户信息卡片（含统计） -->
   <view class="profile-header" wx:if="{{userInfo}}">
     <view class="avatar-wrap">
-      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"/>
+      <image class="avatar" src="{{editingProfile ? profileForm.avatarUrl || '/images/default-avatar.png' : userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" bindtap="onAvatarTap"/>
     </view>
-    <text class="nickname">{{userInfo.nickname || '冒险者'}}</text>
+    <view wx:if="{{editingProfile}}" class="profile-edit-box">
+      <input class="profile-nickname-input" value="{{profileForm.nickname}}" placeholder="请输入昵称" bindinput="onNicknameInput"/>
+      <view class="profile-edit-actions">
+        <view class="btn-ghost" bindtap="cancelEditProfile">取消</view>
+        <view class="btn-primary" bindtap="saveProfile">保存</view>
+      </view>
+    </view>
+    <view wx:else bindtap="startEditProfile">
+      <text class="nickname">{{userInfo.nickname || '冒险者'}}</text>
+    </view>
     <text class="profile-bio">记录生活的每一个精彩瞬间</text>
     <view class="profile-stats">
       <view class="profile-stat">
@@ -47,14 +56,14 @@
         <text class="menu-icon-emoji">⏰</text>
       </view>
       <text class="menu-text">提醒设置</text>
-      <text class="menu-arrow">›</text>
+      <text class="menu-arrow">{{reminderEnabled ? '开' : '关'}}</text>
     </view>
     <view class="menu-item" bindtap="goTheme">
       <view class="menu-icon-wrap" style="background: var(--color-accent-alt-soft);">
         <text class="menu-icon-emoji">🎨</text>
       </view>
       <text class="menu-text">主题与外观</text>
-      <text class="menu-arrow">›</text>
+      <text class="menu-arrow">{{theme === 'dark' ? '深色' : '浅色'}}</text>
     </view>
     <view class="menu-item" bindtap="about">
       <view class="menu-icon-wrap" style="background: var(--color-bg-sunken);">

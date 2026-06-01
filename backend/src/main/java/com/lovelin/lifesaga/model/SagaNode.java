@@ -14,6 +14,7 @@ public class SagaNode {
     private LocalDateTime nodeTime;
     private String photos;
     private boolean milestone;
+    private boolean favorited;
     private int sortOrder;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -38,6 +39,8 @@ public class SagaNode {
     public void setPhotos(String photos) { this.photos = photos; }
     public boolean isMilestone() { return milestone; }
     public void setMilestone(boolean milestone) { this.milestone = milestone; }
+    public boolean isFavorited() { return favorited; }
+    public void setFavorited(boolean favorited) { this.favorited = favorited; }
     public int getSortOrder() { return sortOrder; }
     public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }
     public LocalDateTime getCreatedAt() { return createdAt; }

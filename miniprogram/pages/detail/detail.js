@@ -141,6 +141,30 @@ Page({
     this.setData({ showActionSheet: false });
   },
 
+  completeSaga() {
+    if (!this.data.saga || this.data.saga.status === 'completed') {
+      this.hideActions();
+      return;
+    }
+    wx.showModal({
+      title: '完成副本',
+      content: '完成后副本会标记为已完成，后续可在首页查看完成统计。',
+      confirmText: '完成',
+      confirmColor: '#E05A5A',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.completeSaga(this.sagaId);
+          wx.showToast({ title: '已完成' });
+          this.hideActions();
+          await this.loadData();
+        } catch (err) {
+          wx.showToast({ title: err?.message || '操作失败', icon: 'none' });
+        }
+      },
+    });
+  },
+
   goNodeDetail(e) {
     const { id, sagaId } = e.currentTarget.dataset;
     wx.navigateTo({ url: `/pages/node-detail/node-detail?id=${id}&sagaId=${sagaId}` });

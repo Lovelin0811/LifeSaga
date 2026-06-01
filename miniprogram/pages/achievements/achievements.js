@@ -49,4 +49,15 @@ Page({
       this.setData({ loading: false });
     }
   },
+
+  showAchievementDetail(e) {
+    const achievement = e.currentTarget.dataset.item;
+    if (!achievement) return;
+    wx.showModal({
+      title: achievement.name,
+      content: `${achievement.description}\n\n稀有度：${achievement.rarityName}\n奖励：${achievement.xpReward || 0} XP${achievement.unlocked && achievement.unlockedAt ? `\n解锁于：${achievement.unlockedAt}` : ''}`,
+      showCancel: false,
+      confirmText: '知道了',
+    });
+  },
 });
