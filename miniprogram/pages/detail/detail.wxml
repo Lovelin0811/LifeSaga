@@ -16,7 +16,7 @@
         <text class="type-tag type-tag--{{saga.type}}">{{saga.typeName}}</text>
         <view class="rarity-badge rarity-badge--{{saga.rarity || 'common'}}">{{saga.rarityName}}</view>
         <view class="status-badge status-badge--{{saga.status || 'active'}}">{{saga.status === 'completed' ? '已完成' : '进行中'}}</view>
-        <view class="detail-actions" bindtap="showActions">
+        <view class="detail-actions" wx:if="{{isOwner}}" bindtap="showActions">
           <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
         </view>
       </view>
@@ -41,16 +41,16 @@
     <!-- 时间线 -->
     <view class="timeline-container">
       <!-- 空状态 -->
-      <view class="empty-state" wx:if="{{!nodes.length}}">
-        <text class="empty-text">还没有节点\n开始记录这段旅程吧</text>
-        <view class="add-node-card" style="margin-top: 32rpx;" bindtap="goAddNode">
-          <text class="add-icon">+</text>
-          <text class="add-text">添加新节点</text>
+        <view class="empty-state" wx:if="{{!nodes.length}}">
+          <text class="empty-text">还没有节点\n开始记录这段旅程吧</text>
+          <view class="add-node-card" wx:if="{{isOwner}}" style="margin-top: 32rpx;" bindtap="goAddNode">
+            <text class="add-icon">+</text>
+            <text class="add-text">添加新节点</text>
+          </view>
         </view>
-      </view>
 
       <view class="timeline" wx:else>
-        <view class="timeline-node {{item.milestone ? 'timeline-node--milestone' : ''}} {{item.isActive ? 'timeline-node--active' : ''}}"
+        <view class="timeline-node {{item.milestone ? 'timeline-node--milestone' : ''}} {{item.isActive ? 'timeline-node--active' : ''}} {{!isOwner ? 'timeline-node--readonly' : ''}}"
               wx:for="{{nodes}}" wx:key="id"
               bindtap="goNodeDetail" data-id="{{item.id}}" data-saga-id="{{saga.id}}">
           <!-- 日期 -->
@@ -89,7 +89,7 @@
         </view>
 
         <!-- 添加节点入口 -->
-        <view class="timeline-node timeline-node--add" bindtap="goAddNode">
+        <view class="timeline-node timeline-node--add" wx:if="{{isOwner}}" bindtap="goAddNode">
           <view class="add-node-card">
             <text class="add-icon">+</text>
             <text class="add-text">添加新节点</text>
@@ -101,7 +101,7 @@
 </view>
 
 <!-- 操作面板 (编辑/删除) -->
-<view class="action-sheet-mask" wx:if="{{showActionSheet}}" bindtap="hideActions">
+<view class="action-sheet-mask" wx:if="{{showActionSheet && isOwner}}" bindtap="hideActions">
   <view class="action-sheet" catchtap="">
     <view class="action-sheet-item action-sheet-complete" wx:if="{{saga.status !== 'completed'}}" bindtap="completeSaga">
       <text>完成副本</text>

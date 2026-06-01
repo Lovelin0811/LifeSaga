@@ -9,19 +9,6 @@
       <text class="hero-subtitle">记录你的每一段旅程</text>
     </view>
 
-    <!-- 搜索框 -->
-    <view class="home-search">
-      <view class="search-icon">
-        <image src="/images/icons/search.svg" class="search-icon-img" mode="aspectFit"/>
-      </view>
-      <input class="search-input"
-             value="{{searchQuery}}"
-             placeholder="搜索副本名称..."
-             placeholder-class="search-placeholder"
-             confirm-type="search"
-             bindinput="onSearchInput"/>
-    </view>
-
     <!-- Quick Stats -->
     <view class="quick-stats" wx:if="{{userInfo}}">
       <view class="stat-item">

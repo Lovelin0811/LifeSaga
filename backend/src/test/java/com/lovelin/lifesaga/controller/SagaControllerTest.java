@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SagaControllerTest {
 
@@ -65,12 +66,47 @@ class SagaControllerTest {
         sagaService.publicSagas = List.of(saga);
         SagaController controller = new SagaController(sagaService, new FakeNodeService());
 
-        Map<String, Object> response = controller.publicList(null);
+        Map<String, Object> response = controller.publicList();
         String json = new ObjectMapper().writeValueAsString(response.get("data"));
 
         assertEquals(200, response.get("code"));
         org.junit.jupiter.api.Assertions.assertTrue(json.contains("\"isPublic\":true"));
         org.junit.jupiter.api.Assertions.assertFalse(json.contains("userId"));
+    }
+
+    @Test
+    void detailAllowsNonOwnerWhenSagaIsPublic() {
+        Saga saga = new Saga();
+        saga.setId(12L);
+        saga.setUserId(99L);
+        saga.setPublic(true);
+
+        FakeSagaService sagaService = new FakeSagaService(saga);
+        SagaController controller = new SagaController(sagaService, new FakeNodeService());
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("userId", 100L);
+
+        Map<String, Object> response = controller.detail(12L, request);
+        assertEquals(200, response.get("code"));
+    }
+
+    @Test
+    void detailRejectsNonOwnerWhenSagaIsPrivate() {
+        Saga saga = new Saga();
+        saga.setId(12L);
+        saga.setUserId(99L);
+        saga.setPublic(false);
+
+        FakeSagaService sagaService = new FakeSagaService(saga);
+        SagaController controller = new SagaController(sagaService, new FakeNodeService());
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("userId", 100L);
+
+        Map<String, Object> response = controller.detail(12L, request);
+        assertEquals(403, response.get("code"));
+        assertTrue(String.valueOf(response.get("message")).contains("无权访问"));
     }
 
     private static final class FakeSagaService extends SagaService {
@@ -97,7 +133,7 @@ class SagaControllerTest {
         }
 
         @Override
-        public List<Saga> listPublic(String keyword) {
+        public List<Saga> listPublic() {
             return publicSagas;
         }
     }
@@ -105,6 +141,11 @@ class SagaControllerTest {
     private static final class FakeNodeService extends NodeService {
         private FakeNodeService() {
             super(null, null, null, null);
+        }
+
+        @Override
+        public List<com.lovelin.lifesaga.model.SagaNode> listBySagaId(Long sagaId, Long userId) {
+            return List.of();
         }
     }
 }

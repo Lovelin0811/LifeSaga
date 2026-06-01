@@ -3,18 +3,6 @@
     <text class="page-title">广场</text>
   </view>
 
-  <view class="home-search">
-    <view class="search-icon">
-      <image src="/images/icons/search.svg" class="search-icon-img" mode="aspectFit"/>
-    </view>
-    <input class="search-input"
-           value="{{searchQuery}}"
-           placeholder="搜索公开副本..."
-           placeholder-class="search-placeholder"
-           confirm-type="search"
-           bindinput="onSearchInput"/>
-  </view>
-
   <view class="loading-container" wx:if="{{loading}}">
     <view class="loading-spinner"></view>
   </view>

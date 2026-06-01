@@ -15,7 +15,6 @@ Page({
   data: {
     loading: true,
     sagas: [],
-    searchQuery: '',
     userInfo: null,
     stats: { activeCount: 0, completedCount: 0, totalNodes: 0 },
     statusBarHeight: 44,
@@ -85,54 +84,6 @@ Page({
 
   goCreate() {
     wx.switchTab({ url: '/pages/create/create' });
-  },
-
-  async onSearchInput(e) {
-    const searchQuery = (e.detail.value || '').trim();
-    this.setData({ searchQuery });
-    if (!searchQuery) {
-      await this.loadSagas();
-      return;
-    }
-    try {
-      this.setData({ loading: true });
-      await getApp().ensureLogin();
-      const sagas = await api.getSagas(searchQuery);
-      const list = sagas.map(s => {
-        const type = SAGA_TYPES[s.type] || SAGA_TYPES.life;
-        const rarity = RARITY_MAP[s.rarity] || RARITY_MAP.common;
-        return {
-          ...s,
-          typeName: type.name,
-          typeIcon: type.icon,
-          coverBg: COVER_BGS[s.type] || COVER_BGS.life,
-          rarityName: rarity.name,
-          rarityClass: rarity.class,
-          rarity: s.rarity || 'common',
-          startedAtText: s.startedAt ? formatDate(s.startedAt, 'YYYY.MM.DD') : '',
-          xpPercent: Math.min(100, ((s.nodeCount || 0) / 30) * 100),
-          level: Math.floor((s.nodeCount || 0) / 10) + 1,
-        };
-      });
-      this.setData({
-        sagas: list.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)),
-        stats: {
-          activeCount: list.filter(s => s.status === 'active').length,
-          completedCount: list.filter(s => s.status === 'completed').length,
-          totalNodes: list.reduce((sum, s) => sum + (s.nodeCount || 0), 0),
-        },
-        loading: false,
-      });
-    } catch (err) {
-      console.error('Search sagas failed:', err);
-      this.setData({ loading: false });
-      wx.showToast({ title: '搜索失败', icon: 'none' });
-    }
-  },
-
-  onSearchTap() {
-    const query = this.data.searchQuery || '';
-    if (!query) return;
   },
 
   onShareAppMessage() {

@@ -32,12 +32,8 @@ public class SagaService {
         return sagaRepository.findByUserId(userId);
     }
 
-    public List<Saga> listByUserId(Long userId, String keyword) {
-        return sagaRepository.findByUserId(userId, keyword);
-    }
-
-    public List<Saga> listPublic(String keyword) {
-        return sagaRepository.findPublic(keyword);
+    public List<Saga> listPublic() {
+        return sagaRepository.findPublic();
     }
 
     public Saga getById(Long id) {

@@ -18,17 +18,19 @@ public class AlbumRepository {
     public List<AlbumItemVO> findByUserId(Long userId) {
         String sql = """
                 SELECT
-                    COALESCE(n.cover_url, JSON_UNQUOTE(JSON_EXTRACT(n.photos, '$[0]'))) AS url,
+                    CASE
+                        WHEN JSON_VALID(n.photos) THEN JSON_UNQUOTE(JSON_EXTRACT(n.photos, '$[0]'))
+                        ELSE n.photos
+                    END AS url,
                     n.title,
                     s.name AS saga_name,
                     n.node_time
                 FROM saga_nodes n
                 JOIN sagas s ON s.id = n.saga_id
                 WHERE s.user_id = ?
-                  AND (
-                    n.cover_url IS NOT NULL AND n.cover_url != ''
-                    OR n.photos IS NOT NULL AND n.photos != ''
-                  )
+                  AND n.photos IS NOT NULL
+                  AND n.photos != ''
+                  AND n.photos != '[]'
                 ORDER BY n.node_time DESC, n.created_at DESC
                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {

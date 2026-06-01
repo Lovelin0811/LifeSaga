@@ -234,6 +234,10 @@
   margin-bottom: 32rpx;
 }
 
+.timeline-node--readonly .node-card {
+  cursor: default;
+}
+
 .timeline-node:last-child {
   margin-bottom: 0;
 }

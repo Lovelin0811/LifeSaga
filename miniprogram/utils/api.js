@@ -117,8 +117,8 @@ const login = async () => {
 
 const api = {
   // 副本
-  getSagas: (keyword) => request({ url: keyword ? `/api/sagas?keyword=${encodeURIComponent(keyword)}` : '/api/sagas' }),
-  getPublicSagas: (keyword) => request({ url: keyword ? `/api/sagas/public?keyword=${encodeURIComponent(keyword)}` : '/api/sagas/public' }),
+  getSagas: () => request({ url: '/api/sagas' }),
+  getPublicSagas: () => request({ url: '/api/sagas/public' }),
   getSaga: (id) => request({ url: `/api/sagas/${id}` }),
   createSaga: (data) => request({ url: '/api/sagas', method: 'POST', data }),
   updateSaga: (id, data) => request({ url: `/api/sagas/${id}`, method: 'PUT', data }),

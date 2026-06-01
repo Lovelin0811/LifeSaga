@@ -13,11 +13,12 @@ const COVER_BGS = {
 Page({
   data: {
     loading: true,
-    searchQuery: '',
     sagas: [],
   },
 
-  onLoad() {
+  onLoad() {},
+
+  onShow() {
     this.loadPublicSagas();
   },
 
@@ -25,11 +26,11 @@ Page({
     this.loadPublicSagas().finally(() => wx.stopPullDownRefresh());
   },
 
-  async loadPublicSagas(keyword = '') {
+  async loadPublicSagas() {
     this.setData({ loading: true });
     try {
       await getApp().ensureLogin();
-      const sagas = await api.getPublicSagas(keyword);
+      const sagas = await api.getPublicSagas();
       const list = sagas.map(s => {
         const type = SAGA_TYPES[s.type] || SAGA_TYPES.life;
         const rarity = RARITY_MAP[s.rarity] || RARITY_MAP.common;
@@ -50,12 +51,6 @@ Page({
       this.setData({ loading: false });
       wx.showToast({ title: '加载失败', icon: 'none' });
     }
-  },
-
-  async onSearchInput(e) {
-    const searchQuery = (e.detail.value || '').trim();
-    this.setData({ searchQuery });
-    await this.loadPublicSagas(searchQuery);
   },
 
   goDetail(e) {

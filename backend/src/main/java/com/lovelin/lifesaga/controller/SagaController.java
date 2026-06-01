@@ -27,16 +27,15 @@ public class SagaController {
     }
 
     @GetMapping
-    public Map<String, Object> list(@RequestParam(value = "keyword", required = false) String keyword,
-                                    HttpServletRequest request) {
+    public Map<String, Object> list(HttpServletRequest request) {
         Long userId = getUserId(request);
-        List<Saga> sagas = sagaService.listByUserId(userId, keyword);
+        List<Saga> sagas = sagaService.listByUserId(userId);
         return Map.of("code", 200, "data", sagas, "message", "success");
     }
 
     @GetMapping("/public")
-    public Map<String, Object> publicList(@RequestParam(value = "keyword", required = false) String keyword) {
-        List<PublicSagaVO> sagas = sagaService.listPublic(keyword).stream()
+    public Map<String, Object> publicList() {
+        List<PublicSagaVO> sagas = sagaService.listPublic().stream()
                 .map(PublicSagaVO::from)
                 .toList();
         return Map.of("code", 200, "data", sagas, "message", "success");
@@ -54,10 +53,10 @@ public class SagaController {
     public Map<String, Object> detail(@PathVariable Long id, HttpServletRequest request) {
         Long userId = getUserId(request);
         Saga saga = sagaService.getById(id);
-        if (!saga.getUserId().equals(userId)) {
+        if (!saga.getUserId().equals(userId) && !saga.isPublic()) {
             return Map.of("code", 403, "message", "无权访问");
         }
-        var nodes = nodeService.listBySagaId(id);
+        var nodes = nodeService.listBySagaId(id, userId);
         return Map.of("code", 200, "data", Map.of("saga", saga, "nodes", nodes), "message", "success");
     }
 

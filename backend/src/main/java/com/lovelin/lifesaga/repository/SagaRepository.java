@@ -49,31 +49,9 @@ public class SagaRepository {
         return jdbcTemplate.query(sql, this::mapRow, userId);
     }
 
-    public List<Saga> findByUserId(Long userId, String keyword) {
-        StringBuilder sql = new StringBuilder("SELECT " + BASE_COLUMNS + " FROM sagas WHERE user_id = ?");
-        List<Object> params = new java.util.ArrayList<>();
-        params.add(userId);
-        if (keyword != null && !keyword.isBlank()) {
-            sql.append(" AND (name LIKE ? OR description LIKE ?)");
-            String like = "%" + keyword.trim() + "%";
-            params.add(like);
-            params.add(like);
-        }
-        sql.append(" ORDER BY updated_at DESC");
-        return jdbcTemplate.query(sql.toString(), this::mapRow, params.toArray());
-    }
-
-    public List<Saga> findPublic(String keyword) {
-        StringBuilder sql = new StringBuilder("SELECT " + BASE_COLUMNS + " FROM sagas WHERE is_public = 1");
-        List<Object> params = new java.util.ArrayList<>();
-        if (keyword != null && !keyword.isBlank()) {
-            sql.append(" AND (name LIKE ? OR description LIKE ?)");
-            String like = "%" + keyword.trim() + "%";
-            params.add(like);
-            params.add(like);
-        }
-        sql.append(" ORDER BY updated_at DESC");
-        return jdbcTemplate.query(sql.toString(), this::mapRow, params.toArray());
+    public List<Saga> findPublic() {
+        String sql = "SELECT " + BASE_COLUMNS + " FROM sagas WHERE is_public = 1 ORDER BY updated_at DESC";
+        return jdbcTemplate.query(sql, this::mapRow);
     }
 
     public Optional<Saga> findById(Long id) {

@@ -16,6 +16,7 @@ Page({
     loading: true,
     saga: null,
     nodes: [],
+    isOwner: false,
     showActionSheet: false,
     statusBarHeight: 44,
     navBarHeight: 88,
@@ -45,6 +46,8 @@ Page({
       const response = await api.getSaga(this.sagaId);
       // 后端返回 { saga: {...}, nodes: [...] }
       const saga = response.saga;
+      const currentUserId = this.getCurrentUserId();
+      const isOwner = !!currentUserId && Number(saga.userId) === Number(currentUserId);
       const type = SAGA_TYPES[saga.type] || SAGA_TYPES.life;
       const rarity = RARITY_MAP[saga.rarity] || RARITY_MAP.common;
 
@@ -67,12 +70,21 @@ Page({
         photos: typeof n.photos === 'string' ? JSON.parse(n.photos || '[]') : (n.photos || []),
       }));
 
-      this.setData({ saga: processedSaga, nodes, loading: false });
+      this.setData({ saga: processedSaga, nodes, isOwner, loading: false });
     } catch (err) {
       console.error('Load saga failed:', err);
       this.setData({ loading: false });
       wx.showToast({ title: '加载失败', icon: 'none' });
     }
+  },
+
+  getCurrentUserId() {
+    const app = getApp();
+    const userInfo = app?.globalData?.userInfo;
+    if (!userInfo) return null;
+    if (userInfo.id != null) return userInfo.id;
+    if (userInfo.user && userInfo.user.id != null) return userInfo.user.id;
+    return null;
   },
 
   async loadNodes() {
@@ -121,6 +133,7 @@ Page({
   },
 
   goAddNode() {
+    if (!this.data.isOwner) return;
     wx.navigateTo({ url: `/pages/add-node/add-node?sagaId=${this.sagaId}` });
   },
 
@@ -134,6 +147,7 @@ Page({
   },
 
   showActions() {
+    if (!this.data.isOwner) return;
     this.setData({ showActionSheet: true });
   },
 
@@ -166,6 +180,7 @@ Page({
   },
 
   goNodeDetail(e) {
+    if (!this.data.isOwner) return;
     const { id, sagaId } = e.currentTarget.dataset;
     wx.navigateTo({ url: `/pages/node-detail/node-detail?id=${id}&sagaId=${sagaId}` });
   },
