@@ -1,6 +1,7 @@
 <view class="page-container">
-  <view class="page-header">
+  <view class="stats-header">
     <text class="page-title">数据统计</text>
+    <text class="stats-subtitle">你的 LifeSaga 进度面板</text>
   </view>
 
   <view class="loading-container" wx:if="{{loading}}">
@@ -8,37 +9,101 @@
   </view>
 
   <block wx:else>
-    <view class="quick-stats" style="margin-top: 12rpx;">
-      <view class="stat-item">
-        <text class="stat-num">{{stats.sagas}}</text>
-        <text class="stat-label">副本</text>
+    <view class="stats-hero">
+      <view class="hero-copy">
+        <text class="hero-kicker">完成率</text>
+        <view class="hero-number-row">
+          <text class="hero-number">{{stats.completionRate}}</text>
+          <text class="hero-percent">%</text>
+        </view>
+        <text class="hero-caption">{{stats.completed}} 个已完成 · {{stats.active}} 个进行中</text>
       </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.nodes}}</text>
-        <text class="stat-label">节点</text>
+      <view class="hero-medal">
+        <text class="hero-medal-icon">{{topType ? topType.icon : '✦'}}</text>
+        <text class="hero-medal-label">{{topType ? topType.typeName : '开始记录'}}</text>
       </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.completed}}</text>
-        <text class="stat-label">已完成</text>
-      </view>
-    </view>
-
-    <view class="menu-group">
-      <view class="menu-item">
-        <text class="menu-text">公开副本</text>
-        <text class="menu-arrow">{{stats.publicSagas}}</text>
-      </view>
-      <view class="menu-item">
-        <text class="menu-text">平均节点数</text>
-        <text class="menu-arrow">{{stats.avgNodes}}</text>
+      <view class="hero-progress">
+        <view class="hero-progress-fill" style="width: {{stats.completionRate}}%;"></view>
       </view>
     </view>
 
-    <view class="menu-group" wx:if="{{typeStats.length}}">
-      <view class="menu-item" wx:for="{{typeStats}}" wx:key="type">
-        <text class="menu-text">{{item.typeName}}</text>
-        <text class="menu-arrow">{{item.count}}</text>
+    <view class="metric-grid">
+      <view class="metric-card metric-card--primary">
+        <text class="metric-label">副本总数</text>
+        <text class="metric-value">{{stats.sagas}}</text>
+        <text class="metric-note">人生章节</text>
       </view>
+      <view class="metric-card">
+        <text class="metric-label">记录节点</text>
+        <text class="metric-value">{{stats.nodes}}</text>
+        <text class="metric-note">关键瞬间</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-label">公开副本</text>
+        <text class="metric-value">{{stats.publicSagas}}</text>
+        <text class="metric-note">可被浏览</text>
+      </view>
+      <view class="metric-card">
+        <text class="metric-label">平均节点</text>
+        <text class="metric-value">{{stats.avgNodes}}</text>
+        <text class="metric-note">每个副本</text>
+      </view>
+    </view>
+
+    <view class="section-card">
+      <view class="section-head">
+        <text class="section-title">副本状态</text>
+        <text class="section-tag">{{stats.sagas}} 个副本</text>
+      </view>
+
+      <view class="progress-row">
+        <view class="progress-top">
+          <text class="progress-label">完成进度</text>
+          <text class="progress-value">{{stats.completionRate}}%</text>
+        </view>
+        <view class="progress-track">
+          <view class="progress-fill progress-fill--done" style="width: {{stats.completionRate}}%;"></view>
+        </view>
+      </view>
+
+      <view class="progress-row">
+        <view class="progress-top">
+          <text class="progress-label">公开比例</text>
+          <text class="progress-value">{{stats.publicRate}}%</text>
+        </view>
+        <view class="progress-track">
+          <view class="progress-fill progress-fill--public" style="width: {{stats.publicRate}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-card" wx:if="{{typeStats.length}}">
+      <view class="section-head">
+        <text class="section-title">类型分布</text>
+        <text class="section-tag">最多：{{topType.typeName}}</text>
+      </view>
+
+      <view class="type-list">
+        <view class="type-row" wx:for="{{typeStats}}" wx:key="type">
+          <view class="type-main">
+            <view class="type-icon type-icon--{{item.type}}">
+              <text>{{item.icon}}</text>
+            </view>
+            <text class="type-name">{{item.typeName}}</text>
+          </view>
+          <view class="type-chart">
+            <view class="type-track">
+              <view class="type-fill type-fill--{{item.type}}" style="width: {{item.percent}}%;"></view>
+            </view>
+            <text class="type-count">{{item.count}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-stats" wx:if="{{!stats.sagas}}">
+      <text class="empty-title">还没有统计数据</text>
+      <text class="empty-desc">创建第一个副本后，这里会自动生成你的进度面板。</text>
     </view>
   </block>
 </view>

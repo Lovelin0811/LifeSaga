@@ -51,20 +51,6 @@
 
   <!-- 菜单第二组 -->
   <view class="menu-group">
-    <view class="menu-item" bindtap="goReminders">
-      <view class="menu-icon-wrap" style="background: var(--color-accent-soft);">
-        <text class="menu-icon-emoji">⏰</text>
-      </view>
-      <text class="menu-text">提醒设置</text>
-      <text class="menu-arrow">{{reminderEnabled ? '开' : '关'}}</text>
-    </view>
-    <view class="menu-item" bindtap="goTheme">
-      <view class="menu-icon-wrap" style="background: var(--color-accent-alt-soft);">
-        <text class="menu-icon-emoji">🎨</text>
-      </view>
-      <text class="menu-text">主题与外观</text>
-      <text class="menu-arrow">{{theme === 'dark' ? '深色' : '浅色'}}</text>
-    </view>
     <view class="menu-item" bindtap="about">
       <view class="menu-icon-wrap" style="background: var(--color-bg-sunken);">
         <text class="menu-icon-emoji">ℹ️</text>

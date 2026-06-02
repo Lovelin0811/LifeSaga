@@ -7,15 +7,9 @@ Page({
     stats: { sagas: 0, nodes: 0, achievements: 0 },
     editingProfile: false,
     profileForm: { nickname: '', avatarUrl: '' },
-    reminderEnabled: false,
-    theme: 'light',
   },
 
   onShow() {
-    this.setData({
-      reminderEnabled: !!wx.getStorageSync('lifesaga_reminder_enabled'),
-      theme: wx.getStorageSync('lifesaga_theme') || 'light',
-    });
     this.loadData();
   },
 
@@ -58,28 +52,6 @@ Page({
 
   goStats() {
     wx.navigateTo({ url: '/pages/stats/stats' });
-  },
-
-  goReminders() {
-    const reminderEnabled = !this.data.reminderEnabled;
-    this.setData({ reminderEnabled });
-    wx.setStorageSync('lifesaga_reminder_enabled', reminderEnabled);
-    wx.showToast({
-      title: reminderEnabled ? '已开启提醒' : '已关闭提醒',
-      icon: 'none',
-    });
-  },
-
-  goTheme() {
-    const currentTheme = this.data.theme || 'light';
-    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-    this.setData({ theme: nextTheme });
-    wx.setStorageSync('lifesaga_theme', nextTheme);
-    const app = getApp();
-    if (app && typeof app.setTheme === 'function') {
-      app.setTheme(nextTheme);
-    }
-    wx.showToast({ title: nextTheme === 'light' ? '已切回浅色' : '已切到深色', icon: 'none' });
   },
 
   startEditProfile() {
