@@ -85,7 +85,7 @@ LifeSaga/
 │       ├── create/          # 创建/编辑副本
 │       ├── add-node/        # 添加/编辑节点
 │       ├── node-detail/     # 节点详情
-│       ├── discover/        # 广场（预留）
+│       ├── discover/        # 广场
 │       ├── achievements/    # 成就展示
 │       ├── albums/          # 我的相册
 │       ├── stats/           # 数据统计
@@ -132,10 +132,10 @@ LifeSaga/
 
 | 方法 | 路径 | 功能 | 请求体 | 响应 | 权限 |
 |------|------|------|--------|------|------|
-| GET | `/api/sagas` | 我的副本列表 | `keyword`（可选） | Saga[] | 仅自己的 |
+| GET | `/api/sagas` | 我的副本列表 | - | Saga[] | 仅自己的 |
 | POST | `/api/sagas` | 创建副本 | `{"name","type","coverUrl","description"}` | Saga | - |
-| GET | `/api/sagas/public` | 公开副本列表 | `keyword`（可选） | Saga[] | 无 / 公开 |
-| GET | `/api/sagas/{id}` | 副本详情（含节点） | - | `{"saga":Saga,"nodes":SagaNode[]}` | 仅自己的 |
+| GET | `/api/sagas/public` | 公开副本列表 | - | PublicSagaVO[] | 无 / 公开 |
+| GET | `/api/sagas/{id}` | 副本详情（含节点） | - | `{"saga":Saga,"nodes":SagaNode[]}` | 自己的 / 公开副本只读 |
 | PUT | `/api/sagas/{id}` | 更新副本 | `{"name","type","coverUrl","description"}` | Saga | 仅自己的 |
 | PUT | `/api/sagas/{id}/complete` | 完成副本 | - | Saga | 仅自己的 |
 | DELETE | `/api/sagas/{id}` | 删除副本（级联删除节点） | - | `{"code":200}` | 仅自己的 |
@@ -166,6 +166,19 @@ LifeSaga/
 | 方法 | 路径 | 功能 | 参数 | 响应 | 限制 |
 |------|------|------|------|------|------|
 | POST | `/api/upload` | 上传图片 | multipart `file` | `{"url":"..."}` | 20MB / JPEG,PNG,WebP,GIF |
+
+### 4.7 相册模块
+
+| 方法 | 路径 | 功能 | 响应 | 认证 |
+|------|------|------|------|------|
+| GET | `/api/users/me/albums` | 我的相册 | AlbumItemVO[] | 是 |
+
+相册数据来源：
+
+- 副本封面图：`sagas.cover_url`
+- 节点照片：`saga_nodes.photos`
+- `saga_nodes.photos` 为 JSON 数组时会展开为多条记录，一个节点多张照片会逐张展示
+- 兼容旧格式：如果 `photos` 不是 JSON，会按单张图片处理
 
 ---
 
@@ -345,7 +358,7 @@ UNIQUE(user_id, achievement_id)
 | 标签 | 路径 | 功能 |
 |------|------|------|
 | 首页 | pages/home/home | 副本列表 + 统计 |
-| 广场 | pages/discover/discover | 预留 |
+| 广场 | pages/discover/discover | 公开副本列表 |
 | 创建 | pages/create/create | 创建/编辑副本 |
 | 成就 | pages/achievements/achievements | 成就总览 |
 | 我的 | pages/profile/profile | 个人中心 |
@@ -357,6 +370,7 @@ UNIQUE(user_id, achievement_id)
 | 副本详情 | pages/detail/detail | 时间线 + 操作面板 |
 | 节点详情 | pages/node-detail/node-detail | 照片轮播 + 内容 + 操作 |
 | 添加节点 | pages/add-node/add-node | 表单（时间/地点/照片/标题/描述/里程碑） |
+| 我的相册 | pages/albums/albums | 副本封面 + 节点照片聚合展示 |
 
 ### 8.3 设计系统
 

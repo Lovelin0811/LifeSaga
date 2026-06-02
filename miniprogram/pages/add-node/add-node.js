@@ -1,5 +1,6 @@
 // pages/add-node/add-node.js
 const { api } = require('../../utils/api');
+const { parsePhotos } = require('../../utils/util');
 
 Page({
   data: {
@@ -45,7 +46,7 @@ Page({
     try {
       wx.showLoading({ title: '加载中' });
       const node = await api.getNode(this.data.sagaId, nodeId);
-      const photos = typeof node.photos === 'string' ? JSON.parse(node.photos || '[]') : (node.photos || []);
+      const photos = parsePhotos(node.photos);
       const [datePart, timePart] = (node.nodeTime || '').split('T');
       this.setData({
         title: node.title || '',

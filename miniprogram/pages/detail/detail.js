@@ -1,6 +1,6 @@
 // pages/detail/detail.js
 const { api } = require('../../utils/api');
-const { SAGA_TYPES, RARITY_MAP, formatDate } = require('../../utils/util');
+const { SAGA_TYPES, RARITY_MAP, formatDate, parsePhotos } = require('../../utils/util');
 
 const COVER_BGS = {
   life: 'linear-gradient(135deg, #FFF0EB 0%, #FFE5DD 100%)',
@@ -35,8 +35,10 @@ Page({
 
   onShow() {
     if (this.data.saga) {
-      this.loadNodes(); // 返回时刷新节点列表
-      this.refreshSaga(); // 编辑回来后刷新头部信息
+      if (this.data.isOwner) {
+        this.loadNodes();
+      }
+      this.refreshSaga();
     }
   },
 
@@ -67,7 +69,7 @@ Page({
       const nodes = (response.nodes || []).map(n => ({
         ...n,
         nodeTimeText: n.nodeTime ? formatDate(n.nodeTime, 'YYYY.MM.DD') : '',
-        photos: typeof n.photos === 'string' ? JSON.parse(n.photos || '[]') : (n.photos || []),
+        photos: parsePhotos(n.photos),
       }));
 
       this.setData({ saga: processedSaga, nodes, isOwner, loading: false });
@@ -93,7 +95,7 @@ Page({
       const processed = nodes.map(n => ({
         ...n,
         nodeTimeText: n.nodeTime ? formatDate(n.nodeTime, 'YYYY.MM.DD') : '',
-        photos: typeof n.photos === 'string' ? JSON.parse(n.photos || '[]') : (n.photos || []),
+        photos: parsePhotos(n.photos),
       }));
       this.setData({ nodes: processed });
 

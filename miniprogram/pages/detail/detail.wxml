@@ -63,7 +63,7 @@
             <view class="node-cover cover-bg-{{saga.type}}" wx:if="{{item.coverUrl || item.photos && item.photos.length}}">
               <image wx:if="{{item.coverUrl}}" class="node-cover-img" src="{{item.coverUrl}}" mode="aspectFill"/>
               <image wx:elif="{{item.photos && item.photos.length}}" class="node-cover-img" src="{{item.photos[0]}}" mode="aspectFill"
-                     bindtap="previewPhoto" data-urls="{{item.photos}}" data-current="{{item.photos[0]}}"/>
+                     catchtap="previewPhoto" data-urls="{{item.photos}}" data-current="{{item.photos[0]}}"/>
             </view>
             <!-- 内容 -->
             <view class="node-content">
@@ -82,7 +82,7 @@
               <view class="node-photos" wx:if="{{item.photos && item.photos.length > 1 && !item.coverUrl}}">
                 <image wx:for="{{item.photos}}" wx:for-item="photo" wx:key="*this"
                        class="photo-thumb" src="{{photo}}" mode="aspectFill"
-                       bindtap="previewPhoto" data-urls="{{item.photos}}" data-current="{{photo}}"/>
+                       catchtap="previewPhoto" data-urls="{{item.photos}}" data-current="{{photo}}"/>
               </view>
             </view>
           </view>

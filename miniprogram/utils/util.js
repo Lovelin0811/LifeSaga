@@ -41,6 +41,21 @@ function timeAgo(date) {
   return `${Math.floor(diff / year)} 年前`;
 }
 
+function parsePhotos(photos) {
+  if (!photos) return [];
+  if (Array.isArray(photos)) return photos;
+  if (typeof photos !== 'string') return [];
+  const value = photos.trim();
+  if (!value || value === '[]') return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed.filter(Boolean);
+    return typeof parsed === 'string' && parsed ? [parsed] : [];
+  } catch (err) {
+    return [value];
+  }
+}
+
 // 副本类型配置
 const SAGA_TYPES = {
   life: { name: '生活副本', icon: '🏠', color: '#E8725A' },
@@ -64,6 +79,7 @@ const RARITY_MAP = {
 module.exports = {
   formatDate,
   timeAgo,
+  parsePhotos,
   SAGA_TYPES,
   RARITY_MAP,
 };

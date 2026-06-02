@@ -1,6 +1,6 @@
 // pages/node-detail/node-detail.js
 const { api } = require('../../utils/api');
-const { formatDate } = require('../../utils/util');
+const { formatDate, parsePhotos } = require('../../utils/util');
 
 Page({
   data: {
@@ -29,7 +29,7 @@ Page({
         node: {
           ...node,
           nodeTimeText: node.nodeTime ? formatDate(node.nodeTime, 'YYYY年MM月DD日 HH:mm') : '',
-          photos: typeof node.photos === 'string' ? JSON.parse(node.photos || '[]') : (node.photos || []),
+          photos: parsePhotos(node.photos),
         },
         loading: false,
       });
