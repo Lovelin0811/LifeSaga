@@ -8,11 +8,9 @@ Page({
       sagas: 0,
       nodes: 0,
       completed: 0,
-      publicSagas: 0,
       avgNodes: 0,
       active: 0,
       completionRate: 0,
-      publicRate: 0,
     },
     typeStats: [],
     topType: null,
@@ -32,7 +30,6 @@ Page({
       await getApp().ensureLogin();
       const sagas = await api.getSagas();
       const completed = sagas.filter(s => s.status === 'completed').length;
-      const publicSagas = sagas.filter(s => s.isPublic).length;
       const nodes = sagas.reduce((sum, saga) => sum + (saga.nodeCount || 0), 0);
       const typeMap = {};
       sagas.forEach((saga) => {
@@ -56,11 +53,9 @@ Page({
           sagas: sagas.length,
           nodes,
           completed,
-          publicSagas,
           active: Math.max(sagas.length - completed, 0),
           avgNodes: sagas.length ? Math.round(nodes / sagas.length) : 0,
           completionRate: sagas.length ? Math.round((completed / sagas.length) * 100) : 0,
-          publicRate: sagas.length ? Math.round((publicSagas / sagas.length) * 100) : 0,
         },
         typeStats,
         topType: typeStats[0] || null,

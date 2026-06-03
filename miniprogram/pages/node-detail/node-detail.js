@@ -12,6 +12,7 @@ Page({
   },
 
   onLoad(options) {
+    wx.hideShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] });
     // 获取状态栏高度用于自定义导航
     const systemInfo = wx.getSystemInfoSync();
     this.setData({ statusBarHeight: systemInfo.statusBarHeight || 44 });
@@ -120,16 +121,4 @@ Page({
       .finally(() => wx.hideLoading());
   },
 
-  shareNode() {
-    wx.showShareMenu({ withShareTicket: true });
-    wx.showToast({ title: '点击右上角分享', icon: 'none' });
-  },
-
-  onShareAppMessage() {
-    const node = this.data.node;
-    return {
-      title: node?.title || '节点分享',
-      path: `/pages/node-detail/node-detail?id=${this.nodeId}&sagaId=${this.sagaId}`,
-    };
-  },
 });

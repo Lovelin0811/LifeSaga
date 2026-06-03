@@ -55,7 +55,7 @@ Page({
         name: saga.name || '',
         description: saga.description || '',
         coverUrl: saga.coverUrl || '',
-        isPublic: !!saga.isPublic,
+        isPublic: false,
       });
     } catch (err) {
       console.error('Load saga for edit failed:', err);
@@ -81,10 +81,6 @@ Page({
     this.setData({ selectedType: e.currentTarget.dataset.key });
   },
 
-  togglePublic(e) {
-    this.setData({ isPublic: !!e.detail.value });
-  },
-
   chooseCover() {
     wx.chooseMedia({
       count: 1,
@@ -98,7 +94,7 @@ Page({
 
   async createSaga() {
     if (this.data.submitting) return;
-    const { selectedType, name, description, coverTempPath, isEdit, editId, isPublic } = this.data;
+    const { selectedType, name, description, coverTempPath, isEdit, editId } = this.data;
 
     if (!name) {
       wx.showToast({ title: '请输入副本名称', icon: 'none' });
@@ -119,7 +115,7 @@ Page({
         type: selectedType,
         coverUrl,
         description,
-        isPublic,
+        isPublic: false,
       };
 
       if (isEdit) {

@@ -85,7 +85,7 @@ LifeSaga/
 │       ├── create/          # 创建/编辑副本
 │       ├── add-node/        # 添加/编辑节点
 │       ├── node-detail/     # 节点详情
-│       ├── discover/        # 广场
+│       ├── discover/        # 广场（个人版小程序端暂未注册入口）
 │       ├── achievements/    # 成就展示
 │       ├── albums/          # 我的相册
 │       ├── stats/           # 数据统计
@@ -358,7 +358,6 @@ UNIQUE(user_id, achievement_id)
 | 标签 | 路径 | 功能 |
 |------|------|------|
 | 首页 | pages/home/home | 副本列表 + 统计 |
-| 广场 | pages/discover/discover | 公开副本列表 |
 | 创建 | pages/create/create | 创建/编辑副本 |
 | 成就 | pages/achievements/achievements | 成就总览 |
 | 我的 | pages/profile/profile | 个人中心 |

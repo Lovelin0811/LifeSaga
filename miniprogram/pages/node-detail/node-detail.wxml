@@ -64,10 +64,6 @@
             <text class="action-icon">⚑</text>
             <text>{{node.milestone ? '取消里程碑' : '里程碑'}}</text>
           </view>
-          <view class="action-btn action-btn-secondary" bindtap="shareNode">
-            <text class="action-icon">⇧</text>
-            <text>分享</text>
-          </view>
           <view class="action-btn action-btn-secondary" bindtap="showMenu">
             <text class="action-icon">⋯</text>
             <text>更多</text>

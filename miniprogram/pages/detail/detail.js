@@ -25,6 +25,7 @@ Page({
   sagaId: null,
 
   onLoad(options) {
+    wx.hideShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] });
     const systemInfo = wx.getSystemInfoSync();
     const statusBarHeight = systemInfo.statusBarHeight || 44;
     const navBarHeight = statusBarHeight + 44;
@@ -220,11 +221,4 @@ Page({
     });
   },
 
-  onShareAppMessage() {
-    const { saga } = this.data;
-    return {
-      title: saga?.name || '人生副本',
-      path: `/pages/detail/detail?id=${this.sagaId}`,
-    };
-  },
 });

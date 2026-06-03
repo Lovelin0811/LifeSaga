@@ -5,7 +5,6 @@
     "pages/add-node/add-node",
     "pages/node-detail/node-detail",
     "pages/create/create",
-    "pages/discover/discover",
     "pages/achievements/achievements",
     "pages/profile/profile",
     "pages/albums/albums",
@@ -29,12 +28,6 @@
         "text": "首页",
         "iconPath": "images/tab-home.png",
         "selectedIconPath": "images/tab-home-active.png"
-      },
-      {
-        "pagePath": "pages/discover/discover",
-        "text": "广场",
-        "iconPath": "images/tab-discover.png",
-        "selectedIconPath": "images/tab-discover-active.png"
       },
       {
         "pagePath": "pages/create/create",

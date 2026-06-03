@@ -220,10 +220,6 @@
   background: var(--color-primary);
 }
 
-.progress-fill--public {
-  background: var(--color-info);
-}
-
 .type-list {
   display: flex;
   flex-direction: column;

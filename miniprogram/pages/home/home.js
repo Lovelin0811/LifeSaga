@@ -21,6 +21,7 @@ Page({
   },
 
   onShow() {
+    wx.hideShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] });
     const systemInfo = wx.getSystemInfoSync();
     this.setData({ statusBarHeight: systemInfo.statusBarHeight || 44 });
     this.loadSagas();
@@ -86,10 +87,4 @@ Page({
     wx.switchTab({ url: '/pages/create/create' });
   },
 
-  onShareAppMessage() {
-    return {
-      title: '人生副本 - 记录你的每一段旅程',
-      path: '/pages/home/home',
-    };
-  },
 });

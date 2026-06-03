@@ -39,11 +39,6 @@
         <text class="metric-note">关键瞬间</text>
       </view>
       <view class="metric-card">
-        <text class="metric-label">公开副本</text>
-        <text class="metric-value">{{stats.publicSagas}}</text>
-        <text class="metric-note">可被浏览</text>
-      </view>
-      <view class="metric-card">
         <text class="metric-label">平均节点</text>
         <text class="metric-value">{{stats.avgNodes}}</text>
         <text class="metric-note">每个副本</text>
@@ -63,16 +58,6 @@
         </view>
         <view class="progress-track">
           <view class="progress-fill progress-fill--done" style="width: {{stats.completionRate}}%;"></view>
-        </view>
-      </view>
-
-      <view class="progress-row">
-        <view class="progress-top">
-          <text class="progress-label">公开比例</text>
-          <text class="progress-value">{{stats.publicRate}}%</text>
-        </view>
-        <view class="progress-track">
-          <view class="progress-fill progress-fill--public" style="width: {{stats.publicRate}}%;"></view>
         </view>
       </view>
     </view>
