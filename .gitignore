@@ -8,6 +8,8 @@ backend/local.properties
 backend/logs/
 backend/uploads/
 backend/application-local.yml
+back/application-local.yml
+back/src/main/resources/application-local.yml
 miniprogram/config.local.js
 deploy.sh
 .workbuddy/

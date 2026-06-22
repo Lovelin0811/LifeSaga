@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: lifesaga-ddd
+  config:
+    import: optional:file:./application-local.yml
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/lifesaga?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=5000
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 3000
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.lovelin.lifesaga.saga.domain.model
+  configuration:
+    map-underscore-to-camel-case: true
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
