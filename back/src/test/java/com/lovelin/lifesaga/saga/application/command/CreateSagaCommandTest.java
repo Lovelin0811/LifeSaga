@@ -5,8 +5,6 @@ import com.lovelin.lifesaga.saga.domain.model.SagaOwnerId;
 import com.lovelin.lifesaga.saga.domain.model.SagaType;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,7 +18,6 @@ class CreateSagaCommandTest {
         SagaOwnerId sagaOwnerId = new SagaOwnerId(1);
         SagaName sagaName = new SagaName("日本旅行");
         SagaType sagaType = SagaType.TRAVEL;
-        LocalDateTime startedAt = LocalDateTime.of(2026, 6, 17, 12, 0);
 
         CreateSagaCommand command = new CreateSagaCommand(
                 sagaOwnerId,
@@ -28,7 +25,7 @@ class CreateSagaCommandTest {
                 sagaType,
                 null,
                 null,
-                startedAt
+                false
         );
 
         assertAll(
@@ -37,22 +34,19 @@ class CreateSagaCommandTest {
                 () -> assertEquals(sagaName, command.sagaName()),
                 () -> assertEquals(sagaType, command.sagaType()),
                 () -> assertNull(command.coverUrl()),
-                () -> assertNull(command.description()),
-                () -> assertEquals(startedAt, command.startedAt())
+                () -> assertNull(command.description())
         );
     }
 
     @Test
     void shouldCreateCommandWithOptionalFields() {
-        LocalDateTime startedAt = LocalDateTime.of(2026, 6, 17, 12, 0);
-
         CreateSagaCommand command = new CreateSagaCommand(
                 new SagaOwnerId(1),
                 new SagaName("日本旅行"),
                 SagaType.TRAVEL,
                 "https://example.com/cover.jpg",
                 "记录一次日本旅行",
-                startedAt
+                false
         );
 
         assertAll(
@@ -71,7 +65,7 @@ class CreateSagaCommandTest {
                         SagaType.TRAVEL,
                         null,
                         null,
-                        LocalDateTime.of(2026, 6, 17, 12, 0)
+                        false
                 )
         );
 
@@ -88,7 +82,7 @@ class CreateSagaCommandTest {
                         SagaType.TRAVEL,
                         null,
                         null,
-                        LocalDateTime.of(2026, 6, 17, 12, 0)
+                        false
                 )
         );
 
@@ -105,27 +99,10 @@ class CreateSagaCommandTest {
                         null,
                         null,
                         null,
-                        LocalDateTime.of(2026, 6, 17, 12, 0)
+                        false
                 )
         );
 
         assertEquals("副本类型不能为空", exception.getMessage());
-    }
-
-    @Test
-    void shouldRejectNullStartedAt() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> new CreateSagaCommand(
-                        new SagaOwnerId(1),
-                        new SagaName("日本旅行"),
-                        SagaType.TRAVEL,
-                        null,
-                        null,
-                        null
-                )
-        );
-
-        assertEquals("副本开始时间不能为空", exception.getMessage());
     }
 }

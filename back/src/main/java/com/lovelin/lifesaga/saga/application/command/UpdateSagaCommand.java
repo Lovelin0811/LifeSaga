@@ -11,7 +11,8 @@ public record UpdateSagaCommand(
         SagaName sagaName,
         SagaType sagaType,
         String coverUrl,
-        String description
+        String description,
+        boolean publicVisible
 ) {
 
     public UpdateSagaCommand {

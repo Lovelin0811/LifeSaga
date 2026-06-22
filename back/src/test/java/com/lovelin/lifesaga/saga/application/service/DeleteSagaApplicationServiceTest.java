@@ -4,8 +4,12 @@ import com.lovelin.lifesaga.saga.application.command.DeleteSagaCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaName;
+import com.lovelin.lifesaga.saga.domain.model.SagaNode;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeId;
 import com.lovelin.lifesaga.saga.domain.model.SagaOwnerId;
 import com.lovelin.lifesaga.saga.domain.model.SagaType;
+import com.lovelin.lifesaga.saga.domain.repository.SagaNodeFavoriteRepository;
+import com.lovelin.lifesaga.saga.domain.repository.SagaNodeRepository;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +28,13 @@ class DeleteSagaApplicationServiceTest {
     @Test
     void shouldDeleteSagaSuccessfully() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        DeleteSagaApplicationService service = new DeleteSagaApplicationService(sagaRepository);
+        InMemorySagaNodeRepository sagaNodeRepository = new InMemorySagaNodeRepository();
+        InMemorySagaNodeFavoriteRepository sagaNodeFavoriteRepository = new InMemorySagaNodeFavoriteRepository();
+        DeleteSagaApplicationService service = new DeleteSagaApplicationService(
+                sagaRepository,
+                sagaNodeRepository,
+                sagaNodeFavoriteRepository
+        );
         SagaId sagaId = new SagaId(1);
         sagaRepository.store(sagaId, createSaga());
 
@@ -33,6 +43,8 @@ class DeleteSagaApplicationServiceTest {
         assertAll(
                 () -> assertEquals(1, sagaRepository.deletedCount()),
                 () -> assertEquals(sagaId, sagaRepository.lastDeletedSagaId()),
+                () -> assertEquals(sagaId, sagaNodeRepository.deletedSagaId),
+                () -> assertEquals(sagaId, sagaNodeFavoriteRepository.deletedSagaId),
                 () -> assertEquals(Optional.empty(), sagaRepository.findBySagaId(sagaId))
         );
     }
@@ -40,7 +52,7 @@ class DeleteSagaApplicationServiceTest {
     @Test
     void shouldRejectDeletingSagaWhenCommandIsNull() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        DeleteSagaApplicationService service = new DeleteSagaApplicationService(sagaRepository);
+        DeleteSagaApplicationService service = createService(sagaRepository);
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -56,7 +68,7 @@ class DeleteSagaApplicationServiceTest {
     @Test
     void shouldRejectDeletingSagaWhenSagaNotFound() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        DeleteSagaApplicationService service = new DeleteSagaApplicationService(sagaRepository);
+        DeleteSagaApplicationService service = createService(sagaRepository);
 
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
@@ -72,7 +84,7 @@ class DeleteSagaApplicationServiceTest {
     @Test
     void shouldRejectDeletingSagaWhenOwnerDoesNotMatch() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        DeleteSagaApplicationService service = new DeleteSagaApplicationService(sagaRepository);
+        DeleteSagaApplicationService service = createService(sagaRepository);
         SagaId sagaId = new SagaId(1);
         sagaRepository.store(sagaId, createSaga());
 
@@ -99,6 +111,14 @@ class DeleteSagaApplicationServiceTest {
         );
     }
 
+    private DeleteSagaApplicationService createService(InMemorySagaRepository sagaRepository) {
+        return new DeleteSagaApplicationService(
+                sagaRepository,
+                new InMemorySagaNodeRepository(),
+                new InMemorySagaNodeFavoriteRepository()
+        );
+    }
+
     private static final class InMemorySagaRepository implements SagaRepository {
 
         private final Map<SagaId, Saga> storage = new LinkedHashMap<>();
@@ -112,6 +132,16 @@ class DeleteSagaApplicationServiceTest {
         @Override
         public Optional<Saga> findBySagaId(SagaId sagaId) {
             return Optional.ofNullable(storage.get(sagaId));
+        }
+
+        @Override
+        public java.util.List<Saga> findBySagaOwnerId(SagaOwnerId sagaOwnerId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Saga> findPublic() {
+            return java.util.List.of();
         }
 
         @Override
@@ -132,6 +162,67 @@ class DeleteSagaApplicationServiceTest {
 
         SagaId lastDeletedSagaId() {
             return lastDeletedSagaId;
+        }
+    }
+
+    private static final class InMemorySagaNodeRepository implements SagaNodeRepository {
+
+        private SagaId deletedSagaId;
+
+        @Override
+        public Optional<SagaNode> findBySagaNodeId(SagaNodeId sagaNodeId) {
+            return Optional.empty();
+        }
+
+        @Override
+        public java.util.List<SagaNode> findBySagaId(SagaId sagaId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public SagaNode save(SagaNode sagaNode) {
+            return sagaNode;
+        }
+
+        @Override
+        public void deleteBySagaNodeId(SagaNodeId sagaNodeId) {
+        }
+
+        @Override
+        public void deleteBySagaId(SagaId sagaId) {
+            deletedSagaId = sagaId;
+        }
+    }
+
+    private static final class InMemorySagaNodeFavoriteRepository implements SagaNodeFavoriteRepository {
+
+        private SagaId deletedSagaId;
+
+        @Override
+        public boolean isFavorited(SagaOwnerId sagaOwnerId, SagaNodeId sagaNodeId) {
+            return false;
+        }
+
+        @Override
+        public boolean toggle(SagaOwnerId sagaOwnerId, SagaNodeId sagaNodeId) {
+            return true;
+        }
+
+        @Override
+        public java.util.List<SagaNodeId> findFavoritedSagaNodeIds(
+                SagaOwnerId sagaOwnerId,
+                java.util.List<SagaNodeId> sagaNodeIds
+        ) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public void deleteBySagaNodeId(SagaNodeId sagaNodeId) {
+        }
+
+        @Override
+        public void deleteBySagaId(SagaId sagaId) {
+            deletedSagaId = sagaId;
         }
     }
 }

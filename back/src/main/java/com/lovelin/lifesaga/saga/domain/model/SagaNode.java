@@ -73,6 +73,42 @@ public final class SagaNode {
         );
     }
 
+    public static SagaNode restore(
+            SagaNodeId sagaNodeId,
+            SagaId sagaId,
+            SagaNodeTitle sagaNodeTitle,
+            SagaNodeOrder sagaNodeOrder,
+            SagaNodeDescription sagaNodeDescription,
+            SagaNodeLocation sagaNodeLocation,
+            SagaNodePhotos sagaNodePhotos,
+            SagaNodeTime sagaNodeTime,
+            boolean milestone
+    ) {
+        if (sagaNodeId == null) {
+            throw new IllegalArgumentException("节点 ID 不能为空");
+        }
+        if (sagaId == null) {
+            throw new IllegalArgumentException("节点所属副本不能为空");
+        }
+        if (sagaNodeTitle == null) {
+            throw new IllegalArgumentException("节点标题不能为空");
+        }
+        if (sagaNodeOrder == null) {
+            throw new IllegalArgumentException("节点排序编号不能为空");
+        }
+        return new SagaNode(
+                sagaNodeId,
+                sagaId,
+                sagaNodeTitle,
+                sagaNodeOrder,
+                sagaNodeDescription,
+                sagaNodeLocation,
+                sagaNodePhotos,
+                sagaNodeTime,
+                milestone
+        );
+    }
+
     public SagaNodeId sagaNodeId() {
         return sagaNodeId;
     }

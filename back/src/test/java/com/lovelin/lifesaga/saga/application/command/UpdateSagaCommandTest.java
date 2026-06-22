@@ -27,7 +27,8 @@ class UpdateSagaCommandTest {
                 sagaName,
                 sagaType,
                 null,
-                null
+                null,
+                false
         );
 
         assertAll(
@@ -49,12 +50,14 @@ class UpdateSagaCommandTest {
                 new SagaName("北海道旅行"),
                 SagaType.TRAVEL,
                 "https://example.com/cover.jpg",
-                "更新后的副本简介"
+                "更新后的副本简介",
+                true
         );
 
         assertAll(
                 () -> assertEquals("https://example.com/cover.jpg", command.coverUrl()),
-                () -> assertEquals("更新后的副本简介", command.description())
+                () -> assertEquals("更新后的副本简介", command.description()),
+                () -> assertEquals(true, command.publicVisible())
         );
     }
 
@@ -68,7 +71,8 @@ class UpdateSagaCommandTest {
                         new SagaName("北海道旅行"),
                         SagaType.TRAVEL,
                         null,
-                        null
+                        null,
+                        false
                 )
         );
 
@@ -85,7 +89,8 @@ class UpdateSagaCommandTest {
                         new SagaName("北海道旅行"),
                         SagaType.TRAVEL,
                         null,
-                        null
+                        null,
+                        false
                 )
         );
 
@@ -102,7 +107,8 @@ class UpdateSagaCommandTest {
                         null,
                         SagaType.TRAVEL,
                         null,
-                        null
+                        null,
+                        false
                 )
         );
 
@@ -119,7 +125,8 @@ class UpdateSagaCommandTest {
                         new SagaName("北海道旅行"),
                         null,
                         null,
-                        null
+                        null,
+                        false
                 )
         );
 

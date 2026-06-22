@@ -3,10 +3,13 @@ package com.lovelin.lifesaga.saga.application.service;
 import com.lovelin.lifesaga.saga.application.command.CompleteSagaCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 
+@Service
 public class CompleteSagaApplicationService {
 
     private final SagaRepository sagaRepository;
@@ -17,6 +20,7 @@ public class CompleteSagaApplicationService {
         this.clock = clock;
     }
 
+    @Transactional
     public Saga completeSaga(CompleteSagaCommand command) {
         if (command == null) {
             throw new IllegalArgumentException("完成副本命令不能为空");

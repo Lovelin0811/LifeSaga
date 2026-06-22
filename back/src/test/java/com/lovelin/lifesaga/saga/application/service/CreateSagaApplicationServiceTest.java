@@ -11,7 +11,10 @@ import com.lovelin.lifesaga.saga.domain.model.SagaType;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -26,7 +29,11 @@ class CreateSagaApplicationServiceTest {
     @Test
     void shouldCreateSagaSuccessfully() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        CreateSagaApplicationService service = new CreateSagaApplicationService(sagaRepository);
+        Clock fixedClock = Clock.fixed(
+                Instant.parse("2026-06-17T04:00:00Z"),
+                ZoneId.of("Asia/Shanghai")
+        );
+        CreateSagaApplicationService service = new CreateSagaApplicationService(sagaRepository, fixedClock);
         SagaOwnerId sagaOwnerId = new SagaOwnerId(1);
         SagaName sagaName = new SagaName("日本旅行");
         SagaType sagaType = SagaType.TRAVEL;
@@ -37,7 +44,7 @@ class CreateSagaApplicationServiceTest {
                 sagaType,
                 "https://example.com/cover.jpg",
                 "记录一次日本旅行",
-                startedAt
+                false
         );
 
         Saga saga = service.createSaga(command);
@@ -63,7 +70,7 @@ class CreateSagaApplicationServiceTest {
     @Test
     void shouldRejectCreatingSagaWhenCommandIsNull() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        CreateSagaApplicationService service = new CreateSagaApplicationService(sagaRepository);
+        CreateSagaApplicationService service = new CreateSagaApplicationService(sagaRepository, Clock.systemDefaultZone());
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -85,6 +92,16 @@ class CreateSagaApplicationServiceTest {
         @Override
         public Optional<Saga> findBySagaId(SagaId sagaId) {
             return Optional.empty();
+        }
+
+        @Override
+        public java.util.List<Saga> findBySagaOwnerId(SagaOwnerId sagaOwnerId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Saga> findPublic() {
+            return java.util.List.of();
         }
 
         @Override

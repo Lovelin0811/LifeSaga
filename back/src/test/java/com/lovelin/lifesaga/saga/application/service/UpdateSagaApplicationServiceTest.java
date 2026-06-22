@@ -34,7 +34,8 @@ class UpdateSagaApplicationServiceTest {
                 new SagaName("北海道旅行"),
                 SagaType.STUDY,
                 "https://example.com/updated-cover.jpg",
-                "更新后的副本简介"
+                "更新后的副本简介",
+                true
         );
 
         Saga updatedSaga = service.updateSaga(command);
@@ -110,7 +111,8 @@ class UpdateSagaApplicationServiceTest {
                 new SagaName("北海道旅行"),
                 SagaType.STUDY,
                 "https://example.com/updated-cover.jpg",
-                "更新后的副本简介"
+                "更新后的副本简介",
+                true
         );
     }
 
@@ -138,6 +140,16 @@ class UpdateSagaApplicationServiceTest {
         @Override
         public Optional<Saga> findBySagaId(SagaId sagaId) {
             return Optional.ofNullable(storage.get(sagaId));
+        }
+
+        @Override
+        public java.util.List<Saga> findBySagaOwnerId(SagaOwnerId sagaOwnerId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Saga> findPublic() {
+            return java.util.List.of();
         }
 
         @Override

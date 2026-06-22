@@ -116,6 +116,16 @@ class CompleteSagaApplicationServiceTest {
         }
 
         @Override
+        public java.util.List<Saga> findBySagaOwnerId(SagaOwnerId sagaOwnerId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Saga> findPublic() {
+            return java.util.List.of();
+        }
+
+        @Override
         public Saga save(Saga saga) {
             savedCount++;
             lastSavedSaga = saga;

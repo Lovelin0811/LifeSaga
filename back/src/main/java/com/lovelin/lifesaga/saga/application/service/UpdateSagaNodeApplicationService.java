@@ -5,7 +5,10 @@ import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
 import com.lovelin.lifesaga.saga.domain.repository.SagaNodeRepository;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class UpdateSagaNodeApplicationService {
 
     private final SagaRepository sagaRepository;
@@ -19,6 +22,7 @@ public class UpdateSagaNodeApplicationService {
         this.sagaNodeRepository = sagaNodeRepository;
     }
 
+    @Transactional
     public SagaNode updateSagaNode(UpdateSagaNodeCommand command) {
         if (command == null) {
             throw new IllegalArgumentException("更新节点命令不能为空");

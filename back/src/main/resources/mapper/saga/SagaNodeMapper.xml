@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lovelin.lifesaga.saga.infrastructure.persistence.mapper.SagaNodeMapper">
+
+    <resultMap id="SagaNodeRecordMap" type="com.lovelin.lifesaga.saga.infrastructure.persistence.record.SagaNodeRecord">
+        <id property="id" column="id"/>
+        <result property="sagaId" column="saga_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="location" column="location"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="nodeTime" column="node_time"/>
+        <result property="photos" column="photos"/>
+        <result property="isMilestone" column="is_milestone"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="SagaNodeColumns">
+        id,
+        saga_id,
+        title,
+        content,
+        location,
+        latitude,
+        longitude,
+        node_time,
+        photos,
+        is_milestone,
+        sort_order,
+        created_at,
+        updated_at
+    </sql>
+
+    <select id="findById" resultMap="SagaNodeRecordMap">
+        SELECT
+        <include refid="SagaNodeColumns"/>
+        FROM saga_nodes
+        WHERE id = #{id}
+    </select>
+
+    <select id="findBySagaId" resultMap="SagaNodeRecordMap">
+        SELECT
+        <include refid="SagaNodeColumns"/>
+        FROM saga_nodes
+        WHERE saga_id = #{sagaId}
+        ORDER BY node_time ASC, sort_order ASC, created_at ASC
+    </select>
+
+    <insert id="insert" parameterType="com.lovelin.lifesaga.saga.infrastructure.persistence.record.SagaNodeRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO saga_nodes (
+            saga_id,
+            title,
+            content,
+            location,
+            node_time,
+            photos,
+            is_milestone,
+            sort_order
+        ) VALUES (
+            #{sagaId},
+            #{title},
+            #{content, jdbcType=LONGVARCHAR},
+            #{location, jdbcType=VARCHAR},
+            #{nodeTime, jdbcType=TIMESTAMP},
+            #{photos, jdbcType=LONGVARCHAR},
+            #{isMilestone},
+            #{sortOrder}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lovelin.lifesaga.saga.infrastructure.persistence.record.SagaNodeRecord">
+        UPDATE saga_nodes
+        SET saga_id = #{sagaId},
+            title = #{title},
+            content = #{content, jdbcType=LONGVARCHAR},
+            location = #{location, jdbcType=VARCHAR},
+            node_time = #{nodeTime, jdbcType=TIMESTAMP},
+            photos = #{photos, jdbcType=LONGVARCHAR},
+            is_milestone = #{isMilestone},
+            sort_order = #{sortOrder}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM saga_nodes
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteBySagaId">
+        DELETE FROM saga_nodes
+        WHERE saga_id = #{sagaId}
+    </delete>
+
+</mapper>

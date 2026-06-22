@@ -11,6 +11,7 @@ public final class Saga {
     private String coverUrl;
     private String description;
     private SagaStatus sagaStatus;
+    private boolean publicVisible;
     private int nodeCount;
     private SagaRarity sagaRarity;
     private final LocalDateTime startedAt;
@@ -24,6 +25,7 @@ public final class Saga {
             String coverUrl,
             String description,
             SagaStatus sagaStatus,
+            boolean publicVisible,
             int nodeCount,
             SagaRarity sagaRarity,
             LocalDateTime startedAt,
@@ -36,6 +38,7 @@ public final class Saga {
         this.coverUrl = coverUrl;
         this.description = description;
         this.sagaStatus = sagaStatus;
+        this.publicVisible = publicVisible;
         this.nodeCount = nodeCount;
         this.sagaRarity = sagaRarity;
         this.startedAt = startedAt;
@@ -70,10 +73,65 @@ public final class Saga {
                 coverUrl,
                 description,
                 SagaStatus.ACTIVE,
+                false,
                 0,
                 SagaRarity.COMMON,
                 startedAt,
                 null
+        );
+    }
+
+    public static Saga restore(
+            SagaId sagaId,
+            SagaOwnerId sagaOwnerId,
+            SagaName sagaName,
+            SagaType sagaType,
+            String coverUrl,
+            String description,
+            SagaStatus sagaStatus,
+            boolean publicVisible,
+            int nodeCount,
+            SagaRarity sagaRarity,
+            LocalDateTime startedAt,
+            LocalDateTime endedAt
+    ) {
+        if (sagaId == null) {
+            throw new IllegalArgumentException("副本 ID 不能为空");
+        }
+        if (sagaOwnerId == null) {
+            throw new IllegalArgumentException("副本所有者不能为空");
+        }
+        if (sagaName == null) {
+            throw new IllegalArgumentException("副本名称不能为空");
+        }
+        if (sagaType == null) {
+            throw new IllegalArgumentException("副本类型不能为空");
+        }
+        if (sagaStatus == null) {
+            throw new IllegalArgumentException("副本状态不能为空");
+        }
+        if (nodeCount < 0) {
+            throw new IllegalArgumentException("节点数量不能为负数");
+        }
+        if (sagaRarity == null) {
+            throw new IllegalArgumentException("副本稀有度不能为空");
+        }
+        if (startedAt == null) {
+            throw new IllegalArgumentException("副本开始时间不能为空");
+        }
+        return new Saga(
+                sagaId,
+                sagaOwnerId,
+                sagaName,
+                sagaType,
+                coverUrl,
+                description,
+                sagaStatus,
+                publicVisible,
+                nodeCount,
+                sagaRarity,
+                startedAt,
+                endedAt
         );
     }
 
@@ -141,6 +199,10 @@ public final class Saga {
         description = newDescription;
     }
 
+    public void changePublicVisible(boolean newPublicVisible) {
+        publicVisible = newPublicVisible;
+    }
+
     public SagaId sagaId() {
         return sagaId;
     }
@@ -167,6 +229,10 @@ public final class Saga {
 
     public SagaStatus sagaStatus() {
         return sagaStatus;
+    }
+
+    public boolean publicVisible() {
+        return publicVisible;
     }
 
     public int nodeCount() {

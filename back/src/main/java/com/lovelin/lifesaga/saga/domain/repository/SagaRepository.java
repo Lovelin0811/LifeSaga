@@ -2,12 +2,18 @@ package com.lovelin.lifesaga.saga.domain.repository;
 
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
+import com.lovelin.lifesaga.saga.domain.model.SagaOwnerId;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SagaRepository {
 
     Optional<Saga> findBySagaId(SagaId sagaId);
+
+    List<Saga> findBySagaOwnerId(SagaOwnerId sagaOwnerId);
+
+    List<Saga> findPublic();
 
     Saga save(Saga saga);
 

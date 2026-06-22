@@ -1,8 +1,7 @@
 package com.lovelin.lifesaga.saga.application.service;
 
-import com.lovelin.lifesaga.saga.application.command.DeleteSagaNodeCommand;
+import com.lovelin.lifesaga.saga.application.command.ToggleSagaNodeFavoriteCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
-import com.lovelin.lifesaga.saga.domain.model.SagaNode;
 import com.lovelin.lifesaga.saga.domain.repository.SagaNodeFavoriteRepository;
 import com.lovelin.lifesaga.saga.domain.repository.SagaNodeRepository;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
@@ -10,13 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class DeleteSagaNodeApplicationService {
+public class ToggleSagaNodeFavoriteApplicationService {
 
     private final SagaRepository sagaRepository;
     private final SagaNodeRepository sagaNodeRepository;
     private final SagaNodeFavoriteRepository sagaNodeFavoriteRepository;
 
-    public DeleteSagaNodeApplicationService(
+    public ToggleSagaNodeFavoriteApplicationService(
             SagaRepository sagaRepository,
             SagaNodeRepository sagaNodeRepository,
             SagaNodeFavoriteRepository sagaNodeFavoriteRepository
@@ -27,23 +26,19 @@ public class DeleteSagaNodeApplicationService {
     }
 
     @Transactional
-    public void deleteSagaNode(DeleteSagaNodeCommand command) {
+    public boolean toggleFavorite(ToggleSagaNodeFavoriteCommand command) {
         if (command == null) {
-            throw new IllegalArgumentException("删除节点命令不能为空");
+            throw new IllegalArgumentException("切换节点收藏命令不能为空");
         }
 
         Saga saga = sagaRepository.findBySagaId(command.sagaId())
                 .orElseThrow(() -> new IllegalStateException("副本不存在"));
-
         saga.requireOwner(command.sagaOwnerId());
 
         sagaNodeRepository.findBySagaNodeId(command.sagaNodeId())
                 .filter(foundSagaNode -> command.sagaId().equals(foundSagaNode.sagaId()))
                 .orElseThrow(() -> new IllegalStateException("节点不存在"));
 
-        sagaNodeFavoriteRepository.deleteBySagaNodeId(command.sagaNodeId());
-        sagaNodeRepository.deleteBySagaNodeId(command.sagaNodeId());
-        saga.recordNodeDeleted();
-        sagaRepository.save(saga);
+        return sagaNodeFavoriteRepository.toggle(command.sagaOwnerId(), command.sagaNodeId());
     }
 }

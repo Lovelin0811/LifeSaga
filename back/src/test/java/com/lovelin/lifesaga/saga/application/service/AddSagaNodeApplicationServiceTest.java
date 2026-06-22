@@ -206,6 +206,16 @@ class AddSagaNodeApplicationServiceTest {
         }
 
         @Override
+        public java.util.List<Saga> findBySagaOwnerId(SagaOwnerId sagaOwnerId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Saga> findPublic() {
+            return java.util.List.of();
+        }
+
+        @Override
         public Saga save(Saga saga) {
             savedCount++;
             storage.put(saga.sagaId(), saga);
@@ -233,6 +243,11 @@ class AddSagaNodeApplicationServiceTest {
         }
 
         @Override
+        public java.util.List<SagaNode> findBySagaId(SagaId sagaId) {
+            return java.util.List.of();
+        }
+
+        @Override
         public SagaNode save(SagaNode sagaNode) {
             savedCount++;
             lastSavedSagaNode = sagaNode;
@@ -241,6 +256,10 @@ class AddSagaNodeApplicationServiceTest {
 
         @Override
         public void deleteBySagaNodeId(SagaNodeId sagaNodeId) {
+        }
+
+        @Override
+        public void deleteBySagaId(SagaId sagaId) {
         }
 
         int savedCount() {

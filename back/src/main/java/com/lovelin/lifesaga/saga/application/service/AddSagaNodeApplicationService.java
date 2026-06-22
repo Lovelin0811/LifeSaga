@@ -5,7 +5,10 @@ import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
 import com.lovelin.lifesaga.saga.domain.repository.SagaNodeRepository;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class AddSagaNodeApplicationService {
 
     private final SagaRepository sagaRepository;
@@ -20,6 +23,7 @@ public class AddSagaNodeApplicationService {
     }
 
     // 应用服务负责把“添加节点”这个用例在两个聚合和两个仓储之间串起来。
+    @Transactional
     public SagaNode addSagaNode(AddSagaNodeCommand command) {
         if (command == null) {
             throw new IllegalArgumentException("添加节点命令不能为空");
