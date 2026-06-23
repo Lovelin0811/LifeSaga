@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lovelin.lifesaga.identity.infrastructure.persistence.mapper.UserMapper">
+
+    <resultMap id="UserRecordMap" type="com.lovelin.lifesaga.identity.infrastructure.persistence.record.UserRecord">
+        <id property="id" column="id"/>
+        <result property="openid" column="openid"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="level" column="level"/>
+        <result property="xp" column="xp"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="UserColumns">
+        id,
+        openid,
+        nickname,
+        avatar_url,
+        level,
+        xp,
+        created_at,
+        updated_at
+    </sql>
+
+    <select id="findById" resultMap="UserRecordMap">
+        SELECT
+        <include refid="UserColumns"/>
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByOpenid" resultMap="UserRecordMap">
+        SELECT
+        <include refid="UserColumns"/>
+        FROM users
+        WHERE openid = #{openid}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (
+            openid,
+            nickname,
+            avatar_url,
+            level,
+            xp,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{openid},
+            #{nickname},
+            #{avatarUrl},
+            #{level},
+            #{xp},
+            #{createdAt, jdbcType=TIMESTAMP},
+            #{updatedAt, jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE users
+        SET nickname = #{nickname},
+            avatar_url = #{avatarUrl},
+            level = #{level},
+            xp = #{xp},
+            updated_at = #{updatedAt, jdbcType=TIMESTAMP}
+        WHERE id = #{id}
+    </update>
+</mapper>
