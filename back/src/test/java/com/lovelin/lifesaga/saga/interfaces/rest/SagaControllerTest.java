@@ -1,5 +1,8 @@
 package com.lovelin.lifesaga.saga.interfaces.rest;
 
+import com.lovelin.lifesaga.achievement.application.service.AchievementUnlockUseCase;
+import com.lovelin.lifesaga.achievement.domain.model.Achievement;
+import com.lovelin.lifesaga.identity.domain.model.UserId;
 import com.lovelin.lifesaga.saga.application.service.CreateSagaApplicationService;
 import com.lovelin.lifesaga.saga.application.service.CompleteSagaApplicationService;
 import com.lovelin.lifesaga.saga.application.service.DeleteSagaApplicationService;
@@ -175,9 +178,17 @@ class SagaControllerTest {
 
     private SagaController createSagaController(FakeSagaRepository sagaRepository, Clock clock) {
         return new SagaController(
-                new CreateSagaApplicationService(sagaRepository, clock),
+                new CreateSagaApplicationService(
+                        sagaRepository,
+                        new NoOpAchievementUnlockUseCase(),
+                        clock
+                ),
                 new UpdateSagaApplicationService(sagaRepository),
-                new CompleteSagaApplicationService(sagaRepository, clock),
+                new CompleteSagaApplicationService(
+                        sagaRepository,
+                        new NoOpAchievementUnlockUseCase(),
+                        clock
+                ),
                 new DeleteSagaApplicationService(
                         sagaRepository,
                         new FakeSagaNodeRepository(),
@@ -292,6 +303,24 @@ class SagaControllerTest {
 
         @Override
         public void deleteBySagaId(SagaId sagaId) {
+        }
+    }
+
+    private static final class NoOpAchievementUnlockUseCase implements AchievementUnlockUseCase {
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaCreate(UserId userId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaComplete(UserId userId, SagaType sagaType) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnNodeCreate(UserId userId, SagaId sagaId) {
+            return java.util.List.of();
         }
     }
 }

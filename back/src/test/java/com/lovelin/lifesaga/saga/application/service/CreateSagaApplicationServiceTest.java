@@ -1,5 +1,8 @@
 package com.lovelin.lifesaga.saga.application.service;
 
+import com.lovelin.lifesaga.achievement.application.service.AchievementUnlockUseCase;
+import com.lovelin.lifesaga.achievement.domain.model.Achievement;
+import com.lovelin.lifesaga.identity.domain.model.UserId;
 import com.lovelin.lifesaga.saga.application.command.CreateSagaCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
@@ -33,7 +36,11 @@ class CreateSagaApplicationServiceTest {
                 Instant.parse("2026-06-17T04:00:00Z"),
                 ZoneId.of("Asia/Shanghai")
         );
-        CreateSagaApplicationService service = new CreateSagaApplicationService(sagaRepository, fixedClock);
+        CreateSagaApplicationService service = new CreateSagaApplicationService(
+                sagaRepository,
+                new NoOpAchievementUnlockUseCase(),
+                fixedClock
+        );
         SagaOwnerId sagaOwnerId = new SagaOwnerId(1);
         SagaName sagaName = new SagaName("日本旅行");
         SagaType sagaType = SagaType.TRAVEL;
@@ -70,7 +77,11 @@ class CreateSagaApplicationServiceTest {
     @Test
     void shouldRejectCreatingSagaWhenCommandIsNull() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        CreateSagaApplicationService service = new CreateSagaApplicationService(sagaRepository, Clock.systemDefaultZone());
+        CreateSagaApplicationService service = new CreateSagaApplicationService(
+                sagaRepository,
+                new NoOpAchievementUnlockUseCase(),
+                Clock.systemDefaultZone()
+        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -121,6 +132,24 @@ class CreateSagaApplicationServiceTest {
 
         Saga lastSavedSaga() {
             return lastSavedSaga;
+        }
+    }
+
+    private static final class NoOpAchievementUnlockUseCase implements AchievementUnlockUseCase {
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaCreate(UserId userId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaComplete(UserId userId, SagaType sagaType) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnNodeCreate(UserId userId, SagaId sagaId) {
+            return java.util.List.of();
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.lovelin.lifesaga.identity.interfaces.rest;
 
 import com.lovelin.lifesaga.identity.application.command.UpdateUserProfileCommand;
+import com.lovelin.lifesaga.gallery.application.query.GalleryItemView;
+import com.lovelin.lifesaga.gallery.application.service.GalleryQueryApplicationService;
 import com.lovelin.lifesaga.identity.application.service.UpdateUserProfileApplicationService;
 import com.lovelin.lifesaga.identity.application.service.UserQueryApplicationService;
 import com.lovelin.lifesaga.identity.domain.model.User;
@@ -20,13 +22,16 @@ public class UserController {
 
     private final UserQueryApplicationService userQueryApplicationService;
     private final UpdateUserProfileApplicationService updateUserProfileApplicationService;
+    private final GalleryQueryApplicationService galleryQueryApplicationService;
 
     public UserController(
             UserQueryApplicationService userQueryApplicationService,
-            UpdateUserProfileApplicationService updateUserProfileApplicationService
+            UpdateUserProfileApplicationService updateUserProfileApplicationService,
+            GalleryQueryApplicationService galleryQueryApplicationService
     ) {
         this.userQueryApplicationService = userQueryApplicationService;
         this.updateUserProfileApplicationService = updateUserProfileApplicationService;
+        this.galleryQueryApplicationService = galleryQueryApplicationService;
     }
 
     @GetMapping("/me")
@@ -46,6 +51,16 @@ public class UserController {
                 toUserAvatarUrl(updateUserRequest.avatarUrl())
         ));
         return ApiResponse.success(UserResponse.from(user));
+    }
+
+    @GetMapping("/me/albums")
+    public ApiResponse<java.util.List<AlbumItemResponse>> albums(HttpServletRequest httpServletRequest) {
+        java.util.List<AlbumItemResponse> albums = galleryQueryApplicationService
+                .listByUserId(new UserId(currentUserId(httpServletRequest)))
+                .stream()
+                .map(AlbumItemResponse::from)
+                .toList();
+        return ApiResponse.success(albums);
     }
 
     private long currentUserId(HttpServletRequest httpServletRequest) {
@@ -82,6 +97,23 @@ public class UserController {
                     user.userAvatarUrl().value(),
                     user.userLevel().value(),
                     user.userExperience().value()
+            );
+        }
+    }
+
+    public record AlbumItemResponse(
+            String url,
+            String title,
+            String sagaName,
+            java.time.LocalDateTime nodeTime
+    ) {
+
+        static AlbumItemResponse from(GalleryItemView galleryItemView) {
+            return new AlbumItemResponse(
+                    galleryItemView.url(),
+                    galleryItemView.title(),
+                    galleryItemView.sagaName(),
+                    galleryItemView.photoTime()
             );
         }
     }

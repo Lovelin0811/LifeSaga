@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lovelin.lifesaga.achievement.infrastructure.persistence.mapper.AchievementMapper">
+
+    <resultMap id="AchievementRecordMap" type="com.lovelin.lifesaga.achievement.infrastructure.persistence.record.AchievementRecord">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="icon" column="icon"/>
+        <result property="rarity" column="rarity"/>
+        <result property="conditionType" column="condition_type"/>
+        <result property="conditionValue" column="condition_value"/>
+        <result property="experienceReward" column="xp_reward"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="AchievementRecordMap">
+        SELECT id, code, name, description, icon, rarity, condition_type, condition_value, xp_reward, created_at
+        FROM achievements
+        ORDER BY id
+    </select>
+
+    <select id="findById" resultMap="AchievementRecordMap">
+        SELECT id, code, name, description, icon, rarity, condition_type, condition_value, xp_reward, created_at
+        FROM achievements
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByConditionType" resultMap="AchievementRecordMap">
+        SELECT id, code, name, description, icon, rarity, condition_type, condition_value, xp_reward, created_at
+        FROM achievements
+        WHERE condition_type = #{conditionType}
+    </select>
+</mapper>

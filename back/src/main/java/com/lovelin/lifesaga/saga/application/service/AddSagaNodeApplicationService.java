@@ -1,5 +1,6 @@
 package com.lovelin.lifesaga.saga.application.service;
 
+import com.lovelin.lifesaga.achievement.application.service.AchievementUnlockUseCase;
 import com.lovelin.lifesaga.saga.application.command.AddSagaNodeCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
@@ -13,13 +14,16 @@ public class AddSagaNodeApplicationService {
 
     private final SagaRepository sagaRepository;
     private final SagaNodeRepository sagaNodeRepository;
+    private final AchievementUnlockUseCase achievementUnlockUseCase;
 
     public AddSagaNodeApplicationService(
             SagaRepository sagaRepository,
-            SagaNodeRepository sagaNodeRepository
+            SagaNodeRepository sagaNodeRepository,
+            AchievementUnlockUseCase achievementUnlockUseCase
     ) {
         this.sagaRepository = sagaRepository;
         this.sagaNodeRepository = sagaNodeRepository;
+        this.achievementUnlockUseCase = achievementUnlockUseCase;
     }
 
     // 应用服务负责把“添加节点”这个用例在两个聚合和两个仓储之间串起来。
@@ -47,6 +51,10 @@ public class AddSagaNodeApplicationService {
         SagaNode savedSagaNode = sagaNodeRepository.save(sagaNode);
         saga.recordNodeAdded();
         sagaRepository.save(saga);
+        achievementUnlockUseCase.checkOnNodeCreate(
+                saga.sagaOwnerId().toUserId(),
+                saga.sagaId()
+        );
         return savedSagaNode;
     }
 }

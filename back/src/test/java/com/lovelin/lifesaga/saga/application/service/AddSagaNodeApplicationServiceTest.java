@@ -1,5 +1,8 @@
 package com.lovelin.lifesaga.saga.application.service;
 
+import com.lovelin.lifesaga.achievement.application.service.AchievementUnlockUseCase;
+import com.lovelin.lifesaga.achievement.domain.model.Achievement;
+import com.lovelin.lifesaga.identity.domain.model.UserId;
 import com.lovelin.lifesaga.saga.application.command.AddSagaNodeCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
@@ -37,7 +40,11 @@ class AddSagaNodeApplicationServiceTest {
     void shouldAddSagaNodeSuccessfully() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
         InMemorySagaNodeRepository sagaNodeRepository = new InMemorySagaNodeRepository();
-        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(sagaRepository, sagaNodeRepository);
+        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(
+                sagaRepository,
+                sagaNodeRepository,
+                new NoOpAchievementUnlockUseCase()
+        );
 
         Saga saga = Saga.create(
                 new SagaOwnerId(1),
@@ -87,7 +94,11 @@ class AddSagaNodeApplicationServiceTest {
     void shouldRejectAddingSagaNodeWhenCommandIsNull() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
         InMemorySagaNodeRepository sagaNodeRepository = new InMemorySagaNodeRepository();
-        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(sagaRepository, sagaNodeRepository);
+        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(
+                sagaRepository,
+                sagaNodeRepository,
+                new NoOpAchievementUnlockUseCase()
+        );
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -105,7 +116,11 @@ class AddSagaNodeApplicationServiceTest {
     void shouldRejectAddingSagaNodeWhenSagaNotFound() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
         InMemorySagaNodeRepository sagaNodeRepository = new InMemorySagaNodeRepository();
-        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(sagaRepository, sagaNodeRepository);
+        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(
+                sagaRepository,
+                sagaNodeRepository,
+                new NoOpAchievementUnlockUseCase()
+        );
         AddSagaNodeCommand command = createCommand(new SagaId(404), new SagaOwnerId(1));
 
         IllegalStateException exception = assertThrows(
@@ -124,7 +139,11 @@ class AddSagaNodeApplicationServiceTest {
     void shouldRejectAddingSagaNodeWhenOwnerDoesNotMatch() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
         InMemorySagaNodeRepository sagaNodeRepository = new InMemorySagaNodeRepository();
-        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(sagaRepository, sagaNodeRepository);
+        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(
+                sagaRepository,
+                sagaNodeRepository,
+                new NoOpAchievementUnlockUseCase()
+        );
         Saga saga = Saga.create(
                 new SagaOwnerId(1),
                 new SagaName("日本旅行"),
@@ -153,7 +172,11 @@ class AddSagaNodeApplicationServiceTest {
     void shouldReActivateCompletedSagaAfterAddingSagaNode() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
         InMemorySagaNodeRepository sagaNodeRepository = new InMemorySagaNodeRepository();
-        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(sagaRepository, sagaNodeRepository);
+        AddSagaNodeApplicationService service = new AddSagaNodeApplicationService(
+                sagaRepository,
+                sagaNodeRepository,
+                new NoOpAchievementUnlockUseCase()
+        );
         Saga saga = Saga.create(
                 new SagaOwnerId(1),
                 new SagaName("日本旅行"),
@@ -268,6 +291,24 @@ class AddSagaNodeApplicationServiceTest {
 
         SagaNode lastSavedSagaNode() {
             return lastSavedSagaNode;
+        }
+    }
+
+    private static final class NoOpAchievementUnlockUseCase implements AchievementUnlockUseCase {
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaCreate(UserId userId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaComplete(UserId userId, SagaType sagaType) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnNodeCreate(UserId userId, SagaId sagaId) {
+            return java.util.List.of();
         }
     }
 }

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    username: your_db_username
+    password: your_db_password
+
+jwt:
+  secret: please_change_this_secret_to_at_least_32_chars
+  expiration: 604800000
+
+wechat:
+  app-id: your_wechat_app_id
+  app-secret: your_wechat_app_secret
+
+auth:
+  dev-login-enabled: false
+
+upload:
+  dir: ./uploads
+  public-base-url: ""

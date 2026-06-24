@@ -1,5 +1,8 @@
 package com.lovelin.lifesaga.identity.interfaces.rest;
 
+import com.lovelin.lifesaga.gallery.application.query.GalleryItemView;
+import com.lovelin.lifesaga.gallery.application.query.GalleryQueryRepository;
+import com.lovelin.lifesaga.gallery.application.service.GalleryQueryApplicationService;
 import com.lovelin.lifesaga.identity.application.service.UpdateUserProfileApplicationService;
 import com.lovelin.lifesaga.identity.application.service.UserQueryApplicationService;
 import com.lovelin.lifesaga.identity.domain.model.User;
@@ -17,6 +20,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -84,11 +88,29 @@ class UserControllerTest {
         );
     }
 
+    @Test
+    void shouldReturnCurrentUserAlbums() {
+        FakeUserRepository userRepository = new FakeUserRepository();
+        UserController userController = createUserController(userRepository);
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.setAttribute("userId", 1L);
+
+        UserController.ApiResponse<List<UserController.AlbumItemResponse>> response = userController.albums(httpServletRequest);
+
+        assertAll(
+                () -> assertEquals(200, response.code()),
+                () -> assertEquals(1, response.data().size()),
+                () -> assertEquals("https://example.com/cover.png", response.data().get(0).url()),
+                () -> assertEquals("日本旅行", response.data().get(0).sagaName())
+        );
+    }
+
     private UserController createUserController(FakeUserRepository userRepository) {
         Clock clock = Clock.fixed(Instant.parse("2026-06-23T03:30:00Z"), ZoneId.of("Asia/Shanghai"));
         return new UserController(
                 new UserQueryApplicationService(userRepository),
-                new UpdateUserProfileApplicationService(userRepository, clock)
+                new UpdateUserProfileApplicationService(userRepository, clock),
+                new GalleryQueryApplicationService(new FakeGalleryQueryRepository())
         );
     }
 
@@ -118,6 +140,19 @@ class UserControllerTest {
             }
             userToFind = user;
             return user;
+        }
+    }
+
+    private static final class FakeGalleryQueryRepository implements GalleryQueryRepository {
+
+        @Override
+        public List<GalleryItemView> findByUserId(UserId userId) {
+            return List.of(new GalleryItemView(
+                    "https://example.com/cover.png",
+                    "封面图",
+                    "日本旅行",
+                    LocalDateTime.of(2026, 6, 23, 10, 0)
+            ));
         }
     }
 }

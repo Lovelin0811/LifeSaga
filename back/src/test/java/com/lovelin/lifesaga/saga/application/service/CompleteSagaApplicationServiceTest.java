@@ -1,5 +1,8 @@
 package com.lovelin.lifesaga.saga.application.service;
 
+import com.lovelin.lifesaga.achievement.application.service.AchievementUnlockUseCase;
+import com.lovelin.lifesaga.achievement.domain.model.Achievement;
+import com.lovelin.lifesaga.identity.domain.model.UserId;
 import com.lovelin.lifesaga.saga.application.command.CompleteSagaCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
@@ -33,7 +36,11 @@ class CompleteSagaApplicationServiceTest {
     @Test
     void shouldCompleteSagaSuccessfully() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        CompleteSagaApplicationService service = new CompleteSagaApplicationService(sagaRepository, FIXED_CLOCK);
+        CompleteSagaApplicationService service = new CompleteSagaApplicationService(
+                sagaRepository,
+                new NoOpAchievementUnlockUseCase(),
+                FIXED_CLOCK
+        );
         Saga saga = createSagaWithNode();
         sagaRepository.store(new SagaId(1), saga);
         CompleteSagaCommand command = new CompleteSagaCommand(new SagaId(1), new SagaOwnerId(1));
@@ -53,7 +60,11 @@ class CompleteSagaApplicationServiceTest {
     @Test
     void shouldRejectCompletingSagaWhenSagaNotFound() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        CompleteSagaApplicationService service = new CompleteSagaApplicationService(sagaRepository, FIXED_CLOCK);
+        CompleteSagaApplicationService service = new CompleteSagaApplicationService(
+                sagaRepository,
+                new NoOpAchievementUnlockUseCase(),
+                FIXED_CLOCK
+        );
         CompleteSagaCommand command = new CompleteSagaCommand(new SagaId(404), new SagaOwnerId(1));
 
         IllegalStateException exception = assertThrows(
@@ -70,7 +81,11 @@ class CompleteSagaApplicationServiceTest {
     @Test
     void shouldRejectCompletingSagaWhenOwnerDoesNotMatch() {
         InMemorySagaRepository sagaRepository = new InMemorySagaRepository();
-        CompleteSagaApplicationService service = new CompleteSagaApplicationService(sagaRepository, FIXED_CLOCK);
+        CompleteSagaApplicationService service = new CompleteSagaApplicationService(
+                sagaRepository,
+                new NoOpAchievementUnlockUseCase(),
+                FIXED_CLOCK
+        );
         Saga saga = createSagaWithNode();
         sagaRepository.store(new SagaId(1), saga);
         CompleteSagaCommand command = new CompleteSagaCommand(new SagaId(1), new SagaOwnerId(2));
@@ -142,6 +157,24 @@ class CompleteSagaApplicationServiceTest {
 
         Saga lastSavedSaga() {
             return lastSavedSaga;
+        }
+    }
+
+    private static final class NoOpAchievementUnlockUseCase implements AchievementUnlockUseCase {
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaCreate(UserId userId) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnSagaComplete(UserId userId, SagaType sagaType) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.List<Achievement> checkOnNodeCreate(UserId userId, SagaId sagaId) {
+            return java.util.List.of();
         }
     }
 }

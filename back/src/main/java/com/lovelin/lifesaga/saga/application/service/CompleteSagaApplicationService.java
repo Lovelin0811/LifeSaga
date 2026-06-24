@@ -1,5 +1,6 @@
 package com.lovelin.lifesaga.saga.application.service;
 
+import com.lovelin.lifesaga.achievement.application.service.AchievementUnlockUseCase;
 import com.lovelin.lifesaga.saga.application.command.CompleteSagaCommand;
 import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.repository.SagaRepository;
@@ -13,10 +14,16 @@ import java.time.LocalDateTime;
 public class CompleteSagaApplicationService {
 
     private final SagaRepository sagaRepository;
+    private final AchievementUnlockUseCase achievementUnlockUseCase;
     private final Clock clock;
 
-    public CompleteSagaApplicationService(SagaRepository sagaRepository, Clock clock) {
+    public CompleteSagaApplicationService(
+            SagaRepository sagaRepository,
+            AchievementUnlockUseCase achievementUnlockUseCase,
+            Clock clock
+    ) {
         this.sagaRepository = sagaRepository;
+        this.achievementUnlockUseCase = achievementUnlockUseCase;
         this.clock = clock;
     }
 
@@ -31,6 +38,11 @@ public class CompleteSagaApplicationService {
 
         saga.requireOwner(command.sagaOwnerId());
         saga.complete(LocalDateTime.now(clock));
-        return sagaRepository.save(saga);
+        Saga savedSaga = sagaRepository.save(saga);
+        achievementUnlockUseCase.checkOnSagaComplete(
+                savedSaga.sagaOwnerId().toUserId(),
+                savedSaga.sagaType()
+        );
+        return savedSaga;
     }
 }

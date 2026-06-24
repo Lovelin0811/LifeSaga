@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lovelin.lifesaga.achievement.infrastructure.persistence.mapper.UserAchievementMapper">
+
+    <resultMap id="UserAchievementRecordMap" type="com.lovelin.lifesaga.achievement.infrastructure.persistence.record.UserAchievementRecord">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="achievementId" column="achievement_id"/>
+        <result property="unlockedAt" column="unlocked_at"/>
+    </resultMap>
+
+    <select id="findByUserId" resultMap="UserAchievementRecordMap">
+        SELECT id, user_id, achievement_id, unlocked_at
+        FROM user_achievements
+        WHERE user_id = #{userId}
+        ORDER BY unlocked_at DESC
+    </select>
+
+    <select id="findByUserIdAndAchievementId" resultMap="UserAchievementRecordMap">
+        SELECT id, user_id, achievement_id, unlocked_at
+        FROM user_achievements
+        WHERE user_id = #{userId} AND achievement_id = #{achievementId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_achievements (user_id, achievement_id, unlocked_at)
+        VALUES (#{userId}, #{achievementId}, #{unlockedAt, jdbcType=TIMESTAMP})
+    </insert>
+</mapper>
