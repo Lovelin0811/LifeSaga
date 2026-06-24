@@ -29,7 +29,7 @@
       <text class="location-text {{location ? '' : 'location-placeholder'}}">{{location || '选择或输入地点...'}}</text>
       <text class="location-arrow">›</text>
     </view>
-    <text class="location-tip" wx:if="{{latitude}}">已定位: {{latitude.toFixed(4)}}, {{longitude.toFixed(4)}}</text>
+    <text class="location-tip" wx:if="{{hasGeoPoint}}">已定位: {{latitude.toFixed(4)}}, {{longitude.toFixed(4)}}</text>
   </view>
 
   <!-- 照片 -->

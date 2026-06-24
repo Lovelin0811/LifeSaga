@@ -44,21 +44,21 @@
       </view>
 
       <view class="instance-list">
-        <view class="instance-card {{item.rarity === 'legendary' ? 'instance-card--legendary' : ''}}"
+        <view class="instance-card {{item.rarity === 'LEGENDARY' ? 'instance-card--legendary' : ''}}"
               wx:for="{{sagas}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
           <!-- 封面区域 -->
-          <view class="cover cover-bg-{{item.type}}">
+          <view class="cover cover-bg-{{item.typeClass}}">
             <image wx:if="{{item.coverUrl}}" class="cover-img" src="{{item.coverUrl}}" mode="aspectFill"/>
             <view wx:else class="cover-placeholder">
               <text class="cover-emoji">{{item.typeIcon}}</text>
             </view>
             <view class="cover-gradient"></view>
-            <view class="rarity-badge rarity-badge--{{item.rarity || 'common'}}">{{item.rarityName}}</view>
+            <view class="rarity-badge rarity-badge--{{item.rarityClass || 'common'}}">{{item.rarityName}}</view>
           </view>
           <!-- 卡片内容 -->
           <view class="body">
             <view class="card-top">
-              <text class="type-tag type-tag--{{item.type}}">{{item.typeName}}</text>
+              <text class="type-tag type-tag--{{item.typeClass}}">{{item.typeName}}</text>
             </view>
             <text class="card-title">{{item.name}}</text>
             <text class="card-desc" wx:if="{{item.description}}">{{item.description}}</text>

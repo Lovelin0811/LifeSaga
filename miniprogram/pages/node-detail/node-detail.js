@@ -29,6 +29,7 @@ Page({
       this.setData({
         node: {
           ...node,
+          description: node.description || node.content || '',
           nodeTimeText: node.nodeTime ? formatDate(node.nodeTime, 'YYYY年MM月DD日 HH:mm') : '',
           photos: parsePhotos(node.photos),
         },
@@ -112,7 +113,14 @@ Page({
     wx.showLoading({ title: '处理中' });
     api.toggleNodeMilestone(this.sagaId, this.nodeId)
       .then((node) => {
-        this.setData({ node: { ...node, photos: this.data.node.photos } });
+        this.setData({
+          node: {
+            ...node,
+            description: node.description || node.content || '',
+            nodeTimeText: node.nodeTime ? formatDate(node.nodeTime, 'YYYY年MM月DD日 HH:mm') : '',
+            photos: this.data.node.photos,
+          },
+        });
         wx.showToast({ title: node.milestone ? '已设为里程碑' : '已取消里程碑', icon: 'none' });
       })
       .catch((err) => {

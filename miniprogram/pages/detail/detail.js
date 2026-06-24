@@ -1,14 +1,14 @@
 // pages/detail/detail.js
 const { api } = require('../../utils/api');
-const { SAGA_TYPES, RARITY_MAP, formatDate, parsePhotos } = require('../../utils/util');
+const { SAGA_TYPES, RARITY_MAP, formatDate, parsePhotos, enumKey, classKey } = require('../../utils/util');
 
 const COVER_BGS = {
-  life: 'linear-gradient(135deg, #FFF0EB 0%, #FFE5DD 100%)',
-  travel: 'linear-gradient(135deg, #EBF3FA 0%, #D6E9F8 100%)',
-  study: 'linear-gradient(135deg, #EDF7EF 0%, #D6F0DC 100%)',
-  work: 'linear-gradient(135deg, #FFF6E8 0%, #FFEDD0 100%)',
-  health: 'linear-gradient(135deg, #EDF8F1 0%, #D6F0E4 100%)',
-  creative: 'linear-gradient(135deg, #F5EDF8 0%, #E8D8F0 100%)',
+  LIFE: 'linear-gradient(135deg, #FFF0EB 0%, #FFE5DD 100%)',
+  TRAVEL: 'linear-gradient(135deg, #EBF3FA 0%, #D6E9F8 100%)',
+  STUDY: 'linear-gradient(135deg, #EDF7EF 0%, #D6F0DC 100%)',
+  WORK: 'linear-gradient(135deg, #FFF6E8 0%, #FFEDD0 100%)',
+  HEALTH: 'linear-gradient(135deg, #EDF8F1 0%, #D6F0E4 100%)',
+  CREATIVE: 'linear-gradient(135deg, #F5EDF8 0%, #E8D8F0 100%)',
 };
 
 Page({
@@ -50,18 +50,25 @@ Page({
       // 后端返回 { saga: {...}, nodes: [...] }
       const saga = response.saga;
       const currentUserId = this.getCurrentUserId();
-      const isOwner = !!currentUserId && Number(saga.userId) === Number(currentUserId);
-      const type = SAGA_TYPES[saga.type] || SAGA_TYPES.life;
-      const rarity = RARITY_MAP[saga.rarity] || RARITY_MAP.common;
+      const isOwner = !!currentUserId && Number(saga.ownerId) === Number(currentUserId);
+      const typeKey = enumKey(saga.type, 'LIFE');
+      const rarityKey = enumKey(saga.rarity, 'COMMON');
+      const statusKey = enumKey(saga.status, 'ACTIVE');
+      const type = SAGA_TYPES[typeKey] || SAGA_TYPES.LIFE;
+      const rarity = RARITY_MAP[rarityKey] || RARITY_MAP.COMMON;
 
       const processedSaga = {
         ...saga,
+        type: typeKey,
+        typeClass: classKey(typeKey),
         typeName: type.name,
         typeIcon: type.icon,
-        coverBg: COVER_BGS[saga.type] || COVER_BGS.life,
+        coverBg: COVER_BGS[typeKey] || COVER_BGS.LIFE,
         rarityName: rarity.name,
-        rarityClass: rarity.class,
-        rarity: saga.rarity || 'common',
+        rarity: rarityKey,
+        rarityClass: classKey(rarityKey),
+        status: statusKey,
+        statusClass: classKey(statusKey),
         startedAtText: saga.startedAt ? formatDate(saga.startedAt, 'YYYY.MM.DD') : '',
         level: Math.floor(((saga.nodeCount || 0) + (response.nodes || []).length) / 10) + 1,
         xpPercent: Math.min(100, ((saga.nodeCount || 0) / ((Math.floor((saga.nodeCount || 0) / 10) + 1) * 10)) * 100),
@@ -69,6 +76,7 @@ Page({
 
       const nodes = (response.nodes || []).map(n => ({
         ...n,
+        description: n.description || n.content || '',
         nodeTimeText: n.nodeTime ? formatDate(n.nodeTime, 'YYYY.MM.DD') : '',
         photos: parsePhotos(n.photos),
       }));
@@ -114,17 +122,24 @@ Page({
     try {
       const response = await api.getSaga(this.sagaId);
       const saga = response.saga;
-      const type = SAGA_TYPES[saga.type] || SAGA_TYPES.life;
-      const rarity = RARITY_MAP[saga.rarity] || RARITY_MAP.common;
+      const typeKey = enumKey(saga.type, 'LIFE');
+      const rarityKey = enumKey(saga.rarity, 'COMMON');
+      const statusKey = enumKey(saga.status, 'ACTIVE');
+      const type = SAGA_TYPES[typeKey] || SAGA_TYPES.LIFE;
+      const rarity = RARITY_MAP[rarityKey] || RARITY_MAP.COMMON;
       this.setData({
         saga: {
           ...saga,
+          type: typeKey,
+          typeClass: classKey(typeKey),
           typeName: type.name,
           typeIcon: type.icon,
-          coverBg: COVER_BGS[saga.type] || COVER_BGS.life,
+          coverBg: COVER_BGS[typeKey] || COVER_BGS.LIFE,
           rarityName: rarity.name,
-          rarityClass: rarity.class,
-          rarity: saga.rarity || 'common',
+          rarity: rarityKey,
+          rarityClass: classKey(rarityKey),
+          status: statusKey,
+          statusClass: classKey(statusKey),
           startedAtText: saga.startedAt ? formatDate(saga.startedAt, 'YYYY.MM.DD') : '',
           level: Math.floor((saga.nodeCount || 0) / 10) + 1,
           xpPercent: Math.min(100, ((saga.nodeCount || 0) / ((Math.floor((saga.nodeCount || 0) / 10) + 1) * 10)) * 100),
@@ -159,7 +174,7 @@ Page({
   },
 
   completeSaga() {
-    if (!this.data.saga || this.data.saga.status === 'completed') {
+    if (!this.data.saga || this.data.saga.status === 'COMPLETED') {
       this.hideActions();
       return;
     }

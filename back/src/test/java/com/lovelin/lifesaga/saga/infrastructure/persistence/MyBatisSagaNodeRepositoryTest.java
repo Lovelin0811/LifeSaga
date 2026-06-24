@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeDescription;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeGeoPoint;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeLocation;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeOrder;
@@ -14,6 +15,7 @@ import com.lovelin.lifesaga.saga.infrastructure.persistence.mapper.SagaNodeMappe
 import com.lovelin.lifesaga.saga.infrastructure.persistence.record.SagaNodeRecord;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,7 @@ class MyBatisSagaNodeRepositoryTest {
                 new SagaNodeOrder(1),
                 new SagaNodeDescription("第一次看到东京塔"),
                 new SagaNodeLocation("东京"),
+                new SagaNodeGeoPoint(new BigDecimal("35.658581"), new BigDecimal("139.745438")),
                 new SagaNodePhotos(List.of("https://example.com/1.jpg", "https://example.com/2.jpg")),
                 new SagaNodeTime(LocalDateTime.of(2026, 6, 22, 12, 0))
         );
@@ -45,6 +48,8 @@ class MyBatisSagaNodeRepositoryTest {
                 () -> assertEquals(new SagaId(10), savedSagaNode.sagaId()),
                 () -> assertEquals(new SagaNodeTitle("东京塔"), savedSagaNode.sagaNodeTitle()),
                 () -> assertEquals(new SagaNodeOrder(1), savedSagaNode.sagaNodeOrder()),
+                () -> assertEquals(new BigDecimal("35.658581"), sagaNodeMapper.savedRecord.getLatitude()),
+                () -> assertEquals(new BigDecimal("139.745438"), sagaNodeMapper.savedRecord.getLongitude()),
                 () -> assertEquals("[\"https://example.com/1.jpg\",\"https://example.com/2.jpg\"]", sagaNodeMapper.savedRecord.getPhotos()),
                 () -> assertEquals(false, sagaNodeMapper.savedRecord.getIsMilestone())
         );
@@ -59,6 +64,8 @@ class MyBatisSagaNodeRepositoryTest {
         sagaNodeRecord.setTitle("图书馆");
         sagaNodeRecord.setContent("学习 DDD");
         sagaNodeRecord.setLocation("上海");
+        sagaNodeRecord.setLatitude(new BigDecimal("31.230416"));
+        sagaNodeRecord.setLongitude(new BigDecimal("121.473701"));
         sagaNodeRecord.setNodeTime(LocalDateTime.of(2026, 6, 22, 13, 0));
         sagaNodeRecord.setPhotos("[\"https://example.com/study.jpg\"]");
         sagaNodeRecord.setIsMilestone(true);
@@ -76,6 +83,10 @@ class MyBatisSagaNodeRepositoryTest {
                 () -> assertEquals(new SagaNodeTitle("图书馆"), sagaNode.sagaNodeTitle()),
                 () -> assertEquals(new SagaNodeDescription("学习 DDD"), sagaNode.sagaNodeDescription()),
                 () -> assertEquals(new SagaNodeLocation("上海"), sagaNode.sagaNodeLocation()),
+                () -> assertEquals(
+                        new SagaNodeGeoPoint(new BigDecimal("31.230416"), new BigDecimal("121.473701")),
+                        sagaNode.sagaNodeGeoPoint()
+                ),
                 () -> assertEquals(new SagaNodePhotos(List.of("https://example.com/study.jpg")), sagaNode.sagaNodePhotos()),
                 () -> assertEquals(new SagaNodeOrder(2), sagaNode.sagaNodeOrder()),
                 () -> assertTrue(sagaNode.milestone())

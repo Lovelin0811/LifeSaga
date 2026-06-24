@@ -2,6 +2,7 @@ package com.lovelin.lifesaga.saga.application.command;
 
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeDescription;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeGeoPoint;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeLocation;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeOrder;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodePhotos;
@@ -16,9 +17,33 @@ public record AddSagaNodeCommand(
         SagaNodeOrder sagaNodeOrder,
         SagaNodeDescription sagaNodeDescription,
         SagaNodeLocation sagaNodeLocation,
+        SagaNodeGeoPoint sagaNodeGeoPoint,
         SagaNodePhotos sagaNodePhotos,
         SagaNodeTime sagaNodeTime
 ) {
+
+    public AddSagaNodeCommand(
+            SagaId sagaId,
+            SagaOwnerId sagaOwnerId,
+            SagaNodeTitle sagaNodeTitle,
+            SagaNodeOrder sagaNodeOrder,
+            SagaNodeDescription sagaNodeDescription,
+            SagaNodeLocation sagaNodeLocation,
+            SagaNodePhotos sagaNodePhotos,
+            SagaNodeTime sagaNodeTime
+    ) {
+        this(
+                sagaId,
+                sagaOwnerId,
+                sagaNodeTitle,
+                sagaNodeOrder,
+                sagaNodeDescription,
+                sagaNodeLocation,
+                null,
+                sagaNodePhotos,
+                sagaNodeTime
+        );
+    }
 
     public AddSagaNodeCommand {
         if (sagaId == null) {

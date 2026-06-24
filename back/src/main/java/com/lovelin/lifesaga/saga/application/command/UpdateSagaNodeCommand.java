@@ -2,6 +2,7 @@ package com.lovelin.lifesaga.saga.application.command;
 
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeDescription;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeGeoPoint;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeLocation;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeOrder;
@@ -18,10 +19,38 @@ public record UpdateSagaNodeCommand(
         SagaNodeOrder sagaNodeOrder,
         SagaNodeDescription sagaNodeDescription,
         SagaNodeLocation sagaNodeLocation,
+        SagaNodeGeoPoint sagaNodeGeoPoint,
         SagaNodePhotos sagaNodePhotos,
         SagaNodeTime sagaNodeTime,
         boolean milestone
 ) {
+
+    public UpdateSagaNodeCommand(
+            SagaId sagaId,
+            SagaNodeId sagaNodeId,
+            SagaOwnerId sagaOwnerId,
+            SagaNodeTitle sagaNodeTitle,
+            SagaNodeOrder sagaNodeOrder,
+            SagaNodeDescription sagaNodeDescription,
+            SagaNodeLocation sagaNodeLocation,
+            SagaNodePhotos sagaNodePhotos,
+            SagaNodeTime sagaNodeTime,
+            boolean milestone
+    ) {
+        this(
+                sagaId,
+                sagaNodeId,
+                sagaOwnerId,
+                sagaNodeTitle,
+                sagaNodeOrder,
+                sagaNodeDescription,
+                sagaNodeLocation,
+                null,
+                sagaNodePhotos,
+                sagaNodeTime,
+                milestone
+        );
+    }
 
     public UpdateSagaNodeCommand {
         if (sagaId == null) {

@@ -14,6 +14,7 @@ import com.lovelin.lifesaga.saga.application.service.UpdateSagaNodeApplicationSe
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeDescription;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeGeoPoint;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeLocation;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeOrder;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +92,7 @@ public class SagaNodeController {
                 new SagaNodeOrder(sagaNodeRequest.sortOrder()),
                 toSagaNodeDescription(sagaNodeRequest.description()),
                 new SagaNodeLocation(sagaNodeRequest.location()),
+                toSagaNodeGeoPoint(sagaNodeRequest.latitude(), sagaNodeRequest.longitude()),
                 toSagaNodePhotos(sagaNodeRequest.photos()),
                 new SagaNodeTime(sagaNodeRequest.nodeTime())
         ));
@@ -125,6 +128,7 @@ public class SagaNodeController {
                 new SagaNodeOrder(sagaNodeRequest.sortOrder()),
                 toSagaNodeDescription(sagaNodeRequest.description()),
                 new SagaNodeLocation(sagaNodeRequest.location()),
+                toSagaNodeGeoPoint(sagaNodeRequest.latitude(), sagaNodeRequest.longitude()),
                 toSagaNodePhotos(sagaNodeRequest.photos()),
                 new SagaNodeTime(sagaNodeRequest.nodeTime()),
                 Boolean.TRUE.equals(sagaNodeRequest.milestone())
@@ -198,11 +202,20 @@ public class SagaNodeController {
         return new SagaNodePhotos(photos);
     }
 
+    private SagaNodeGeoPoint toSagaNodeGeoPoint(BigDecimal latitude, BigDecimal longitude) {
+        if (latitude == null && longitude == null) {
+            return null;
+        }
+        return new SagaNodeGeoPoint(latitude, longitude);
+    }
+
     public record SagaNodeRequest(
             String title,
             int sortOrder,
             String description,
             String location,
+            BigDecimal latitude,
+            BigDecimal longitude,
             List<String> photos,
             LocalDateTime nodeTime,
             Boolean milestone
@@ -216,6 +229,8 @@ public class SagaNodeController {
             int sortOrder,
             String description,
             String location,
+            BigDecimal latitude,
+            BigDecimal longitude,
             List<String> photos,
             LocalDateTime nodeTime,
             boolean milestone,
@@ -234,6 +249,8 @@ public class SagaNodeController {
                     sagaNode.sagaNodeOrder().value(),
                     sagaNode.sagaNodeDescription() == null ? null : sagaNode.sagaNodeDescription().value(),
                     sagaNode.sagaNodeLocation() == null ? null : sagaNode.sagaNodeLocation().value(),
+                    sagaNode.sagaNodeGeoPoint() == null ? null : sagaNode.sagaNodeGeoPoint().latitude(),
+                    sagaNode.sagaNodeGeoPoint() == null ? null : sagaNode.sagaNodeGeoPoint().longitude(),
                     sagaNode.sagaNodePhotos() == null ? null : sagaNode.sagaNodePhotos().values(),
                     sagaNode.sagaNodeTime() == null ? null : sagaNode.sagaNodeTime().value(),
                     sagaNode.milestone(),

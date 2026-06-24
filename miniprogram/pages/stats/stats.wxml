@@ -71,14 +71,14 @@
       <view class="type-list">
         <view class="type-row" wx:for="{{typeStats}}" wx:key="type">
           <view class="type-main">
-            <view class="type-icon type-icon--{{item.type}}">
+            <view class="type-icon type-icon--{{item.typeClass}}">
               <text>{{item.icon}}</text>
             </view>
             <text class="type-name">{{item.typeName}}</text>
           </view>
           <view class="type-chart">
             <view class="type-track">
-              <view class="type-fill type-fill--{{item.type}}" style="width: {{item.percent}}%;"></view>
+              <view class="type-fill type-fill--{{item.typeClass}}" style="width: {{item.percent}}%;"></view>
             </view>
             <text class="type-count">{{item.count}}</text>
           </view>

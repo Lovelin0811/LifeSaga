@@ -1,5 +1,5 @@
 const { api } = require('../../utils/api');
-const { SAGA_TYPES } = require('../../utils/util');
+const { SAGA_TYPES, enumKey, classKey } = require('../../utils/util');
 
 Page({
   data: {
@@ -29,18 +29,20 @@ Page({
     try {
       await getApp().ensureLogin();
       const sagas = await api.getSagas();
-      const completed = sagas.filter(s => s.status === 'completed').length;
+      const completed = sagas.filter(s => enumKey(s.status) === 'COMPLETED').length;
       const nodes = sagas.reduce((sum, saga) => sum + (saga.nodeCount || 0), 0);
       const typeMap = {};
       sagas.forEach((saga) => {
-        typeMap[saga.type] = (typeMap[saga.type] || 0) + 1;
+        const typeKey = enumKey(saga.type, 'LIFE');
+        typeMap[typeKey] = (typeMap[typeKey] || 0) + 1;
       });
       const maxTypeCount = Math.max(...Object.values(typeMap), 1);
       const typeStats = Object.entries(typeMap)
         .map(([type, count]) => {
-          const config = SAGA_TYPES[type] || {};
+          const config = SAGA_TYPES[type] || SAGA_TYPES.LIFE;
           return {
             type,
+            typeClass: classKey(type),
             typeName: config.name || type,
             icon: config.icon || '◦',
             count,

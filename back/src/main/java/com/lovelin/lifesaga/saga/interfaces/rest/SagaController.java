@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -226,6 +227,8 @@ public class SagaController {
             int sortOrder,
             String description,
             String location,
+            BigDecimal latitude,
+            BigDecimal longitude,
             List<String> photos,
             LocalDateTime nodeTime,
             boolean milestone,
@@ -241,6 +244,8 @@ public class SagaController {
                     sagaNode.sagaNodeOrder().value(),
                     sagaNode.sagaNodeDescription() == null ? null : sagaNode.sagaNodeDescription().value(),
                     sagaNode.sagaNodeLocation() == null ? null : sagaNode.sagaNodeLocation().value(),
+                    sagaNode.sagaNodeGeoPoint() == null ? null : sagaNode.sagaNodeGeoPoint().latitude(),
+                    sagaNode.sagaNodeGeoPoint() == null ? null : sagaNode.sagaNodeGeoPoint().longitude(),
                     sagaNode.sagaNodePhotos() == null ? null : sagaNode.sagaNodePhotos().values(),
                     sagaNode.sagaNodeTime() == null ? null : sagaNode.sagaNodeTime().value(),
                     sagaNode.milestone(),

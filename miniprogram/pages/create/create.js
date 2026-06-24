@@ -2,18 +2,18 @@
 const { api } = require('../../utils/api');
 
 const TYPES = [
-  { key: 'life', name: '生活', icon: '🏠', color: '#E8725A' },
-  { key: 'travel', name: '旅行', icon: '✈️', color: '#5A9FD4' },
-  { key: 'study', name: '学习', icon: '📚', color: '#5CB870' },
-  { key: 'work', name: '工作', icon: '💼', color: '#E5A44D' },
-  { key: 'health', name: '健身', icon: '💪', color: '#6BBF8A' },
-  { key: 'creative', name: '创作', icon: '✨', color: '#B088C4' },
+  { key: 'LIFE', name: '生活', icon: '🏠', color: '#E8725A' },
+  { key: 'TRAVEL', name: '旅行', icon: '✈️', color: '#5A9FD4' },
+  { key: 'STUDY', name: '学习', icon: '📚', color: '#5CB870' },
+  { key: 'WORK', name: '工作', icon: '💼', color: '#E5A44D' },
+  { key: 'HEALTH', name: '健身', icon: '💪', color: '#6BBF8A' },
+  { key: 'CREATIVE', name: '创作', icon: '✨', color: '#B088C4' },
 ];
 
 Page({
   data: {
     types: TYPES,
-    selectedType: 'life',
+    selectedType: 'LIFE',
     name: '',
     description: '',
     coverUrl: '',
@@ -51,11 +51,11 @@ Page({
       const response = await api.getSaga(id);
       const saga = response.saga;
       this.setData({
-        selectedType: saga.type || 'life',
+        selectedType: saga.type || 'LIFE',
         name: saga.name || '',
         description: saga.description || '',
         coverUrl: saga.coverUrl || '',
-        isPublic: false,
+        isPublic: !!saga.publicVisible,
       });
     } catch (err) {
       console.error('Load saga for edit failed:', err);
@@ -65,7 +65,7 @@ Page({
 
   resetForm() {
     this.setData({
-      selectedType: 'life',
+      selectedType: 'LIFE',
       name: '',
       description: '',
       coverUrl: '',
@@ -94,7 +94,7 @@ Page({
 
   async createSaga() {
     if (this.data.submitting) return;
-    const { selectedType, name, description, coverTempPath, isEdit, editId } = this.data;
+    const { selectedType, name, description, coverTempPath, isPublic, isEdit, editId } = this.data;
 
     if (!name) {
       wx.showToast({ title: '请输入副本名称', icon: 'none' });
@@ -115,7 +115,7 @@ Page({
         type: selectedType,
         coverUrl,
         description,
-        isPublic: false,
+        publicVisible: isPublic,
       };
 
       if (isEdit) {

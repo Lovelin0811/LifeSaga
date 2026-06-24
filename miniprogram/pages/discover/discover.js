@@ -1,13 +1,13 @@
 const { api } = require('../../utils/api');
-const { SAGA_TYPES, RARITY_MAP, formatDate } = require('../../utils/util');
+const { SAGA_TYPES, RARITY_MAP, formatDate, enumKey, classKey } = require('../../utils/util');
 
 const COVER_BGS = {
-  life: 'linear-gradient(135deg, #FFF0EB 0%, #FFE5DD 100%)',
-  travel: 'linear-gradient(135deg, #EBF3FA 0%, #D6E9F8 100%)',
-  study: 'linear-gradient(135deg, #EDF7EF 0%, #D6F0DC 100%)',
-  work: 'linear-gradient(135deg, #FFF6E8 0%, #FFEDD0 100%)',
-  health: 'linear-gradient(135deg, #EDF8F1 0%, #D6F0E4 100%)',
-  creative: 'linear-gradient(135deg, #F5EDF8 0%, #E8D8F0 100%)',
+  LIFE: 'linear-gradient(135deg, #FFF0EB 0%, #FFE5DD 100%)',
+  TRAVEL: 'linear-gradient(135deg, #EBF3FA 0%, #D6E9F8 100%)',
+  STUDY: 'linear-gradient(135deg, #EDF7EF 0%, #D6F0DC 100%)',
+  WORK: 'linear-gradient(135deg, #FFF6E8 0%, #FFEDD0 100%)',
+  HEALTH: 'linear-gradient(135deg, #EDF8F1 0%, #D6F0E4 100%)',
+  CREATIVE: 'linear-gradient(135deg, #F5EDF8 0%, #E8D8F0 100%)',
 };
 
 Page({
@@ -32,16 +32,20 @@ Page({
       await getApp().ensureLogin();
       const sagas = await api.getPublicSagas();
       const list = sagas.map(s => {
-        const type = SAGA_TYPES[s.type] || SAGA_TYPES.life;
-        const rarity = RARITY_MAP[s.rarity] || RARITY_MAP.common;
+        const typeKey = enumKey(s.type, 'LIFE');
+        const rarityKey = enumKey(s.rarity, 'COMMON');
+        const type = SAGA_TYPES[typeKey] || SAGA_TYPES.LIFE;
+        const rarity = RARITY_MAP[rarityKey] || RARITY_MAP.COMMON;
         return {
           ...s,
+          type: typeKey,
+          typeClass: classKey(typeKey),
           typeName: type.name,
           typeIcon: type.icon,
-          coverBg: COVER_BGS[s.type] || COVER_BGS.life,
+          coverBg: COVER_BGS[typeKey] || COVER_BGS.LIFE,
           rarityName: rarity.name,
-          rarityClass: rarity.class,
-          rarity: s.rarity || 'common',
+          rarity: rarityKey,
+          rarityClass: classKey(rarityKey),
           startedAtText: s.startedAt ? formatDate(s.startedAt, 'YYYY.MM.DD') : '',
         };
       });

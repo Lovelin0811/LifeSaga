@@ -41,6 +41,7 @@ public class UpdateSagaNodeApplicationService {
         sagaNode.changeOrder(command.sagaNodeOrder());
         sagaNode.changeDescription(command.sagaNodeDescription());
         sagaNode.changeLocation(command.sagaNodeLocation());
+        sagaNode.changeGeoPoint(command.sagaNodeGeoPoint());
         sagaNode.changePhotos(command.sagaNodePhotos());
         sagaNode.changeTime(command.sagaNodeTime());
         sagaNode.changeMilestone(command.milestone());

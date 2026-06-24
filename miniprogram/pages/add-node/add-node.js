@@ -13,6 +13,7 @@ Page({
     location: '',
     latitude: null,
     longitude: null,
+    hasGeoPoint: false,
     content: '',
     photos: [],
     photoUrls: [],
@@ -50,10 +51,11 @@ Page({
       const [datePart, timePart] = (node.nodeTime || '').split('T');
       this.setData({
         title: node.title || '',
-        content: node.content || '',
+        content: node.description || node.content || '',
         location: node.location || '',
-        latitude: node.latitude || null,
-        longitude: node.longitude || null,
+        latitude: node.latitude === null || node.latitude === undefined ? null : Number(node.latitude),
+        longitude: node.longitude === null || node.longitude === undefined ? null : Number(node.longitude),
+        hasGeoPoint: node.latitude !== null && node.latitude !== undefined && node.longitude !== null && node.longitude !== undefined,
         date: datePart || '',
         time: timePart ? timePart.substring(0, 5) : '',
         isMilestone: !!node.milestone,
@@ -83,6 +85,7 @@ Page({
           location: res.name || res.address || '',
           latitude: res.latitude,
           longitude: res.longitude,
+          hasGeoPoint: true,
         });
       },
       fail: (err) => {
@@ -121,10 +124,20 @@ Page({
 
   async save() {
     if (this.data.submitting) return;
-    const { title, content, date, time, location, latitude, longitude, photos, isMilestone, sortOrder, sagaId } = this.data;
+    const { title, content, date, time, location, latitude, longitude, photos, isMilestone, sortOrder } = this.data;
 
-    if (!title && !content) {
-      wx.showToast({ title: '请填写标题或内容', icon: 'none' });
+    if (!title || !title.trim()) {
+      wx.showToast({ title: '请填写标题', icon: 'none' });
+      return;
+    }
+
+    if (!location || !location.trim()) {
+      wx.showToast({ title: '请选择或填写地点', icon: 'none' });
+      return;
+    }
+
+    if (!date) {
+      wx.showToast({ title: '请选择日期', icon: 'none' });
       return;
     }
 
@@ -147,13 +160,13 @@ Page({
       const nodeTime = date ? (time ? `${date}T${time}:00` : `${date}T00:00:00`) : null;
 
       const payload = {
-        title,
-        content,
-        location,
-        latitude: latitude || null,
-        longitude: longitude || null,
+        title: title.trim(),
+        description: content,
+        location: location.trim(),
+        latitude: latitude === null || latitude === undefined ? null : latitude,
+        longitude: longitude === null || longitude === undefined ? null : longitude,
         nodeTime,
-        photos: photoUrls.length > 0 ? JSON.stringify(photoUrls) : null,
+        photos: photoUrls.length > 0 ? photoUrls : null,
         milestone: isMilestone,
         sortOrder,
       };

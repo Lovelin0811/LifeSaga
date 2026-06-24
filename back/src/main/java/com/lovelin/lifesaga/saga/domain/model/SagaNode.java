@@ -8,6 +8,7 @@ public final class SagaNode {
     private SagaNodeOrder sagaNodeOrder;
     private SagaNodeDescription sagaNodeDescription;
     private SagaNodeLocation sagaNodeLocation;
+    private SagaNodeGeoPoint sagaNodeGeoPoint;
     private SagaNodePhotos sagaNodePhotos;
     private SagaNodeTime sagaNodeTime;
     private boolean milestone;
@@ -19,6 +20,7 @@ public final class SagaNode {
             SagaNodeOrder sagaNodeOrder,
             SagaNodeDescription sagaNodeDescription,
             SagaNodeLocation sagaNodeLocation,
+            SagaNodeGeoPoint sagaNodeGeoPoint,
             SagaNodePhotos sagaNodePhotos,
             SagaNodeTime sagaNodeTime,
             boolean milestone
@@ -29,6 +31,7 @@ public final class SagaNode {
         this.sagaNodeOrder = sagaNodeOrder;
         this.sagaNodeDescription = sagaNodeDescription;
         this.sagaNodeLocation = sagaNodeLocation;
+        this.sagaNodeGeoPoint = sagaNodeGeoPoint;
         this.sagaNodePhotos = sagaNodePhotos;
         this.sagaNodeTime = sagaNodeTime;
         this.milestone = milestone;
@@ -51,6 +54,28 @@ public final class SagaNode {
             SagaNodePhotos sagaNodePhotos,
             SagaNodeTime sagaNodeTime
     ) {
+        return create(
+                sagaId,
+                sagaNodeTitle,
+                sagaNodeOrder,
+                sagaNodeDescription,
+                sagaNodeLocation,
+                null,
+                sagaNodePhotos,
+                sagaNodeTime
+        );
+    }
+
+    public static SagaNode create(
+            SagaId sagaId,
+            SagaNodeTitle sagaNodeTitle,
+            SagaNodeOrder sagaNodeOrder,
+            SagaNodeDescription sagaNodeDescription,
+            SagaNodeLocation sagaNodeLocation,
+            SagaNodeGeoPoint sagaNodeGeoPoint,
+            SagaNodePhotos sagaNodePhotos,
+            SagaNodeTime sagaNodeTime
+    ) {
         if (sagaId == null) {
             throw new IllegalArgumentException("节点所属副本不能为空");
         }
@@ -67,6 +92,7 @@ public final class SagaNode {
                 sagaNodeOrder,
                 sagaNodeDescription,
                 sagaNodeLocation,
+                sagaNodeGeoPoint,
                 sagaNodePhotos,
                 sagaNodeTime,
                 false
@@ -80,6 +106,32 @@ public final class SagaNode {
             SagaNodeOrder sagaNodeOrder,
             SagaNodeDescription sagaNodeDescription,
             SagaNodeLocation sagaNodeLocation,
+            SagaNodePhotos sagaNodePhotos,
+            SagaNodeTime sagaNodeTime,
+            boolean milestone
+    ) {
+        return restore(
+                sagaNodeId,
+                sagaId,
+                sagaNodeTitle,
+                sagaNodeOrder,
+                sagaNodeDescription,
+                sagaNodeLocation,
+                null,
+                sagaNodePhotos,
+                sagaNodeTime,
+                milestone
+        );
+    }
+
+    public static SagaNode restore(
+            SagaNodeId sagaNodeId,
+            SagaId sagaId,
+            SagaNodeTitle sagaNodeTitle,
+            SagaNodeOrder sagaNodeOrder,
+            SagaNodeDescription sagaNodeDescription,
+            SagaNodeLocation sagaNodeLocation,
+            SagaNodeGeoPoint sagaNodeGeoPoint,
             SagaNodePhotos sagaNodePhotos,
             SagaNodeTime sagaNodeTime,
             boolean milestone
@@ -103,6 +155,7 @@ public final class SagaNode {
                 sagaNodeOrder,
                 sagaNodeDescription,
                 sagaNodeLocation,
+                sagaNodeGeoPoint,
                 sagaNodePhotos,
                 sagaNodeTime,
                 milestone
@@ -133,6 +186,10 @@ public final class SagaNode {
         return sagaNodeLocation;
     }
 
+    public SagaNodeGeoPoint sagaNodeGeoPoint() {
+        return sagaNodeGeoPoint;
+    }
+
     public SagaNodePhotos sagaNodePhotos() {
         return sagaNodePhotos;
     }
@@ -161,6 +218,10 @@ public final class SagaNode {
 
     public void changeLocation(SagaNodeLocation newSagaNodeLocation) {
         sagaNodeLocation = newSagaNodeLocation;
+    }
+
+    public void changeGeoPoint(SagaNodeGeoPoint newSagaNodeGeoPoint) {
+        sagaNodeGeoPoint = newSagaNodeGeoPoint;
     }
 
     public void changePhotos(SagaNodePhotos newSagaNodePhotos) {

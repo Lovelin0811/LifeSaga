@@ -58,23 +58,31 @@ function parsePhotos(photos) {
 
 // 副本类型配置
 const SAGA_TYPES = {
-  life: { name: '生活副本', icon: '🏠', color: '#E8725A' },
-  travel: { name: '旅行副本', icon: '✈️', color: '#5A9FD4' },
-  study: { name: '学习副本', icon: '📚', color: '#5CB870' },
-  work: { name: '工作副本', icon: '💼', color: '#E5A44D' },
-  health: { name: '健身副本', icon: '💪', color: '#6BBF8A' },
-  creative: { name: '创作副本', icon: '✨', color: '#B088C4' },
+  LIFE: { name: '生活副本', icon: '🏠', color: '#E8725A' },
+  TRAVEL: { name: '旅行副本', icon: '✈️', color: '#5A9FD4' },
+  STUDY: { name: '学习副本', icon: '📚', color: '#5CB870' },
+  WORK: { name: '工作副本', icon: '💼', color: '#E5A44D' },
+  HEALTH: { name: '健身副本', icon: '💪', color: '#6BBF8A' },
+  CREATIVE: { name: '创作副本', icon: '✨', color: '#B088C4' },
 };
 
 // 稀有度配置
 const RARITY_MAP = {
-  common: { name: '普通', color: '#A8B0B8', class: 'rarity-common' },
-  uncommon: { name: '优秀', color: '#5CB870', class: 'rarity-uncommon' },
-  rare: { name: '稀有', color: '#5A9FD4', class: 'rarity-rare' },
-  epic: { name: '史诗', color: '#B088C4', class: 'rarity-epic' },
-  legendary: { name: '传说', color: '#E5A44D', class: 'rarity-legendary' },
-  mythic: { name: '神话', color: '#E8725A', class: 'rarity-mythic' },
+  COMMON: { name: '普通', color: '#A8B0B8' },
+  UNCOMMON: { name: '优秀', color: '#5CB870' },
+  RARE: { name: '稀有', color: '#5A9FD4' },
+  EPIC: { name: '史诗', color: '#B088C4' },
+  LEGENDARY: { name: '传说', color: '#E5A44D' },
+  MYTHIC: { name: '神话', color: '#E8725A' },
 };
+
+function enumKey(value, fallback) {
+  return String(value || fallback || '').toUpperCase();
+}
+
+function classKey(value, fallback) {
+  return enumKey(value, fallback).toLowerCase();
+}
 
 module.exports = {
   formatDate,
@@ -82,4 +90,6 @@ module.exports = {
   parsePhotos,
   SAGA_TYPES,
   RARITY_MAP,
+  enumKey,
+  classKey,
 };

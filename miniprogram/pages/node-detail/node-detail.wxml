@@ -47,8 +47,8 @@
         </view>
 
         <!-- 正文（大字号 1.8 行高） -->
-        <view class="detail-content" wx:if="{{node.content}}">
-          <text>{{node.content}}</text>
+        <view class="detail-content" wx:if="{{node.description}}">
+          <text>{{node.description}}</text>
         </view>
 
         <!-- 分隔线 -->

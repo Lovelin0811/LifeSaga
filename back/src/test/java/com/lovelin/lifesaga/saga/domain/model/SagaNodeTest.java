@@ -2,6 +2,7 @@ package com.lovelin.lifesaga.saga.domain.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,6 +42,7 @@ class SagaNodeTest {
     void shouldCreateSagaNodeWithOptionalFields() {
         SagaNodeDescription sagaNodeDescription = new SagaNodeDescription("第一次旅行的记录");
         SagaNodeLocation sagaNodeLocation = new SagaNodeLocation("东京塔");
+        SagaNodeGeoPoint sagaNodeGeoPoint = new SagaNodeGeoPoint(new BigDecimal("35.658581"), new BigDecimal("139.745438"));
         SagaNodePhotos sagaNodePhotos = new SagaNodePhotos(List.of("https://example.com/photo.jpg"));
         SagaNodeTime sagaNodeTime = new SagaNodeTime(LocalDateTime.of(2026, 6, 17, 12, 0));
 
@@ -50,6 +52,7 @@ class SagaNodeTest {
                 new SagaNodeOrder(1),
                 sagaNodeDescription,
                 sagaNodeLocation,
+                sagaNodeGeoPoint,
                 sagaNodePhotos,
                 sagaNodeTime
         );
@@ -57,6 +60,7 @@ class SagaNodeTest {
         assertAll(
                 () -> assertEquals(sagaNodeDescription, sagaNode.sagaNodeDescription()),
                 () -> assertEquals(sagaNodeLocation, sagaNode.sagaNodeLocation()),
+                () -> assertEquals(sagaNodeGeoPoint, sagaNode.sagaNodeGeoPoint()),
                 () -> assertEquals(sagaNodePhotos, sagaNode.sagaNodePhotos()),
                 () -> assertEquals(sagaNodeTime, sagaNode.sagaNodeTime())
         );
@@ -168,6 +172,26 @@ class SagaNodeTest {
         sagaNode.changeLocation(null);
 
         assertNull(sagaNode.sagaNodeLocation());
+    }
+
+    @Test
+    void shouldChangeSagaNodeGeoPoint() {
+        SagaNode sagaNode = createSagaNode();
+        SagaNodeGeoPoint sagaNodeGeoPoint = new SagaNodeGeoPoint(new BigDecimal("35.658581"), new BigDecimal("139.745438"));
+
+        sagaNode.changeGeoPoint(sagaNodeGeoPoint);
+
+        assertEquals(sagaNodeGeoPoint, sagaNode.sagaNodeGeoPoint());
+    }
+
+    @Test
+    void shouldAllowClearingSagaNodeGeoPoint() {
+        SagaNode sagaNode = createSagaNode();
+        sagaNode.changeGeoPoint(new SagaNodeGeoPoint(new BigDecimal("35.658581"), new BigDecimal("139.745438")));
+
+        sagaNode.changeGeoPoint(null);
+
+        assertNull(sagaNode.sagaNodeGeoPoint());
     }
 
     @Test

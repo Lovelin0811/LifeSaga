@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeDescription;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeGeoPoint;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeId;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeLocation;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeOrder;
@@ -17,6 +18,7 @@ import com.lovelin.lifesaga.saga.infrastructure.persistence.mapper.SagaNodeMappe
 import com.lovelin.lifesaga.saga.infrastructure.persistence.record.SagaNodeRecord;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,6 +96,8 @@ public class MyBatisSagaNodeRepository implements SagaNodeRepository {
         sagaNodeRecord.setTitle(sagaNode.sagaNodeTitle().value());
         sagaNodeRecord.setContent(valueOf(sagaNode.sagaNodeDescription()));
         sagaNodeRecord.setLocation(valueOf(sagaNode.sagaNodeLocation()));
+        sagaNodeRecord.setLatitude(latitudeOf(sagaNode.sagaNodeGeoPoint()));
+        sagaNodeRecord.setLongitude(longitudeOf(sagaNode.sagaNodeGeoPoint()));
         sagaNodeRecord.setNodeTime(sagaNode.sagaNodeTime() == null ? null : sagaNode.sagaNodeTime().value());
         sagaNodeRecord.setPhotos(toPhotosText(sagaNode.sagaNodePhotos()));
         sagaNodeRecord.setIsMilestone(sagaNode.milestone());
@@ -109,6 +113,7 @@ public class MyBatisSagaNodeRepository implements SagaNodeRepository {
                 new SagaNodeOrder(sagaNodeRecord.getSortOrder()),
                 sagaNodeDescriptionOf(sagaNodeRecord.getContent()),
                 sagaNodeLocationOf(sagaNodeRecord.getLocation()),
+                sagaNodeGeoPointOf(sagaNodeRecord.getLatitude(), sagaNodeRecord.getLongitude()),
                 sagaNodePhotosOf(sagaNodeRecord.getPhotos()),
                 sagaNodeRecord.getNodeTime() == null ? null : new SagaNodeTime(sagaNodeRecord.getNodeTime()),
                 Boolean.TRUE.equals(sagaNodeRecord.getIsMilestone())
@@ -145,11 +150,26 @@ public class MyBatisSagaNodeRepository implements SagaNodeRepository {
         return value == null || value.isBlank() ? null : new SagaNodeLocation(value);
     }
 
+    private SagaNodeGeoPoint sagaNodeGeoPointOf(BigDecimal latitude, BigDecimal longitude) {
+        if (latitude == null && longitude == null) {
+            return null;
+        }
+        return new SagaNodeGeoPoint(latitude, longitude);
+    }
+
     private String valueOf(SagaNodeDescription sagaNodeDescription) {
         return sagaNodeDescription == null ? null : sagaNodeDescription.value();
     }
 
     private String valueOf(SagaNodeLocation sagaNodeLocation) {
         return sagaNodeLocation == null ? null : sagaNodeLocation.value();
+    }
+
+    private BigDecimal latitudeOf(SagaNodeGeoPoint sagaNodeGeoPoint) {
+        return sagaNodeGeoPoint == null ? null : sagaNodeGeoPoint.latitude();
+    }
+
+    private BigDecimal longitudeOf(SagaNodeGeoPoint sagaNodeGeoPoint) {
+        return sagaNodeGeoPoint == null ? null : sagaNodeGeoPoint.longitude();
     }
 }

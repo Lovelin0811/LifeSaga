@@ -1,6 +1,6 @@
 // pages/achievements/achievements.js
 const { api } = require('../../utils/api');
-const { RARITY_MAP } = require('../../utils/util');
+const { RARITY_MAP, enumKey, classKey } = require('../../utils/util');
 
 Page({
   data: {
@@ -27,8 +27,14 @@ Page({
 
       const unlockedCount = achievements.filter(a => a.unlocked).length;
       const list = achievements.map(a => {
-        const rarity = RARITY_MAP[a.rarity] || RARITY_MAP.common;
-        return { ...a, rarityName: rarity.name };
+        const rarityKey = enumKey(a.rarity, 'COMMON');
+        const rarity = RARITY_MAP[rarityKey] || RARITY_MAP.COMMON;
+        return {
+          ...a,
+          rarity: rarityKey,
+          rarityClass: classKey(rarityKey),
+          rarityName: rarity.name,
+        };
       });
 
       const level = userInfo.level || 1;

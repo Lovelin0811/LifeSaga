@@ -44,6 +44,7 @@ public class AddSagaNodeApplicationService {
                 command.sagaNodeOrder(),
                 command.sagaNodeDescription(),
                 command.sagaNodeLocation(),
+                command.sagaNodeGeoPoint(),
                 command.sagaNodePhotos(),
                 command.sagaNodeTime()
         );

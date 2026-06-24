@@ -133,10 +133,10 @@ LifeSaga/
 | 方法 | 路径 | 功能 | 请求体 | 响应 | 权限 |
 |------|------|------|--------|------|------|
 | GET | `/api/sagas` | 我的副本列表 | - | Saga[] | 仅自己的 |
-| POST | `/api/sagas` | 创建副本 | `{"name","type","coverUrl","description"}` | Saga | - |
+| POST | `/api/sagas` | 创建副本 | `{"name","type","coverUrl","description","publicVisible"}` | Saga | - |
 | GET | `/api/sagas/public` | 公开副本列表 | - | PublicSagaVO[] | 无 / 公开 |
 | GET | `/api/sagas/{id}` | 副本详情（含节点） | - | `{"saga":Saga,"nodes":SagaNode[]}` | 自己的 / 公开副本只读 |
-| PUT | `/api/sagas/{id}` | 更新副本 | `{"name","type","coverUrl","description"}` | Saga | 仅自己的 |
+| PUT | `/api/sagas/{id}` | 更新副本 | `{"name","type","coverUrl","description","publicVisible"}` | Saga | 仅自己的 |
 | PUT | `/api/sagas/{id}/complete` | 完成副本 | - | Saga | 仅自己的 |
 | DELETE | `/api/sagas/{id}` | 删除副本（级联删除节点） | - | `{"code":200}` | 仅自己的 |
 
@@ -147,7 +147,7 @@ LifeSaga/
 | 方法 | 路径 | 功能 | 请求体 | 响应 | 权限 |
 |------|------|------|--------|------|------|
 | GET | `/api/sagas/{sagaId}/nodes` | 节点列表 | - | SagaNode[] | 仅自己的 |
-| POST | `/api/sagas/{sagaId}/nodes` | 创建节点 | `{"title","content","location","latitude","longitude","nodeTime","photos","milestone","sortOrder"}` | SagaNode | 仅自己的 |
+| POST | `/api/sagas/{sagaId}/nodes` | 创建节点 | `{"title","description","location","latitude","longitude","nodeTime","photos","milestone","sortOrder"}` | SagaNode | 仅自己的 |
 | GET | `/api/sagas/{sagaId}/nodes/{id}` | 节点详情 | - | SagaNode | 仅自己的 |
 | PUT | `/api/sagas/{sagaId}/nodes/{id}` | 更新节点 | 同创建 | SagaNode | 仅自己的 |
 | PUT | `/api/sagas/{sagaId}/nodes/{id}/toggle-milestone` | 切换里程碑 | - | SagaNode | 仅自己的 |

@@ -13,9 +13,9 @@
     <!-- 副本头部信息 -->
     <view class="detail-header">
       <view class="detail-title-row">
-        <text class="type-tag type-tag--{{saga.type}}">{{saga.typeName}}</text>
-        <view class="rarity-badge rarity-badge--{{saga.rarity || 'common'}}">{{saga.rarityName}}</view>
-        <view class="status-badge status-badge--{{saga.status || 'active'}}">{{saga.status === 'completed' ? '已完成' : '进行中'}}</view>
+        <text class="type-tag type-tag--{{saga.typeClass}}">{{saga.typeName}}</text>
+        <view class="rarity-badge rarity-badge--{{saga.rarityClass || 'common'}}">{{saga.rarityName}}</view>
+        <view class="status-badge status-badge--{{saga.statusClass || 'active'}}">{{saga.status === 'COMPLETED' ? '已完成' : '进行中'}}</view>
         <view class="detail-actions" wx:if="{{isOwner}}" bindtap="showActions">
           <image src="/images/icons/more.svg" class="nav-icon" mode="aspectFit"/>
         </view>
@@ -60,7 +60,7 @@
           <!-- 节点卡片 -->
           <view class="node-card">
             <!-- 封面图 -->
-            <view class="node-cover cover-bg-{{saga.type}}" wx:if="{{item.coverUrl || item.photos && item.photos.length}}">
+            <view class="node-cover cover-bg-{{saga.typeClass}}" wx:if="{{item.coverUrl || item.photos && item.photos.length}}">
               <image wx:if="{{item.coverUrl}}" class="node-cover-img" src="{{item.coverUrl}}" mode="aspectFill"/>
               <image wx:elif="{{item.photos && item.photos.length}}" class="node-cover-img" src="{{item.photos[0]}}" mode="aspectFill"
                      catchtap="previewPhoto" data-urls="{{item.photos}}" data-current="{{item.photos[0]}}"/>
@@ -77,7 +77,7 @@
                 <image src="/images/icons/location.svg" class="location-icon" mode="aspectFit"/>
                 <text>{{item.location}}</text>
               </view>
-              <text class="node-text" wx:if="{{item.content}}">{{item.content}}</text>
+              <text class="node-text" wx:if="{{item.description}}">{{item.description}}</text>
               <!-- 照片预览（无封面时显示） -->
               <view class="node-photos" wx:if="{{item.photos && item.photos.length > 1 && !item.coverUrl}}">
                 <image wx:for="{{item.photos}}" wx:for-item="photo" wx:key="*this"
@@ -103,7 +103,7 @@
 <!-- 操作面板 (编辑/删除) -->
 <view class="action-sheet-mask" wx:if="{{showActionSheet && isOwner}}" bindtap="hideActions">
   <view class="action-sheet" catchtap="">
-    <view class="action-sheet-item action-sheet-complete" wx:if="{{saga.status !== 'completed'}}" bindtap="completeSaga">
+    <view class="action-sheet-item action-sheet-complete" wx:if="{{saga.status !== 'COMPLETED'}}" bindtap="completeSaga">
       <text>完成副本</text>
     </view>
     <view class="action-sheet-item action-sheet-edit" bindtap="editSaga">
