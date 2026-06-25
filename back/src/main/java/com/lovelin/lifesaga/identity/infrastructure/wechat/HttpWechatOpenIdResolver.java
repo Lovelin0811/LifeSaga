@@ -2,6 +2,7 @@ package com.lovelin.lifesaga.identity.infrastructure.wechat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class HttpWechatOpenIdResolver implements WechatOpenIdResolver {
     private final String appSecret;
     private final boolean devLoginEnabled;
 
+    @Autowired
     public HttpWechatOpenIdResolver(
             Environment environment,
             @Value("${wechat.app-id:}") String appId,

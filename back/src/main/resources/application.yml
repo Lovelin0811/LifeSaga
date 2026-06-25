@@ -1,12 +1,10 @@
 spring:
   application:
     name: lifesaga-ddd
-  config:
-    import: optional:file:./application-local.yml
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/lifesaga?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=5000
-    username: ${DB_USERNAME:}
-    password: ${DB_PASSWORD:}
+    url: jdbc:mysql://127.0.0.1:3306/LifeSagaNew?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=5000
+    username: ${DB_USERNAME:lovelin}
+    password: ${DB_PASSWORD:Lov3lin@2026}
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -21,3 +19,18 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+
+wechat:
+  app-id: ${WECHAT_APP_ID:wxa471e1b37045d49b}
+  app-secret: ${WECHAT_APP_SECRET:f13b9fb5793cf7df3ebef1ed33fb96f9}
+
+jwt:
+  secret: ${JWT_SECRET:9f4c2a7d8b1e5f0a6c3d9e2b7a4f8c1d6e0b3a9c5f2d7e1a8b4c6d0f3a7e9b2c}
+  expiration: ${JWT_EXPIRATION:604800000}
+
+upload:
+  dir: ${UPLOAD_DIR:./uploads}
+  public-base-url: ${UPLOAD_PUBLIC_URL:http://127.0.0.1:3000}
+
+auth:
+  dev-login-enabled: ${AUTH_DEV_LOGIN:true}

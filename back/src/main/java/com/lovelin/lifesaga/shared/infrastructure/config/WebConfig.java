@@ -2,6 +2,8 @@ package com.lovelin.lifesaga.shared.infrastructure.config;
 
 import com.lovelin.lifesaga.shared.infrastructure.security.AuthFilter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Value("${upload.dir:./uploads}")
     private String uploadDir;
+
+    @Bean
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> serverPortCustomizer() {
+        return factory -> factory.setPort(3000);
+    }
 
     @Bean
     public FilterRegistrationBean<AuthFilter> authFilterRegistration(AuthFilter authFilter) {
