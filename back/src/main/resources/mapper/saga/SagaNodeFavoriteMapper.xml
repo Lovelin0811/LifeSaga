@@ -16,6 +16,11 @@
         VALUES (#{userId}, #{nodeId})
     </insert>
 
+    <insert id="insertIgnore">
+        INSERT IGNORE INTO node_favorites (user_id, node_id)
+        VALUES (#{userId}, #{nodeId})
+    </insert>
+
     <delete id="deleteByUserIdAndNodeId">
         DELETE FROM node_favorites
         WHERE user_id = #{userId}

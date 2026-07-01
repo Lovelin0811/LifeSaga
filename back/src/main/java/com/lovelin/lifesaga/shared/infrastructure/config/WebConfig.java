@@ -2,8 +2,6 @@ package com.lovelin.lifesaga.shared.infrastructure.config;
 
 import com.lovelin.lifesaga.shared.infrastructure.security.AuthFilter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,18 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Value("${upload.dir:./uploads}")
     private String uploadDir;
-
-    /**
-     * 强制端口 3000。
-     * 本地开发时 WorkBuddy 会设置 SERVER__PORT=61713 环境变量，
-     * Spring Boot relaxed binding 将其映射为 server.port=61713，
-     * 环境变量优先级高于 application.yml，导致配置文件中的端口被覆盖。
-     * 此处通过 WebServerFactoryCustomizer 硬编码兜底，确保 dev/prod 一致。
-     */
-    @Bean
-    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> serverPortCustomizer() {
-        return factory -> factory.setPort(3000);
-    }
 
     @Bean
     public FilterRegistrationBean<AuthFilter> authFilterRegistration(AuthFilter authFilter) {

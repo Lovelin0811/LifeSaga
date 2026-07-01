@@ -69,6 +69,38 @@ public class MyBatisSagaRepository implements SagaRepository {
     }
 
     @Override
+    public Saga recordNodeAdded(SagaId sagaId, SagaOwnerId sagaOwnerId) {
+        if (sagaId == null) {
+            throw new IllegalArgumentException("副本 ID 不能为空");
+        }
+        if (sagaOwnerId == null) {
+            throw new IllegalArgumentException("副本所有者 ID 不能为空");
+        }
+
+        int updatedRows = sagaMapper.recordNodeAdded(sagaId.value(), sagaOwnerId.value());
+        if (updatedRows != 1) {
+            throw new IllegalStateException("副本节点统计更新失败");
+        }
+        return findBySagaId(sagaId).orElseThrow(() -> new IllegalStateException("副本不存在"));
+    }
+
+    @Override
+    public Saga recordNodeDeleted(SagaId sagaId, SagaOwnerId sagaOwnerId) {
+        if (sagaId == null) {
+            throw new IllegalArgumentException("副本 ID 不能为空");
+        }
+        if (sagaOwnerId == null) {
+            throw new IllegalArgumentException("副本所有者 ID 不能为空");
+        }
+
+        int updatedRows = sagaMapper.recordNodeDeleted(sagaId.value(), sagaOwnerId.value());
+        if (updatedRows != 1) {
+            throw new IllegalStateException("副本节点统计更新失败");
+        }
+        return findBySagaId(sagaId).orElseThrow(() -> new IllegalStateException("副本不存在"));
+    }
+
+    @Override
     public void deleteBySagaId(SagaId sagaId) {
         if (sagaId == null) {
             throw new IllegalArgumentException("副本 ID 不能为空");

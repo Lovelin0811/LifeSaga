@@ -83,6 +83,26 @@ class MyBatisSagaRepositoryTest {
     }
 
     @Test
+    void shouldRestoreRelationshipSagaType() {
+        FakeSagaMapper sagaMapper = new FakeSagaMapper();
+        SagaRecord sagaRecord = new SagaRecord();
+        sagaRecord.setId(105L);
+        sagaRecord.setUserId(8L);
+        sagaRecord.setName("亲密关系");
+        sagaRecord.setType("RELATIONSHIP");
+        sagaRecord.setStatus("ACTIVE");
+        sagaRecord.setNodeCount(1);
+        sagaRecord.setRarity("COMMON");
+        sagaRecord.setStartedAt(LocalDateTime.of(2026, 6, 20, 9, 0));
+        sagaMapper.recordToFind = sagaRecord;
+        MyBatisSagaRepository sagaRepository = new MyBatisSagaRepository(sagaMapper);
+
+        Saga saga = sagaRepository.findBySagaId(new SagaId(105)).orElseThrow();
+
+        assertEquals(SagaType.RELATIONSHIP, saga.sagaType());
+    }
+
+    @Test
     void shouldUpdateExistingSaga() {
         FakeSagaMapper sagaMapper = new FakeSagaMapper();
         MyBatisSagaRepository sagaRepository = new MyBatisSagaRepository(sagaMapper);
@@ -112,11 +132,63 @@ class MyBatisSagaRepositoryTest {
         );
     }
 
+    @Test
+    void shouldRecordNodeAddedAtomically() {
+        FakeSagaMapper sagaMapper = new FakeSagaMapper();
+        SagaRecord sagaRecord = new SagaRecord();
+        sagaRecord.setId(103L);
+        sagaRecord.setUserId(9L);
+        sagaRecord.setName("旅行");
+        sagaRecord.setType("TRAVEL");
+        sagaRecord.setStatus("ACTIVE");
+        sagaRecord.setNodeCount(3);
+        sagaRecord.setRarity("UNCOMMON");
+        sagaRecord.setStartedAt(LocalDateTime.of(2026, 6, 21, 9, 0));
+        sagaMapper.recordToFind = sagaRecord;
+        MyBatisSagaRepository sagaRepository = new MyBatisSagaRepository(sagaMapper);
+
+        Saga saga = sagaRepository.recordNodeAdded(new SagaId(103), new SagaOwnerId(9));
+
+        assertAll(
+                () -> assertEquals(1, sagaMapper.recordNodeAddedCount),
+                () -> assertEquals(4, saga.nodeCount()),
+                () -> assertEquals(SagaRarity.UNCOMMON, saga.sagaRarity())
+        );
+    }
+
+    @Test
+    void shouldRecordNodeDeletedAtomically() {
+        FakeSagaMapper sagaMapper = new FakeSagaMapper();
+        SagaRecord sagaRecord = new SagaRecord();
+        sagaRecord.setId(104L);
+        sagaRecord.setUserId(9L);
+        sagaRecord.setName("旅行");
+        sagaRecord.setType("TRAVEL");
+        sagaRecord.setStatus("COMPLETED");
+        sagaRecord.setNodeCount(1);
+        sagaRecord.setRarity("COMMON");
+        sagaRecord.setStartedAt(LocalDateTime.of(2026, 6, 21, 9, 0));
+        sagaRecord.setEndedAt(LocalDateTime.of(2026, 6, 22, 9, 0));
+        sagaMapper.recordToFind = sagaRecord;
+        MyBatisSagaRepository sagaRepository = new MyBatisSagaRepository(sagaMapper);
+
+        Saga saga = sagaRepository.recordNodeDeleted(new SagaId(104), new SagaOwnerId(9));
+
+        assertAll(
+                () -> assertEquals(1, sagaMapper.recordNodeDeletedCount),
+                () -> assertEquals(0, saga.nodeCount()),
+                () -> assertEquals(SagaStatus.ACTIVE, saga.sagaStatus()),
+                () -> assertEquals(null, saga.endedAt())
+        );
+    }
+
     private static final class FakeSagaMapper implements SagaMapper {
 
         private SagaRecord recordToFind;
         private SagaRecord savedRecord;
         private int updateCount;
+        private int recordNodeAddedCount;
+        private int recordNodeDeletedCount;
 
         @Override
         public Optional<SagaRecord> findById(long id) {
@@ -144,6 +216,26 @@ class MyBatisSagaRepositoryTest {
         public int update(SagaRecord sagaRecord) {
             savedRecord = sagaRecord;
             updateCount++;
+            return 1;
+        }
+
+        @Override
+        public int recordNodeAdded(long id, long userId) {
+            recordNodeAddedCount++;
+            recordToFind.setNodeCount(recordToFind.getNodeCount() + 1);
+            recordToFind.setRarity(SagaRarity.fromNodeCount(recordToFind.getNodeCount()).name());
+            recordToFind.setStatus(SagaStatus.ACTIVE.name());
+            recordToFind.setEndedAt(null);
+            return 1;
+        }
+
+        @Override
+        public int recordNodeDeleted(long id, long userId) {
+            recordNodeDeletedCount++;
+            recordToFind.setNodeCount(recordToFind.getNodeCount() - 1);
+            recordToFind.setRarity(SagaRarity.fromNodeCount(recordToFind.getNodeCount()).name());
+            recordToFind.setStatus(SagaStatus.ACTIVE.name());
+            recordToFind.setEndedAt(null);
             return 1;
         }
 

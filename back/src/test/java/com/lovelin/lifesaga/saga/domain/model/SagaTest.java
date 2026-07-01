@@ -182,6 +182,29 @@ class SagaTest {
     }
 
     @Test
+    void shouldBackfillEndedAtWhenCompletedSagaEndedAtIsMissing() {
+        Saga saga = Saga.restore(
+                new SagaId(1),
+                new SagaOwnerId(1),
+                new SagaName("日本旅行"),
+                SagaType.TRAVEL,
+                null,
+                null,
+                SagaStatus.COMPLETED,
+                false,
+                1,
+                SagaRarity.COMMON,
+                LocalDateTime.of(2026, 6, 11, 12, 0),
+                null
+        );
+        LocalDateTime completedAt = LocalDateTime.of(2026, 6, 16, 12, 0);
+
+        saga.complete(completedAt);
+
+        assertEquals(completedAt, saga.endedAt());
+    }
+
+    @Test
     void shouldRecordNodeAdded() {
         Saga saga = createSaga();
 

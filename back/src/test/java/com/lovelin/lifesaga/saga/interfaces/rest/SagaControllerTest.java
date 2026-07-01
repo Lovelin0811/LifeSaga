@@ -12,7 +12,14 @@ import com.lovelin.lifesaga.saga.domain.model.Saga;
 import com.lovelin.lifesaga.saga.domain.model.SagaId;
 import com.lovelin.lifesaga.saga.domain.model.SagaName;
 import com.lovelin.lifesaga.saga.domain.model.SagaNode;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeDescription;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeGeoPoint;
 import com.lovelin.lifesaga.saga.domain.model.SagaNodeId;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeLocation;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeOrder;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodePhotos;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeTime;
+import com.lovelin.lifesaga.saga.domain.model.SagaNodeTitle;
 import com.lovelin.lifesaga.saga.domain.model.SagaOwnerId;
 import com.lovelin.lifesaga.saga.domain.model.SagaRarity;
 import com.lovelin.lifesaga.saga.domain.model.SagaStatus;
@@ -27,6 +34,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -176,7 +184,96 @@ class SagaControllerTest {
         );
     }
 
+    @Test
+    void shouldHideOwnerIdInPublicSagaList() {
+        Clock fixedClock = Clock.fixed(Instant.parse("2026-06-22T10:00:00Z"), ZoneId.of("Asia/Shanghai"));
+        FakeSagaRepository sagaRepository = new FakeSagaRepository();
+        sagaRepository.publicSagas = List.of(Saga.restore(
+                new SagaId(201),
+                new SagaOwnerId(8),
+                new SagaName("公开副本"),
+                SagaType.TRAVEL,
+                null,
+                null,
+                SagaStatus.ACTIVE,
+                true,
+                2,
+                SagaRarity.COMMON,
+                LocalDateTime.of(2026, 6, 20, 10, 0),
+                null
+        ));
+        SagaController sagaController = createSagaController(sagaRepository, new FakeSagaNodeRepository(), fixedClock);
+
+        SagaController.ApiResponse<List<SagaController.SagaResponse>> response = sagaController.listPublic();
+
+        assertAll(
+                () -> assertEquals(200, response.code()),
+                () -> assertEquals(1, response.data().size()),
+                () -> assertEquals(null, response.data().getFirst().ownerId())
+        );
+    }
+
+    @Test
+    void shouldHideSensitiveNodeFieldsForPublicViewer() {
+        Clock fixedClock = Clock.fixed(Instant.parse("2026-06-22T10:00:00Z"), ZoneId.of("Asia/Shanghai"));
+        FakeSagaRepository sagaRepository = new FakeSagaRepository();
+        sagaRepository.sagaToFind = Saga.restore(
+                new SagaId(202),
+                new SagaOwnerId(8),
+                new SagaName("公开副本"),
+                SagaType.TRAVEL,
+                null,
+                null,
+                SagaStatus.ACTIVE,
+                true,
+                1,
+                SagaRarity.COMMON,
+                LocalDateTime.of(2026, 6, 20, 10, 0),
+                null
+        );
+        FakeSagaNodeRepository sagaNodeRepository = new FakeSagaNodeRepository();
+        sagaNodeRepository.sagaNodes = List.of(SagaNode.restore(
+                new SagaNodeId(301),
+                new SagaId(202),
+                new SagaNodeTitle("东京"),
+                new SagaNodeOrder(1),
+                new SagaNodeDescription("详细描述"),
+                new SagaNodeLocation("涩谷"),
+                new SagaNodeGeoPoint(new java.math.BigDecimal("35.6580"), new java.math.BigDecimal("139.7016")),
+                new SagaNodePhotos(List.of("https://example.com/photo.jpg")),
+                new SagaNodeTime(LocalDateTime.of(2026, 6, 21, 10, 0)),
+                true
+        ));
+        SagaController sagaController = createSagaController(sagaRepository, sagaNodeRepository, fixedClock);
+        MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        httpServletRequest.setAttribute("userId", 7L);
+
+        SagaController.ApiResponse<SagaController.SagaDetailResponse> response = sagaController.detail(202L, httpServletRequest);
+        SagaController.SagaNodeResponse nodeResponse = response.data().nodes().getFirst();
+
+        assertAll(
+                () -> assertEquals(200, response.code()),
+                () -> assertEquals(null, response.data().saga().ownerId()),
+                () -> assertEquals("东京", nodeResponse.title()),
+                () -> assertEquals(null, nodeResponse.description()),
+                () -> assertEquals(null, nodeResponse.location()),
+                () -> assertEquals(null, nodeResponse.latitude()),
+                () -> assertEquals(null, nodeResponse.longitude()),
+                () -> assertEquals(null, nodeResponse.nodeTime()),
+                () -> assertEquals(false, nodeResponse.favorited()),
+                () -> assertEquals(List.of("https://example.com/photo.jpg"), nodeResponse.photos())
+        );
+    }
+
     private SagaController createSagaController(FakeSagaRepository sagaRepository, Clock clock) {
+        return createSagaController(sagaRepository, new FakeSagaNodeRepository(), clock);
+    }
+
+    private SagaController createSagaController(
+            FakeSagaRepository sagaRepository,
+            FakeSagaNodeRepository sagaNodeRepository,
+            Clock clock
+    ) {
         return new SagaController(
                 new CreateSagaApplicationService(
                         sagaRepository,
@@ -191,12 +288,12 @@ class SagaControllerTest {
                 ),
                 new DeleteSagaApplicationService(
                         sagaRepository,
-                        new FakeSagaNodeRepository(),
+                        sagaNodeRepository,
                         new FakeSagaNodeFavoriteRepository()
                 ),
                 new SagaQueryApplicationService(
                         sagaRepository,
-                        new FakeSagaNodeRepository(),
+                        sagaNodeRepository,
                         new FakeSagaNodeFavoriteRepository()
                 )
         );
@@ -207,6 +304,7 @@ class SagaControllerTest {
         private Saga savedSaga;
         private Saga sagaToFind;
         private SagaId deletedSagaId;
+        private List<Saga> publicSagas = List.of();
 
         @Override
         public Optional<Saga> findBySagaId(SagaId sagaId) {
@@ -220,7 +318,7 @@ class SagaControllerTest {
 
         @Override
         public java.util.List<Saga> findPublic() {
-            return java.util.List.of();
+            return publicSagas;
         }
 
         @Override
@@ -253,6 +351,8 @@ class SagaControllerTest {
 
     private static final class FakeSagaNodeRepository implements SagaNodeRepository {
 
+        private List<SagaNode> sagaNodes = List.of();
+
         @Override
         public Optional<SagaNode> findBySagaNodeId(SagaNodeId sagaNodeId) {
             return Optional.empty();
@@ -260,7 +360,9 @@ class SagaControllerTest {
 
         @Override
         public java.util.List<SagaNode> findBySagaId(SagaId sagaId) {
-            return java.util.List.of();
+            return sagaNodes.stream()
+                    .filter(sagaNode -> sagaNode.sagaId().equals(sagaId))
+                    .toList();
         }
 
         @Override

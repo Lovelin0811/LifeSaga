@@ -30,7 +30,10 @@ CREATE TABLE sagas (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_user_id (user_id),
-    INDEX idx_status (status)
+    INDEX idx_status (status),
+    CONSTRAINT fk_sagas_user
+        FOREIGN KEY (user_id) REFERENCES users (id)
+        ON DELETE CASCADE
 );
 
 -- 节点表
@@ -49,7 +52,10 @@ CREATE TABLE saga_nodes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_saga_id (saga_id),
-    INDEX idx_node_time (node_time)
+    INDEX idx_node_time (node_time),
+    CONSTRAINT fk_saga_nodes_saga
+        FOREIGN KEY (saga_id) REFERENCES sagas (id)
+        ON DELETE CASCADE
 );
 
 -- 节点收藏表
@@ -60,7 +66,13 @@ CREATE TABLE node_favorites (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uk_user_node (user_id, node_id),
     INDEX idx_user_id (user_id),
-    INDEX idx_node_id (node_id)
+    INDEX idx_node_id (node_id),
+    CONSTRAINT fk_node_favorites_user
+        FOREIGN KEY (user_id) REFERENCES users (id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_node_favorites_node
+        FOREIGN KEY (node_id) REFERENCES saga_nodes (id)
+        ON DELETE CASCADE
 );
 
 -- 成就表
@@ -84,7 +96,13 @@ CREATE TABLE user_achievements (
     achievement_id BIGINT NOT NULL,
     unlocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uk_user_achievement (user_id, achievement_id),
-    INDEX idx_user_id (user_id)
+    INDEX idx_user_id (user_id),
+    CONSTRAINT fk_user_achievements_user
+        FOREIGN KEY (user_id) REFERENCES users (id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_user_achievements_achievement
+        FOREIGN KEY (achievement_id) REFERENCES achievements (id)
+        ON DELETE CASCADE
 );
 
 INSERT INTO achievements (code, name, description, icon, rarity, condition_type, condition_value, xp_reward) VALUES

@@ -26,7 +26,7 @@ public class AuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getRequestURI();
-        if (path.startsWith("/api/auth/") || path.startsWith("/api/sagas/public")) {
+        if (isPublicPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -43,6 +43,12 @@ public class AuthFilter extends OncePerRequestFilter {
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"code\":401,\"message\":\"未登录或token已过期\"}");
+        response.getWriter().write("{\"code\":401,\"data\":null,\"message\":\"未登录或token已过期\"}");
+    }
+
+    private boolean isPublicPath(String path) {
+        return path.startsWith("/api/auth/")
+                || "/api/sagas/public".equals(path)
+                || "/api/sagas/public/".equals(path);
     }
 }

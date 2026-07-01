@@ -12,6 +12,8 @@ public interface SagaNodeFavoriteMapper {
 
     int insert(@Param("userId") long userId, @Param("nodeId") long nodeId);
 
+    int insertIgnore(@Param("userId") long userId, @Param("nodeId") long nodeId);
+
     int deleteByUserIdAndNodeId(@Param("userId") long userId, @Param("nodeId") long nodeId);
 
     List<Long> findNodeIdsByUserIdAndNodeIds(@Param("userId") long userId, @Param("nodeIds") List<Long> nodeIds);

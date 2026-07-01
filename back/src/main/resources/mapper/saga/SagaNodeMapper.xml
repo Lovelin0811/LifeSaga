@@ -80,8 +80,7 @@
 
     <update id="update" parameterType="com.lovelin.lifesaga.saga.infrastructure.persistence.record.SagaNodeRecord">
         UPDATE saga_nodes
-        SET saga_id = #{sagaId},
-            title = #{title},
+        SET title = #{title},
             content = #{content, jdbcType=LONGVARCHAR},
             location = #{location, jdbcType=VARCHAR},
             latitude = #{latitude, jdbcType=DECIMAL},
@@ -91,6 +90,7 @@
             is_milestone = #{isMilestone},
             sort_order = #{sortOrder}
         WHERE id = #{id}
+          AND saga_id = #{sagaId}
     </update>
 
     <delete id="deleteById">

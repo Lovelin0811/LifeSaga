@@ -20,5 +20,9 @@ public interface SagaMapper {
 
     int update(SagaRecord sagaRecord);
 
+    int recordNodeAdded(@Param("id") long id, @Param("userId") long userId);
+
+    int recordNodeDeleted(@Param("id") long id, @Param("userId") long userId);
+
     int deleteById(@Param("id") long id);
 }

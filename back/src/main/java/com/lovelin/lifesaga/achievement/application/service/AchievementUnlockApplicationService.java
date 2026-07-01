@@ -24,6 +24,14 @@ import java.util.List;
 @Service
 public class AchievementUnlockApplicationService implements AchievementUnlockUseCase {
 
+    private static final List<SagaType> COMPLETIONIST_REQUIRED_TYPES = List.of(
+            SagaType.LIFE,
+            SagaType.TRAVEL,
+            SagaType.STUDY,
+            SagaType.WORK,
+            SagaType.HEALTH
+    );
+
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -126,12 +134,13 @@ public class AchievementUnlockApplicationService implements AchievementUnlockUse
     }
 
     private boolean allTypesCompleted(UserId userId) {
-        for (SagaType sagaType : SagaType.values()) {
+        for (SagaType sagaType : COMPLETIONIST_REQUIRED_TYPES) {
             if (achievementProgressRepository.countCompletedSagasByType(userId, sagaType) == 0) {
                 return false;
             }
         }
-        return true;
+        return achievementProgressRepository.countCompletedSagasByType(userId, SagaType.CREATIVE) > 0
+                || achievementProgressRepository.countCompletedSagasByType(userId, SagaType.RELATIONSHIP) > 0;
     }
 
     private boolean hasStreak(UserId userId, int requiredDays) {

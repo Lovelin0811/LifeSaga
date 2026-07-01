@@ -110,6 +110,46 @@ class AchievementUnlockApplicationServiceTest {
         );
     }
 
+    @Test
+    void shouldTreatRelationshipAsCreativeSlotForCompletionist() {
+        Achievement achievement = achievement(3, "completionist", "all_types_completed", 200);
+        FakeAchievementRepository achievementRepository = new FakeAchievementRepository(List.of(achievement));
+        FakeUserAchievementRepository userAchievementRepository = new FakeUserAchievementRepository();
+        FakeAchievementProgressRepository achievementProgressRepository = new FakeAchievementProgressRepository();
+        achievementProgressRepository.completedLife = 1;
+        achievementProgressRepository.completedTravel = 1;
+        achievementProgressRepository.completedStudy = 1;
+        achievementProgressRepository.completedWork = 1;
+        achievementProgressRepository.completedHealth = 1;
+        achievementProgressRepository.completedRelationship = 1;
+        FakeUserRepository userRepository = new FakeUserRepository();
+        userRepository.user = User.restore(
+                new UserId(7),
+                new UserOpenId("wx_openid_001"),
+                new UserNickname(""),
+                new UserAvatarUrl(""),
+                new UserLevel(1),
+                new UserExperience(0),
+                LocalDateTime.of(2026, 6, 23, 10, 0),
+                LocalDateTime.of(2026, 6, 23, 10, 0)
+        );
+        AchievementUnlockApplicationService service = new AchievementUnlockApplicationService(
+                achievementRepository,
+                userAchievementRepository,
+                achievementProgressRepository,
+                userRepository,
+                Clock.fixed(Instant.parse("2026-06-23T03:30:00Z"), ZoneId.of("Asia/Shanghai"))
+        );
+
+        List<Achievement> unlockedAchievements = service.checkOnSagaCreate(new UserId(7));
+
+        assertAll(
+                () -> assertEquals(1, unlockedAchievements.size()),
+                () -> assertEquals("completionist", unlockedAchievements.get(0).achievementCode().value()),
+                () -> assertEquals(200, userRepository.user.userExperience().value())
+        );
+    }
+
     private Achievement achievement(long id, String code, String conditionType, int experienceReward) {
         return Achievement.restore(
                 new AchievementId(id),
@@ -176,6 +216,13 @@ class AchievementUnlockApplicationServiceTest {
     private static final class FakeAchievementProgressRepository implements AchievementProgressRepository {
 
         private boolean sagaHasPhotos;
+        private int completedLife;
+        private int completedTravel;
+        private int completedStudy;
+        private int completedWork;
+        private int completedHealth;
+        private int completedRelationship;
+        private int completedCreative;
 
         @Override
         public int countSagasByUserId(UserId userId) {
@@ -189,7 +236,15 @@ class AchievementUnlockApplicationServiceTest {
 
         @Override
         public int countCompletedSagasByType(UserId userId, SagaType sagaType) {
-            return 0;
+            return switch (sagaType) {
+                case LIFE -> completedLife;
+                case TRAVEL -> completedTravel;
+                case STUDY -> completedStudy;
+                case WORK -> completedWork;
+                case HEALTH -> completedHealth;
+                case RELATIONSHIP -> completedRelationship;
+                case CREATIVE -> completedCreative;
+            };
         }
 
         @Override

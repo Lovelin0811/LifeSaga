@@ -138,7 +138,7 @@ public class MyBatisSagaNodeRepository implements SagaNodeRepository {
         try {
             return new SagaNodePhotos(objectMapper.readValue(photos, STRING_LIST_TYPE));
         } catch (JsonProcessingException exception) {
-            throw new IllegalStateException("节点照片反序列化失败", exception);
+            return parseLegacyPhotos(photos, exception);
         }
     }
 
@@ -154,7 +154,30 @@ public class MyBatisSagaNodeRepository implements SagaNodeRepository {
         if (latitude == null && longitude == null) {
             return null;
         }
+        if (latitude == null || longitude == null) {
+            return null;
+        }
         return new SagaNodeGeoPoint(latitude, longitude);
+    }
+
+    private SagaNodePhotos parseLegacyPhotos(String photos, JsonProcessingException exception) {
+        String normalizedPhotos = photos == null ? "" : photos.trim();
+        if (normalizedPhotos.isEmpty()) {
+            return null;
+        }
+        if (normalizedPhotos.contains(",")) {
+            List<String> urls = java.util.Arrays.stream(normalizedPhotos.split(","))
+                    .map(String::trim)
+                    .filter(url -> !url.isEmpty())
+                    .toList();
+            if (!urls.isEmpty()) {
+                return new SagaNodePhotos(urls);
+            }
+        }
+        if (normalizedPhotos.startsWith("http://") || normalizedPhotos.startsWith("https://") || normalizedPhotos.startsWith("/")) {
+            return new SagaNodePhotos(List.of(normalizedPhotos));
+        }
+        throw new IllegalStateException("节点照片反序列化失败", exception);
     }
 
     private String valueOf(SagaNodeDescription sagaNodeDescription) {

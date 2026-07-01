@@ -55,7 +55,8 @@ public class SagaQueryApplicationService {
 
         Saga saga = sagaRepository.findBySagaId(sagaId)
                 .orElseThrow(() -> new IllegalStateException("副本不存在"));
-        if (!saga.sagaOwnerId().equals(sagaOwnerId) && !saga.publicVisible()) {
+        boolean ownerView = saga.sagaOwnerId().equals(sagaOwnerId);
+        if (!ownerView && !saga.publicVisible()) {
             throw new IllegalStateException("无权查看该副本");
         }
 
@@ -70,10 +71,10 @@ public class SagaQueryApplicationService {
                         favoritedSagaNodeIds.contains(sagaNode.sagaNodeId())
                 ))
                 .toList();
-        return new SagaDetail(saga, nodeDetails);
+        return new SagaDetail(saga, nodeDetails, ownerView);
     }
 
-    public record SagaDetail(Saga saga, List<SagaNodeDetail> sagaNodes) {
+    public record SagaDetail(Saga saga, List<SagaNodeDetail> sagaNodes, boolean ownerView) {
     }
 
     public record SagaNodeDetail(SagaNode sagaNode, boolean favorited) {

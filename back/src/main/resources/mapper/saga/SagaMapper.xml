@@ -101,9 +101,43 @@
             is_public = #{isPublic},
             node_count = #{nodeCount},
             rarity = #{rarity},
-            started_at = #{startedAt, jdbcType=TIMESTAMP},
             ended_at = #{endedAt, jdbcType=TIMESTAMP}
         WHERE id = #{id}
+    </update>
+
+    <update id="recordNodeAdded">
+        UPDATE sagas
+        SET node_count = node_count + 1,
+            rarity = CASE
+                WHEN node_count + 1 >= 30 THEN 'MYTHIC'
+                WHEN node_count + 1 >= 21 THEN 'LEGENDARY'
+                WHEN node_count + 1 >= 11 THEN 'EPIC'
+                WHEN node_count + 1 >= 6 THEN 'RARE'
+                WHEN node_count + 1 >= 3 THEN 'UNCOMMON'
+                ELSE 'COMMON'
+            END,
+            status = 'ACTIVE',
+            ended_at = NULL
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <update id="recordNodeDeleted">
+        UPDATE sagas
+        SET node_count = node_count - 1,
+            rarity = CASE
+                WHEN node_count - 1 >= 30 THEN 'MYTHIC'
+                WHEN node_count - 1 >= 21 THEN 'LEGENDARY'
+                WHEN node_count - 1 >= 11 THEN 'EPIC'
+                WHEN node_count - 1 >= 6 THEN 'RARE'
+                WHEN node_count - 1 >= 3 THEN 'UNCOMMON'
+                ELSE 'COMMON'
+            END,
+            status = 'ACTIVE',
+            ended_at = NULL
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND node_count > 0
     </update>
 
     <delete id="deleteById">

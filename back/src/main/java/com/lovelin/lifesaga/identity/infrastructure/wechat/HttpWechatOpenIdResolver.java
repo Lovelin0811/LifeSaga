@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Arrays;
 
 @Component
@@ -28,9 +29,19 @@ public class HttpWechatOpenIdResolver implements WechatOpenIdResolver {
             Environment environment,
             @Value("${wechat.app-id:}") String appId,
             @Value("${wechat.app-secret:}") String appSecret,
-            @Value("${auth.dev-login-enabled:false}") boolean devLoginEnabled
+            @Value("${auth.dev-login-enabled:false}") boolean devLoginEnabled,
+            @Value("${wechat.connect-timeout:5s}") Duration connectTimeout,
+            @Value("${wechat.read-timeout:5s}") Duration readTimeout
     ) {
-        this(environment, appId, appSecret, devLoginEnabled, HttpClient.newHttpClient(), new ObjectMapper());
+        this(
+                environment,
+                appId,
+                appSecret,
+                devLoginEnabled,
+                HttpClient.newBuilder().connectTimeout(connectTimeout).build(),
+                new ObjectMapper(),
+                readTimeout
+        );
     }
 
     HttpWechatOpenIdResolver(
@@ -39,7 +50,8 @@ public class HttpWechatOpenIdResolver implements WechatOpenIdResolver {
             String appSecret,
             boolean devLoginEnabled,
             HttpClient httpClient,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            Duration readTimeout
     ) {
         this.environment = environment;
         this.appId = appId;
@@ -47,7 +59,10 @@ public class HttpWechatOpenIdResolver implements WechatOpenIdResolver {
         this.devLoginEnabled = devLoginEnabled;
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
+        this.readTimeout = readTimeout;
     }
+
+    private final Duration readTimeout;
 
     @Override
     public String resolveOpenId(String code) {
@@ -74,6 +89,7 @@ public class HttpWechatOpenIdResolver implements WechatOpenIdResolver {
                     + "&grant_type=authorization_code";
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create(url))
+                    .timeout(readTimeout)
                     .GET()
                     .build();
             HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());

@@ -25,12 +25,15 @@ public class MyBatisSagaNodeFavoriteRepository implements SagaNodeFavoriteReposi
 
     @Override
     public boolean toggle(SagaOwnerId sagaOwnerId, SagaNodeId sagaNodeId) {
-        if (isFavorited(sagaOwnerId, sagaNodeId)) {
-            sagaNodeFavoriteMapper.deleteByUserIdAndNodeId(sagaOwnerId.value(), sagaNodeId.value());
+        int insertedRows = sagaNodeFavoriteMapper.insertIgnore(sagaOwnerId.value(), sagaNodeId.value());
+        if (insertedRows == 1) {
+            return true;
+        }
+        int deletedRows = sagaNodeFavoriteMapper.deleteByUserIdAndNodeId(sagaOwnerId.value(), sagaNodeId.value());
+        if (deletedRows > 0) {
             return false;
         }
-        sagaNodeFavoriteMapper.insert(sagaOwnerId.value(), sagaNodeId.value());
-        return true;
+        return sagaNodeFavoriteMapper.insertIgnore(sagaOwnerId.value(), sagaNodeId.value()) == 1;
     }
 
     @Override

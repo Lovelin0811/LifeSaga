@@ -14,6 +14,8 @@ public enum SagaType {
     WORK,
     /** 健身与健康管理经历。 */
     HEALTH,
+    /** 亲密关系相关经历，兼容旧版 relationship 数据。 */
+    RELATIONSHIP,
     /** 创作与作品产出经历。 */
     CREATIVE
 }

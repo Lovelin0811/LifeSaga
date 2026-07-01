@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MyBatisSagaNodeRepositoryTest {
@@ -120,6 +121,41 @@ class MyBatisSagaNodeRepositoryTest {
                 () -> assertEquals("新标题", sagaNodeMapper.savedRecord.getTitle()),
                 () -> assertEquals(true, sagaNodeMapper.savedRecord.getIsMilestone())
         );
+    }
+
+    @Test
+    void shouldRestoreLegacySinglePhotoText() {
+        FakeSagaNodeMapper sagaNodeMapper = new FakeSagaNodeMapper();
+        SagaNodeRecord sagaNodeRecord = new SagaNodeRecord();
+        sagaNodeRecord.setId(203L);
+        sagaNodeRecord.setSagaId(12L);
+        sagaNodeRecord.setTitle("旧照片");
+        sagaNodeRecord.setPhotos("https://example.com/legacy.jpg");
+        sagaNodeRecord.setSortOrder(1);
+        sagaNodeMapper.recordToFind = sagaNodeRecord;
+        MyBatisSagaNodeRepository sagaNodeRepository = new MyBatisSagaNodeRepository(sagaNodeMapper, new ObjectMapper());
+
+        SagaNode sagaNode = sagaNodeRepository.findBySagaNodeId(new SagaNodeId(203)).orElseThrow();
+
+        assertEquals(new SagaNodePhotos(List.of("https://example.com/legacy.jpg")), sagaNode.sagaNodePhotos());
+    }
+
+    @Test
+    void shouldIgnoreHalfMissingGeoPointFromLegacyData() {
+        FakeSagaNodeMapper sagaNodeMapper = new FakeSagaNodeMapper();
+        SagaNodeRecord sagaNodeRecord = new SagaNodeRecord();
+        sagaNodeRecord.setId(204L);
+        sagaNodeRecord.setSagaId(12L);
+        sagaNodeRecord.setTitle("旧坐标");
+        sagaNodeRecord.setLatitude(new BigDecimal("31.230416"));
+        sagaNodeRecord.setLongitude(null);
+        sagaNodeRecord.setSortOrder(1);
+        sagaNodeMapper.recordToFind = sagaNodeRecord;
+        MyBatisSagaNodeRepository sagaNodeRepository = new MyBatisSagaNodeRepository(sagaNodeMapper, new ObjectMapper());
+
+        SagaNode sagaNode = sagaNodeRepository.findBySagaNodeId(new SagaNodeId(204)).orElseThrow();
+
+        assertNull(sagaNode.sagaNodeGeoPoint());
     }
 
     private static final class FakeSagaNodeMapper implements SagaNodeMapper {

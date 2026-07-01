@@ -43,7 +43,6 @@ public class DeleteSagaNodeApplicationService {
 
         sagaNodeFavoriteRepository.deleteBySagaNodeId(command.sagaNodeId());
         sagaNodeRepository.deleteBySagaNodeId(command.sagaNodeId());
-        saga.recordNodeDeleted();
-        sagaRepository.save(saga);
+        sagaRepository.recordNodeDeleted(command.sagaId(), command.sagaOwnerId());
     }
 }

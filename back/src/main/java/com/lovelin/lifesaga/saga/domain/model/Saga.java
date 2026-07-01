@@ -137,6 +137,9 @@ public final class Saga {
 
     public void complete(LocalDateTime completedAt) {
         if (sagaStatus == SagaStatus.COMPLETED) {
+            if (endedAt == null && completedAt != null) {
+                endedAt = completedAt;
+            }
             return;
         }
         if (nodeCount == 0) {

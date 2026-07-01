@@ -58,7 +58,7 @@ public class SagaController {
     public ApiResponse<List<SagaResponse>> list(HttpServletRequest httpServletRequest) {
         Long userId = currentUserId(httpServletRequest);
         List<SagaResponse> sagas = sagaQueryApplicationService.listOwnerSagas(new SagaOwnerId(userId)).stream()
-                .map(SagaResponse::from)
+                .map(saga -> SagaResponse.from(saga, true))
                 .toList();
         return ApiResponse.success(sagas);
     }
@@ -66,7 +66,7 @@ public class SagaController {
     @GetMapping("/public")
     public ApiResponse<List<SagaResponse>> listPublic() {
         List<SagaResponse> sagas = sagaQueryApplicationService.listPublicSagas().stream()
-                .map(SagaResponse::from)
+                .map(saga -> SagaResponse.from(saga, false))
                 .toList();
         return ApiResponse.success(sagas);
     }
@@ -93,12 +93,12 @@ public class SagaController {
         Saga saga = createSagaApplicationService.createSaga(new CreateSagaCommand(
                 new SagaOwnerId(userId),
                 new SagaName(createSagaRequest.name()),
-                SagaType.valueOf(createSagaRequest.type().toUpperCase(Locale.ROOT)),
+                parseSagaType(createSagaRequest.type()),
                 createSagaRequest.coverUrl(),
                 createSagaRequest.description(),
                 Boolean.TRUE.equals(createSagaRequest.publicVisible())
         ));
-        return ApiResponse.success(SagaResponse.from(saga));
+        return ApiResponse.success(SagaResponse.from(saga, true));
     }
 
     @PutMapping("/{id}")
@@ -112,12 +112,12 @@ public class SagaController {
                 new SagaId(id),
                 new SagaOwnerId(userId),
                 new SagaName(updateSagaRequest.name()),
-                SagaType.valueOf(updateSagaRequest.type().toUpperCase(Locale.ROOT)),
+                parseSagaType(updateSagaRequest.type()),
                 updateSagaRequest.coverUrl(),
                 updateSagaRequest.description(),
                 Boolean.TRUE.equals(updateSagaRequest.publicVisible())
         ));
-        return ApiResponse.success(SagaResponse.from(saga));
+        return ApiResponse.success(SagaResponse.from(saga, true));
     }
 
     @PutMapping("/{id}/complete")
@@ -130,7 +130,7 @@ public class SagaController {
                 new SagaId(id),
                 new SagaOwnerId(userId)
         ));
-        return ApiResponse.success(SagaResponse.from(saga));
+        return ApiResponse.success(SagaResponse.from(saga, true));
     }
 
     @DeleteMapping("/{id}")
@@ -152,6 +152,17 @@ public class SagaController {
             throw new IllegalStateException("未登录");
         }
         return value;
+    }
+
+    private SagaType parseSagaType(String type) {
+        if (type == null || type.isBlank()) {
+            throw new IllegalArgumentException("副本类型不能为空");
+        }
+        try {
+            return SagaType.valueOf(type.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("副本类型非法");
+        }
     }
 
     public record CreateSagaRequest(
@@ -187,10 +198,10 @@ public class SagaController {
             LocalDateTime endedAt
     ) {
 
-        static SagaResponse from(Saga saga) {
+        static SagaResponse from(Saga saga, boolean includeOwnerId) {
             return new SagaResponse(
                     saga.sagaId() == null ? null : saga.sagaId().value(),
-                    saga.sagaOwnerId().value(),
+                    includeOwnerId ? saga.sagaOwnerId().value() : null,
                     saga.sagaName().value(),
                     saga.sagaType().name(),
                     saga.coverUrl(),
@@ -212,9 +223,9 @@ public class SagaController {
 
         static SagaDetailResponse from(SagaQueryApplicationService.SagaDetail sagaDetail) {
             return new SagaDetailResponse(
-                    SagaResponse.from(sagaDetail.saga()),
+                    SagaResponse.from(sagaDetail.saga(), sagaDetail.ownerView()),
                     sagaDetail.sagaNodes().stream()
-                            .map(SagaNodeResponse::from)
+                            .map(sagaNodeDetail -> SagaNodeResponse.from(sagaNodeDetail, sagaDetail.ownerView()))
                             .toList()
             );
         }
@@ -235,21 +246,34 @@ public class SagaController {
             boolean favorited
     ) {
 
-        static SagaNodeResponse from(SagaQueryApplicationService.SagaNodeDetail sagaNodeDetail) {
+        static SagaNodeResponse from(
+                SagaQueryApplicationService.SagaNodeDetail sagaNodeDetail,
+                boolean ownerView
+        ) {
             SagaNode sagaNode = sagaNodeDetail.sagaNode();
             return new SagaNodeResponse(
                     sagaNode.sagaNodeId() == null ? null : sagaNode.sagaNodeId().value(),
                     sagaNode.sagaId().value(),
                     sagaNode.sagaNodeTitle().value(),
                     sagaNode.sagaNodeOrder().value(),
-                    sagaNode.sagaNodeDescription() == null ? null : sagaNode.sagaNodeDescription().value(),
-                    sagaNode.sagaNodeLocation() == null ? null : sagaNode.sagaNodeLocation().value(),
-                    sagaNode.sagaNodeGeoPoint() == null ? null : sagaNode.sagaNodeGeoPoint().latitude(),
-                    sagaNode.sagaNodeGeoPoint() == null ? null : sagaNode.sagaNodeGeoPoint().longitude(),
+                    ownerView && sagaNode.sagaNodeDescription() != null
+                            ? sagaNode.sagaNodeDescription().value()
+                            : null,
+                    ownerView && sagaNode.sagaNodeLocation() != null
+                            ? sagaNode.sagaNodeLocation().value()
+                            : null,
+                    ownerView && sagaNode.sagaNodeGeoPoint() != null
+                            ? sagaNode.sagaNodeGeoPoint().latitude()
+                            : null,
+                    ownerView && sagaNode.sagaNodeGeoPoint() != null
+                            ? sagaNode.sagaNodeGeoPoint().longitude()
+                            : null,
                     sagaNode.sagaNodePhotos() == null ? null : sagaNode.sagaNodePhotos().values(),
-                    sagaNode.sagaNodeTime() == null ? null : sagaNode.sagaNodeTime().value(),
+                    ownerView && sagaNode.sagaNodeTime() != null
+                            ? sagaNode.sagaNodeTime().value()
+                            : null,
                     sagaNode.milestone(),
-                    sagaNodeDetail.favorited()
+                    ownerView && sagaNodeDetail.favorited()
             );
         }
     }

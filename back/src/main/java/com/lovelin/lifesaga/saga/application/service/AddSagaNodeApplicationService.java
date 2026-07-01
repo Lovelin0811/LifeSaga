@@ -50,11 +50,10 @@ public class AddSagaNodeApplicationService {
         );
 
         SagaNode savedSagaNode = sagaNodeRepository.save(sagaNode);
-        saga.recordNodeAdded();
-        sagaRepository.save(saga);
+        Saga updatedSaga = sagaRepository.recordNodeAdded(command.sagaId(), command.sagaOwnerId());
         achievementUnlockUseCase.checkOnNodeCreate(
-                saga.sagaOwnerId().toUserId(),
-                saga.sagaId()
+                updatedSaga.sagaOwnerId().toUserId(),
+                updatedSaga.sagaId()
         );
         return savedSagaNode;
     }

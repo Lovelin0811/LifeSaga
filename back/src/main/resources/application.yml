@@ -8,6 +8,10 @@ spring:
     username: ${DB_USERNAME:}
     password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
   sql:
     init:
       mode: never
@@ -25,6 +29,8 @@ mybatis:
 wechat:
   app-id: ${WECHAT_APP_ID:}
   app-secret: ${WECHAT_APP_SECRET:}
+  connect-timeout: ${WECHAT_CONNECT_TIMEOUT:5s}
+  read-timeout: ${WECHAT_READ_TIMEOUT:5s}
 
 jwt:
   secret: ${JWT_SECRET:}
@@ -32,7 +38,7 @@ jwt:
 
 upload:
   dir: ${UPLOAD_DIR:./uploads}
-  public-base-url: ${UPLOAD_PUBLIC_URL:http://127.0.0.1:3000}
+  public-base-url: ${UPLOAD_PUBLIC_URL:}
 
 auth:
   dev-login-enabled: ${AUTH_DEV_LOGIN:false}
