@@ -5,7 +5,7 @@
 | 发布目标 | 只发布 `back/` | `backend/` 是历史实现，不应继续发布 |
 | 打包产物 | `back/target/lifesaga-ddd-0.0.1-SNAPSHOT.jar` | 需要更新现有发布脚本 |
 | 数据库 | 使用 `LifeSagaNew` | 见 `back/src/main/resources/db/schema.sql` |
-| 配置文件 | 基于 `back/local.properties.example` 或 `back/application-prod.example.yml` 补齐 | 你当前服务器是 `local.properties` 方式 |
+| 配置文件 | 基于 `back/application-local.example.yml` 派生 | 本地用 `application-local.yml`，服务器按部署方式转成对应配置 |
 | JWT | 使用生产专用强随机密钥 | 不得与测试环境共用 |
 | 微信密钥 | 使用生产小程序对应密钥 | 必填 |
 | 上传目录 | 指向服务器持久目录 | 例如 `/opt/lifesaga/uploads` |
